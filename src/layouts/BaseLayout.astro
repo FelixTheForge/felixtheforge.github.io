@@ -18,35 +18,55 @@ const { title, description = 'FelixTheForge — personal writings' } = Astro.pro
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body class="min-h-screen flex flex-col">
-    <header class="py-10 px-6">
-      <nav class="max-w-2xl mx-auto flex items-center justify-between">
-        <a href="/" class="font-serif text-lg tracking-wide hover:text-accent transition-colors">
-          Felix<span class="text-accent">TheForge</span>
+  <body style="min-height:100vh; display:flex; flex-direction:column;">
+    <header style="padding: 2.5rem 1.5rem;">
+      <nav style="max-width:42rem; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
+        <a href="/" class="site-logo">
+          Felix<span style="color:var(--color-accent)">TheForge</span>
         </a>
-        <ul class="flex gap-8 font-sans text-sm text-muted tracking-wider uppercase">
-          <li><a href="/" class="hover:text-ink transition-colors">Home</a></li>
-          <li><a href="/blog" class="hover:text-ink transition-colors">Writing</a></li>
-          <li><a href="/about" class="hover:text-ink transition-colors">About</a></li>
+        <ul style="display:flex; gap:2rem; list-style:none; margin:0; padding:0;">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/blog" class="nav-link">Writing</a></li>
+          <li><a href="/about" class="nav-link">About</a></li>
         </ul>
       </nav>
     </header>
 
-    <main class="flex-1 px-6">
+    <main style="flex:1; padding:0 1.5rem;">
       <slot />
     </main>
 
-    <footer class="py-12 px-6 mt-20 border-t border-border">
-      <div class="max-w-2xl mx-auto flex items-center justify-between text-sm text-muted font-sans">
-        <span>© {new Date().getFullYear()} FelixTheForge</span>
-        <span class="tracking-widest text-xs">✦</span>
-        <a
-          href="https://github.com/FelixTheForge"
-          target="_blank"
-          rel="noopener"
-          class="hover:text-ink transition-colors"
-        >GitHub</a>
+    <footer style="padding:3rem 1.5rem; margin-top:5rem; border-top:1px solid var(--color-border);">
+      <div style="max-width:42rem; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-size:0.875rem; color:var(--color-muted); font-family:var(--font-sans);">
+          © {new Date().getFullYear()} FelixTheForge
+        </span>
+        <span style="letter-spacing:0.2em; font-size:0.75rem; color:var(--color-muted);">✦</span>
+        <a href="https://github.com/FelixTheForge" target="_blank" rel="noopener" class="nav-link">
+          GitHub
+        </a>
       </div>
     </footer>
   </body>
 </html>
+
+<style>
+  .site-logo {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: color 0.2s;
+  }
+  .nav-link {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--color-ink); }
+</style>

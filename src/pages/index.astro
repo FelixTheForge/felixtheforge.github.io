@@ -8,45 +8,40 @@ const posts = (await getCollection('blog'))
 ---
 
 <BaseLayout title="FelixTheForge">
-  <div class="max-w-2xl mx-auto py-20 fade-in">
+  <div class="fade-in" style="max-width:42rem; margin:0 auto; padding:5rem 0;">
 
-    <!-- Hero -->
-    <section class="mb-24">
-      <p class="font-sans text-sm text-muted tracking-widest uppercase mb-6">Hello, I'm</p>
-      <h1 class="font-serif text-5xl font-medium leading-tight text-ink mb-6">
-        Felix<br /><span class="text-accent">The Forge</span>
+    <section style="margin-bottom:6rem;">
+      <p style="font-family:var(--font-sans); font-size:0.75rem; color:var(--color-muted); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:1.5rem;">Hello, I'm</p>
+      <h1 style="font-family:var(--font-serif); font-size:3rem; font-weight:500; line-height:1.2; color:var(--color-ink); margin-bottom:1.5rem;">
+        Felix<br /><span style="color:var(--color-accent)">The Forge</span>
       </h1>
-      <p class="font-serif text-xl text-muted italic leading-relaxed max-w-lg">
+      <p style="font-family:var(--font-serif); font-size:1.25rem; color:var(--color-muted); font-style:italic; line-height:1.7; max-width:32rem;">
         Writing about technology, craft, and the slow accumulation of ideas.
       </p>
     </section>
 
-    <!-- Divider -->
-    <div class="flex items-center gap-4 mb-16">
-      <div class="flex-1 h-px bg-border"></div>
-      <span class="text-muted text-xs tracking-widest">RECENT WRITINGS</span>
-      <div class="flex-1 h-px bg-border"></div>
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:4rem;">
+      <div style="flex:1; height:1px; background:var(--color-border);"></div>
+      <span style="font-family:var(--font-sans); font-size:0.65rem; color:var(--color-muted); letter-spacing:0.2em; text-transform:uppercase; white-space:nowrap;">Recent Writings</span>
+      <div style="flex:1; height:1px; background:var(--color-border);"></div>
     </div>
 
-    <!-- Post list -->
     <section>
       {posts.length === 0 ? (
-        <p class="text-muted font-serif italic text-center py-12">No writings yet. The forge is heating up.</p>
+        <p style="color:var(--color-muted); font-family:var(--font-serif); font-style:italic; text-align:center; padding:3rem 0;">No writings yet. The forge is heating up.</p>
       ) : (
-        <ul class="space-y-10">
+        <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2.5rem;">
           {posts.map((post) => (
             <li>
-              <a href={`/blog/${post.id}`} class="group block">
-                <div class="flex items-baseline justify-between gap-4 mb-2">
-                  <h2 class="font-serif text-xl font-medium group-hover:text-accent transition-colors">
-                    {post.data.title}
-                  </h2>
-                  <time class="font-sans text-xs text-muted tracking-wide shrink-0">
+              <a href={`/blog/${post.id}`} class="post-link">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:0.5rem;">
+                  <h2 class="post-title">{post.data.title}</h2>
+                  <time style="font-family:var(--font-sans); font-size:0.75rem; color:var(--color-muted); letter-spacing:0.05em; white-space:nowrap;">
                     {new Date(post.data.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                   </time>
                 </div>
                 {post.data.description && (
-                  <p class="font-serif text-muted leading-relaxed">{post.data.description}</p>
+                  <p style="font-family:var(--font-serif); color:var(--color-muted); line-height:1.7;">{post.data.description}</p>
                 )}
               </a>
             </li>
@@ -55,12 +50,32 @@ const posts = (await getCollection('blog'))
       )}
 
       {posts.length > 0 && (
-        <div class="mt-14 text-center">
-          <a href="/blog" class="font-sans text-sm text-muted hover:text-ink transition-colors tracking-widest uppercase">
-            All writings →
-          </a>
+        <div style="margin-top:3.5rem; text-align:center;">
+          <a href="/blog" class="more-link">All writings →</a>
         </div>
       )}
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .post-link { text-decoration: none; display: block; }
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    transition: color 0.2s;
+  }
+  .post-link:hover .post-title { color: var(--color-accent); }
+  .more-link {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .more-link:hover { color: var(--color-ink); }
+</style>

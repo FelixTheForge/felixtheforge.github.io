@@ -16,9 +16,9 @@ const formatted = new Date(date).toLocaleDateString('en-US', {
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="max-w-2xl mx-auto py-16 fade-in">
-    <header class="mb-12 text-center">
-      <div class="flex items-center justify-center gap-3 mb-6 text-muted font-sans text-sm tracking-wider uppercase">
+  <article class="fade-in" style="max-width:42rem; margin:0 auto; padding:4rem 0;">
+    <header style="margin-bottom:3rem; text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:0.75rem; margin-bottom:1.5rem; color:var(--color-muted); font-family:var(--font-sans); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase;">
         <time datetime={date}>{formatted}</time>
         {tags.length > 0 && (
           <>
@@ -27,22 +27,33 @@ const formatted = new Date(date).toLocaleDateString('en-US', {
           </>
         )}
       </div>
-      <h1 class="font-serif text-4xl font-medium leading-tight text-ink mb-4">{title}</h1>
+      <h1 style="font-family:var(--font-serif); font-size:2.25rem; font-weight:500; line-height:1.3; color:var(--color-ink); margin-bottom:1rem;">{title}</h1>
       {description && (
-        <p class="text-muted font-serif text-xl italic">{description}</p>
+        <p style="color:var(--color-muted); font-family:var(--font-serif); font-size:1.25rem; font-style:italic;">{description}</p>
       )}
     </header>
 
-    <div class="border-t border-border pt-12">
+    <div style="border-top:1px solid var(--color-border); padding-top:3rem;">
       <div class="prose-blog">
         <slot />
       </div>
     </div>
 
-    <footer class="mt-16 pt-8 border-t border-border">
-      <a href="/blog" class="font-sans text-sm text-muted hover:text-ink transition-colors tracking-wider uppercase">
-        ← All writings
-      </a>
+    <footer style="margin-top:4rem; padding-top:2rem; border-top:1px solid var(--color-border);">
+      <a href="/blog" class="back-link">← All writings</a>
     </footer>
   </article>
 </BaseLayout>
+
+<style>
+  .back-link {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--color-ink); }
+</style>
