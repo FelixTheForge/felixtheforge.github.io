@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
 import { getCollection } from 'astro:content';
+import { readingTime } from '../../utils/readingTime';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
@@ -9,39 +11,54 @@ const years = [...new Set(posts.map(p => new Date(p.data.date).getFullYear()))];
 ---
 
 <BaseLayout title="Writing — FelixTheForge">
-  <div class="fade-in" style="max-width:42rem; margin:0 auto; padding:4rem 0;">
-    <header style="margin-bottom:4rem;">
-      <h1 style="font-family:var(--font-serif); font-size:2.5rem; font-weight:500; margin-bottom:0.75rem; color:var(--color-ink);">Writing</h1>
-      <p style="color:var(--color-muted); font-family:var(--font-serif); font-style:italic;">
+  <PageBanner
+    title="Writing"
+    subtitle="Ideas, notes, and things worth saying."
+    image="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1400&q=80"
+  />
+
+  <div class="fade-in page-wrap">
+    <div class="count-line">
+      <span class="count-text" id="blog-count">
         {posts.length} {posts.length === 1 ? 'piece' : 'pieces'} so far.
-      </p>
-    </header>
+      </span>
+    </div>
 
     {posts.length === 0 ? (
-      <p style="color:var(--color-muted); font-family:var(--font-serif); font-style:italic; text-align:center; padding:4rem 0;">The forge is heating up.</p>
+      <p class="empty">The forge is heating up.</p>
     ) : (
       years.map(year => (
-        <section style="margin-bottom:3.5rem;">
-          <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
-            <span style="font-family:var(--font-sans); font-size:0.75rem; color:var(--color-muted); letter-spacing:0.1em;">{year}</span>
-            <div style="flex:1; height:1px; background:var(--color-border);"></div>
+        <section class="year-group">
+          <div class="year-hd">
+            <span class="year-label">{year}</span>
+            <div class="year-line"></div>
           </div>
-          <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2rem;">
+          <ul class="post-list">
             {posts
               .filter(p => new Date(p.data.date).getFullYear() === year)
               .map(post => (
                 <li>
-                  <a href={`/blog/${post.id}`} class="post-link">
-                    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:1.5rem;">
-                      <div>
-                        <h2 class="post-title">{post.data.title}</h2>
-                        {post.data.description && (
-                          <p style="color:var(--color-muted); font-family:var(--font-serif); font-size:0.9375rem; line-height:1.6; margin-top:0.25rem;">{post.data.description}</p>
-                        )}
+                  <a href={`/blog/${post.id}`} class="post-row">
+                    {post.data.cover && (
+                      <img src={post.data.cover} alt="" class="row-thumb" loading="lazy"/>
+                    )}
+                    <div class="row-body">
+                      <h2 class="row-title">{post.data.title}</h2>
+                      {post.data.description && (
+                        <p class="row-desc">{post.data.description}</p>
+                      )}
+                      <div class="row-meta">
+                        {post.data.tags?.slice(0,3).map(t => (
+                          <span class="row-tag">{t}</span>
+                        ))}
                       </div>
-                      <time style="font-family:var(--font-sans); font-size:0.75rem; color:var(--color-muted); white-space:nowrap; letter-spacing:0.05em;">
-                        {new Date(post.data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </div>
+                    <div class="row-right">
+                      <time class="row-date">
+                        {new Date(post.data.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
                       </time>
+                      <span class="row-rt">{readingTime(post.body ?? '')}</span>
+                      <span class="row-arrow">→</span>
                     </div>
                   </a>
                 </li>
@@ -55,13 +72,59 @@ const years = [...new Set(posts.map(p => new Date(p.data.date).getFullYear()))];
 </BaseLayout>
 
 <style>
-  .post-link { text-decoration: none; display: block; }
-  .post-title {
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--color-ink);
-    transition: color 0.2s;
+  .page-wrap { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+  .count-line { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); }
+  .count-text { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); }
+
+  .year-group { margin-bottom: 3rem; }
+  .year-hd { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+  .year-label { font-family: var(--font-sans); font-size: .7rem; color: var(--color-accent); letter-spacing: .12em; font-weight: 500; }
+  .year-line { flex: 1; height: 1px; background: var(--color-border); }
+
+  .post-list { list-style: none; margin: 0; padding: 0; }
+
+  .post-row {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: 1.25rem .75rem; border-radius: 6px;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none; transition: background .2s;
   }
-  .post-link:hover .post-title { color: var(--color-accent); }
+  .post-row:hover { background: color-mix(in srgb, var(--color-accent) 5%, transparent); }
+
+  .row-thumb {
+    width: 5.5rem; height: 3.75rem; object-fit: cover;
+    border-radius: 4px; flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .row-body { flex: 1; min-width: 0; }
+  .row-title {
+    font-family: var(--font-serif); font-size: 1.1rem; font-weight: 500;
+    color: var(--color-ink); margin-bottom: .3rem; transition: color .2s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .post-row:hover .row-title { color: var(--color-accent); }
+  .row-desc {
+    font-family: var(--font-serif); font-size: .875rem; color: var(--color-muted);
+    line-height: 1.5; margin-bottom: .5rem;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .row-meta { display: flex; gap: .35rem; flex-wrap: wrap; }
+  .row-tag {
+    font-family: var(--font-sans); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: .12rem .4rem; border-radius: 2px;
+  }
+
+  .row-right {
+    display: flex; flex-direction: column; align-items: flex-end; gap: .3rem;
+    flex-shrink: 0; min-width: 5rem;
+  }
+  .row-date { font-family: var(--font-sans); font-size: .68rem; color: var(--color-muted); white-space: nowrap; }
+  .row-rt { font-family: var(--font-sans); font-size: .62rem; color: color-mix(in srgb, var(--color-muted) 70%, transparent); }
+  .row-arrow { color: var(--color-border); font-size: .9rem; transition: color .2s, transform .2s; }
+  .post-row:hover .row-arrow { color: var(--color-accent); transform: translateX(3px); }
+
+  .empty { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); text-align: center; padding: 4rem 0; }
 </style>

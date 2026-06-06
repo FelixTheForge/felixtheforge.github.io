@@ -1,8 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
 import { SITE } from '../config/site';
 ---
 <BaseLayout title="About — FelixTheForge">
+  <PageBanner
+    title="About"
+    subtitle="Builder, thinker, occasional writer."
+    image="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1400&q=80"
+    tint="rgba(15,20,30,.58)"
+  />
   <div class="fade-in about-wrap">
 
     <!-- Hero -->

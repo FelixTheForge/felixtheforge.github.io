@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('blog');
@@ -9,6 +10,12 @@ const tags = [...tagMap.entries()].sort((a,b) => b[1]-a[1]);
 ---
 
 <BaseLayout title="Tags — FelixTheForge">
+  <PageBanner
+    title="Tags"
+    subtitle="Browse by topic."
+    image="https://images.unsplash.com/photo-1476900543704-4312b429f7e3?w=1400&q=80"
+    tint="rgba(20,15,10,.55)"
+  />
   <div class="fade-in page-wrap">
     <h1 class="page-title">Tags</h1>
     <p class="page-sub">{tags.length} topics explored so far.</p>
