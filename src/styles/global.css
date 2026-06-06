@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-parchment text-ink antialiased;
+    font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+  }
+
+  body {
+    @apply font-serif;
+  }
+
+  ::selection {
+    @apply bg-accent/20 text-ink;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-parchment;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+}
+
+@layer components {
+  .prose-blog {
+    @apply font-serif text-[1.125rem] leading-[1.85] text-ink/90;
+  }
+
+  .prose-blog h2 {
+    @apply font-serif text-2xl font-medium mt-12 mb-4 text-ink;
+  }
+
+  .prose-blog h3 {
+    @apply font-serif text-xl mt-8 mb-3 text-ink;
+  }
+
+  .prose-blog p {
+    @apply mb-6;
+  }
+
+  .prose-blog a {
+    @apply text-accent underline underline-offset-4 decoration-accent/40 hover:decoration-accent transition-all;
+  }
+
+  .prose-blog blockquote {
+    @apply border-l-2 border-accent/40 pl-6 my-8 text-muted italic;
+  }
+
+  .prose-blog code {
+    @apply font-mono text-sm bg-border/60 px-1.5 py-0.5 rounded;
+  }
+
+  .prose-blog pre {
+    @apply bg-ink/5 rounded-lg p-6 my-8 overflow-x-auto;
+  }
+
+  .prose-blog pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose-blog hr {
+    @apply border-border my-12;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

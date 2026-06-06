@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+  .slice(0, 5);
+---
+
+<BaseLayout title="FelixTheForge">
+  <div class="max-w-2xl mx-auto py-20 fade-in">
+
+    <!-- Hero -->
+    <section class="mb-24">
+      <p class="font-sans text-sm text-muted tracking-widest uppercase mb-6">Hello, I'm</p>
+      <h1 class="font-serif text-5xl font-medium leading-tight text-ink mb-6">
+        Felix<br /><span class="text-accent">The Forge</span>
+      </h1>
+      <p class="font-serif text-xl text-muted italic leading-relaxed max-w-lg">
+        Writing about technology, craft, and the slow accumulation of ideas.
+      </p>
+    </section>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-4 mb-16">
+      <div class="flex-1 h-px bg-border"></div>
+      <span class="text-muted text-xs tracking-widest">RECENT WRITINGS</span>
+      <div class="flex-1 h-px bg-border"></div>
+    </div>
+
+    <!-- Post list -->
+    <section>
+      {posts.length === 0 ? (
+        <p class="text-muted font-serif italic text-center py-12">No writings yet. The forge is heating up.</p>
+      ) : (
+        <ul class="space-y-10">
+          {posts.map((post) => (
+            <li>
+              <a href={`/blog/${post.id}`} class="group block">
+                <div class="flex items-baseline justify-between gap-4 mb-2">
+                  <h2 class="font-serif text-xl font-medium group-hover:text-accent transition-colors">
+                    {post.data.title}
+                  </h2>
+                  <time class="font-sans text-xs text-muted tracking-wide shrink-0">
+                    {new Date(post.data.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                  </time>
+                </div>
+                {post.data.description && (
+                  <p class="font-serif text-muted leading-relaxed">{post.data.description}</p>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {posts.length > 0 && (
+        <div class="mt-14 text-center">
+          <a href="/blog" class="font-sans text-sm text-muted hover:text-ink transition-colors tracking-widest uppercase">
+            All writings →
+          </a>
+        </div>
+      )}
+    </section>
+  </div>
+</BaseLayout>
