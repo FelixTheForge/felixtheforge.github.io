@@ -4,9 +4,10 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  heroHeader?: boolean;
 }
 
-const { title, description = 'FelixTheForge — personal writings' } = Astro.props;
+const { title, description = 'FelixTheForge — personal writings', heroHeader = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,10 +20,10 @@ const { title, description = 'FelixTheForge — personal writings' } = Astro.pro
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body style="min-height:100vh; display:flex; flex-direction:column;">
-    <header style="padding: 2.5rem 1.5rem;">
+    <header class={heroHeader ? 'site-header hero-mode' : 'site-header page-mode'}>
       <nav style="max-width:42rem; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
         <a href="/" class="site-logo">
-          Felix<span style="color:var(--color-accent)">TheForge</span>
+          Felix<span class="logo-accent">TheForge</span>
         </a>
         <ul style="display:flex; gap:2rem; list-style:none; margin:0; padding:0;">
           <li><a href="/" class="nav-link">Home</a></li>
@@ -32,7 +33,7 @@ const { title, description = 'FelixTheForge — personal writings' } = Astro.pro
       </nav>
     </header>
 
-    <main style="flex:1; padding:0 1.5rem;">
+    <main style={heroHeader ? 'flex:1; padding:0;' : 'flex:1; padding:0 1.5rem;'}>
       <slot />
     </main>
 
@@ -42,7 +43,7 @@ const { title, description = 'FelixTheForge — personal writings' } = Astro.pro
           © {new Date().getFullYear()} FelixTheForge
         </span>
         <span style="letter-spacing:0.2em; font-size:0.75rem; color:var(--color-muted);">✦</span>
-        <a href="https://github.com/FelixTheForge" target="_blank" rel="noopener" class="nav-link">
+        <a href="https://github.com/FelixTheForge" target="_blank" rel="noopener" class="nav-link footer-link">
           GitHub
         </a>
       </div>
@@ -51,22 +52,49 @@ const { title, description = 'FelixTheForge — personal writings' } = Astro.pro
 </html>
 
 <style>
+  /* Hero mode: absolute, white text, floats over image */
+  .site-header.hero-mode {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .hero-mode .site-logo { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.3); }
+  .hero-mode .logo-accent { color: #a8c5a0; }
+  .hero-mode .nav-link { color: rgba(255,255,255,0.65); }
+  .hero-mode .nav-link:hover { color: #fff; }
+
+  /* Page mode: normal, ink-colored */
+  .site-header.page-mode {
+    position: relative;
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 0;
+  }
+
+  .page-mode .site-logo { color: var(--color-ink); text-shadow: none; }
+  .page-mode .logo-accent { color: var(--color-accent); }
+  .page-mode .nav-link { color: var(--color-muted); }
+  .page-mode .nav-link:hover { color: var(--color-ink); }
+
   .site-logo {
     font-family: var(--font-serif);
     font-size: 1.125rem;
     letter-spacing: 0.05em;
     text-decoration: none;
-    color: var(--color-ink);
-    transition: color 0.2s;
+    transition: opacity 0.2s;
   }
+
   .nav-link {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    color: var(--color-muted);
+    font-size: 0.7rem;
     text-decoration: none;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     transition: color 0.2s;
   }
-  .nav-link:hover { color: var(--color-ink); }
+
+  .footer-link { color: var(--color-muted) !important; }
+  .footer-link:hover { color: var(--color-ink) !important; }
 </style>
