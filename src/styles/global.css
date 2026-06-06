@@ -1,38 +1,78 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap');
 @import "tailwindcss";
 
+/* ══════════════════════════════════
+   Light theme (default)
+══════════════════════════════════ */
 @theme {
   --font-serif: 'EB Garamond', Georgia, serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --color-parchment: #f8f5f0;
-  --color-ink: #2c2c2c;
-  --color-muted: #8a8580;
-  --color-accent: #6b7c6e;
-  --color-border: #e8e4de;
+  --font-sans:  'Inter', system-ui, sans-serif;
 }
 
+:root[data-theme="light"] {
+  --color-bg:       #f5f1eb;
+  --color-surface:  #faf7f2;
+  --color-surface2: #f0ebe2;
+  --color-ink:      #1e1e1e;
+  --color-muted:    #7a7570;
+  --color-accent:   #5a7a5c;
+  --color-accent2:  #8b6f47;
+  --color-border:   #e0d9d0;
+  --color-parchment: #f5f1eb;
+  --shadow-sm: 0 1px 8px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 24px rgba(0,0,0,.10);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,.14);
+}
+
+/* ══════════════════════════════════
+   Dark theme
+══════════════════════════════════ */
+:root[data-theme="dark"] {
+  --color-bg:       #141414;
+  --color-surface:  #1c1c1c;
+  --color-surface2: #252525;
+  --color-ink:      #e8e2d9;
+  --color-muted:    #7a7570;
+  --color-accent:   #7aaa7c;
+  --color-accent2:  #c4965a;
+  --color-border:   #2e2e2e;
+  --color-parchment: #141414;
+  --shadow-sm: 0 1px 8px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,.5);
+}
+
+/* ══════════════════════════════════
+   Base
+══════════════════════════════════ */
 @layer base {
   html {
-    background-color: var(--color-parchment);
+    background: var(--color-bg);
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+    transition: background .25s, color .25s;
   }
 
-  body {
-    font-family: var(--font-serif);
-  }
+  body { font-family: var(--font-serif); }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
     color: var(--color-ink);
   }
 
   ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--color-parchment); }
-  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
+  ::-webkit-scrollbar-track { background: var(--color-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+
+  img { display: block; max-width: 100%; }
+  * { box-sizing: border-box; }
 }
 
+/* ══════════════════════════════════
+   Prose (article body)
+══════════════════════════════════ */
 @layer components {
   .prose-blog {
     font-family: var(--font-serif);
@@ -40,72 +80,47 @@
     line-height: 1.85;
     color: color-mix(in srgb, var(--color-ink) 90%, transparent);
   }
-
   .prose-blog h2 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    color: var(--color-ink);
+    font-size: 1.5rem; font-weight: 500;
+    margin: 3rem 0 1rem; color: var(--color-ink);
+    padding-bottom: .5rem; border-bottom: 1px solid var(--color-border);
   }
-
-  .prose-blog h3 {
-    font-size: 1.25rem;
-    margin-top: 2rem;
-    margin-bottom: 0.75rem;
-    color: var(--color-ink);
-  }
-
+  .prose-blog h3 { font-size: 1.2rem; margin: 2rem 0 .75rem; color: var(--color-ink); }
   .prose-blog p { margin-bottom: 1.5rem; }
-
   .prose-blog a {
-    color: var(--color-accent);
-    text-decoration: underline;
+    color: var(--color-accent); text-decoration: underline;
     text-underline-offset: 4px;
     text-decoration-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
-    transition: text-decoration-color 0.2s;
+    transition: text-decoration-color .2s;
   }
-
-  .prose-blog a:hover {
-    text-decoration-color: var(--color-accent);
-  }
-
+  .prose-blog a:hover { text-decoration-color: var(--color-accent); }
   .prose-blog blockquote {
-    border-left: 2px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
-    padding-left: 1.5rem;
-    margin: 2rem 0;
-    color: var(--color-muted);
-    font-style: italic;
+    border-left: 3px solid var(--color-accent); padding-left: 1.5rem;
+    margin: 2rem 0; color: var(--color-muted); font-style: italic;
+    background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+    padding: 1rem 1rem 1rem 1.5rem; border-radius: 0 4px 4px 0;
   }
-
   .prose-blog code {
-    font-family: monospace;
-    font-size: 0.875rem;
-    background: color-mix(in srgb, var(--color-border) 60%, transparent);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
+    font-family: 'Fira Code', 'Cascadia Code', monospace; font-size: .875em;
+    background: var(--color-surface2); padding: .15rem .4rem;
+    border-radius: 3px; color: var(--color-accent2);
   }
-
   .prose-blog pre {
-    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin: 2rem 0;
-    overflow-x: auto;
+    background: var(--color-surface2); border-radius: 6px;
+    padding: 1.5rem; margin: 2rem 0; overflow-x: auto;
+    border: 1px solid var(--color-border);
   }
-
-  .prose-blog pre code { background: transparent; padding: 0; }
-
-  .prose-blog hr {
-    border-color: var(--color-border);
-    margin: 3rem 0;
-  }
+  .prose-blog pre code { background: transparent; padding: 0; color: inherit; }
+  .prose-blog hr { border: none; border-top: 1px solid var(--color-border); margin: 3rem 0; }
+  .prose-blog ul, .prose-blog ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+  .prose-blog li { margin-bottom: .4rem; }
+  .prose-blog img { border-radius: 6px; margin: 2rem auto; box-shadow: var(--shadow-md); }
 }
 
-.fade-in {
-  animation: fadeIn 0.6s ease forwards;
-}
-
+/* ══════════════════════════════════
+   Utility
+══════════════════════════════════ */
+.fade-in { animation: fadeIn .6s ease both; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
