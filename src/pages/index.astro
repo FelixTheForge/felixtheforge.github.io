@@ -8,74 +8,390 @@ const posts = (await getCollection('blog'))
 ---
 
 <BaseLayout title="FelixTheForge">
-  <div class="fade-in" style="max-width:42rem; margin:0 auto; padding:5rem 0;">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">Personal Blog</div>
 
-    <section style="margin-bottom:6rem;">
-      <p style="font-family:var(--font-sans); font-size:0.75rem; color:var(--color-muted); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:1.5rem;">Hello, I'm</p>
-      <h1 style="font-family:var(--font-serif); font-size:3rem; font-weight:500; line-height:1.2; color:var(--color-ink); margin-bottom:1.5rem;">
-        Felix<br /><span style="color:var(--color-accent)">The Forge</span>
+      <h1 class="hero-title">
+        <span class="hero-name">Felix</span>
+        <span class="hero-name accent">TheForge</span>
       </h1>
-      <p style="font-family:var(--font-serif); font-size:1.25rem; color:var(--color-muted); font-style:italic; line-height:1.7; max-width:32rem;">
-        Writing about technology, craft, and the slow accumulation of ideas.
-      </p>
-    </section>
 
-    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:4rem;">
-      <div style="flex:1; height:1px; background:var(--color-border);"></div>
-      <span style="font-family:var(--font-sans); font-size:0.65rem; color:var(--color-muted); letter-spacing:0.2em; text-transform:uppercase; white-space:nowrap;">Recent Writings</span>
-      <div style="flex:1; height:1px; background:var(--color-border);"></div>
+      <p class="hero-sub">
+        Writing about technology, craft,<br />and the slow accumulation of ideas.
+      </p>
+
+      <div class="hero-links">
+        <a href="/blog" class="btn-primary">Read Writing</a>
+        <a href="/about" class="btn-ghost">About Me</a>
+      </div>
+
+      <div class="hero-socials">
+        <a href="https://github.com/FelixTheForge" target="_blank" rel="noopener" class="social-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
     </div>
 
-    <section>
+    <div class="hero-deco" aria-hidden="true">
+      <div class="deco-ring deco-ring-1"></div>
+      <div class="deco-ring deco-ring-2"></div>
+      <div class="deco-ring deco-ring-3"></div>
+      <div class="deco-dots"></div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider">
+    <div class="divider-line"></div>
+    <span class="divider-label">Recent Writings</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Posts -->
+  <section class="posts-section">
+    <div class="posts-inner">
       {posts.length === 0 ? (
-        <p style="color:var(--color-muted); font-family:var(--font-serif); font-style:italic; text-align:center; padding:3rem 0;">No writings yet. The forge is heating up.</p>
+        <p class="empty-state">No writings yet. The forge is heating up.</p>
       ) : (
-        <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2.5rem;">
-          {posts.map((post) => (
-            <li>
-              <a href={`/blog/${post.id}`} class="post-link">
-                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:0.5rem;">
-                  <h2 class="post-title">{post.data.title}</h2>
-                  <time style="font-family:var(--font-sans); font-size:0.75rem; color:var(--color-muted); letter-spacing:0.05em; white-space:nowrap;">
+        <ul class="post-list">
+          {posts.map((post, i) => (
+            <li class="post-item" style={`animation-delay: ${i * 80}ms`}>
+              <a href={`/blog/${post.id}`} class="post-card">
+                <div class="post-card-left">
+                  <div class="post-number">0{i + 1}</div>
+                </div>
+                <div class="post-card-body">
+                  <h2 class="post-card-title">{post.data.title}</h2>
+                  {post.data.description && (
+                    <p class="post-card-desc">{post.data.description}</p>
+                  )}
+                  {post.data.tags?.length > 0 && (
+                    <div class="post-card-tags">
+                      {post.data.tags.map(t => <span class="tag">{t}</span>)}
+                    </div>
+                  )}
+                </div>
+                <div class="post-card-right">
+                  <time class="post-card-date">
                     {new Date(post.data.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                   </time>
+                  <span class="post-arrow">→</span>
                 </div>
-                {post.data.description && (
-                  <p style="font-family:var(--font-serif); color:var(--color-muted); line-height:1.7;">{post.data.description}</p>
-                )}
               </a>
             </li>
           ))}
         </ul>
       )}
 
-      {posts.length > 0 && (
-        <div style="margin-top:3.5rem; text-align:center;">
-          <a href="/blog" class="more-link">All writings →</a>
-        </div>
-      )}
-    </section>
-  </div>
+      <div class="all-writings-wrap">
+        <a href="/blog" class="all-writings-link">
+          <span>All writings</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .post-link { text-decoration: none; display: block; }
-  .post-title {
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--color-ink);
-    transition: color 0.2s;
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 5rem 0 4rem;
+    overflow: hidden;
   }
-  .post-link:hover .post-title { color: var(--color-accent); }
-  .more-link {
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-tag {
+    display: inline-block;
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    margin-bottom: 2rem;
+  }
+
+  .hero-title {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 8vw, 5.5rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-name { color: var(--color-ink); }
+  .hero-name.accent { color: var(--color-accent); }
+
+  .hero-sub {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--color-muted);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .btn-primary {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-parchment);
+    background: var(--color-ink);
+    padding: 0.65rem 1.5rem;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover {
+    background: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink);
+    border: 1px solid var(--color-border);
+    padding: 0.65rem 1.5rem;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  .hero-socials {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
     color: var(--color-muted);
     text-decoration: none;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
     transition: color 0.2s;
   }
-  .more-link:hover { color: var(--color-ink); }
+  .social-link:hover { color: var(--color-ink); }
+
+  /* ── Decorative rings ── */
+  .hero-deco {
+    position: absolute;
+    right: -6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28rem;
+    height: 28rem;
+    pointer-events: none;
+  }
+
+  .deco-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+  .deco-ring-1 { inset: 0; }
+  .deco-ring-2 { inset: 2.5rem; border-style: dashed; }
+  .deco-ring-3 { inset: 5rem; }
+
+  .deco-dots {
+    position: absolute;
+    inset: 8rem;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 30%, transparent) 1px, transparent 1px);
+    background-size: 1.2rem 1.2rem;
+    border-radius: 50%;
+    mask-image: radial-gradient(circle, black 40%, transparent 70%);
+  }
+
+  /* ── Divider ── */
+  .section-divider {
+    max-width: 42rem;
+    margin: 0 auto 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--color-border); }
+  .divider-label {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    color: var(--color-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── Posts ── */
+  .posts-section { padding-bottom: 5rem; }
+  .posts-inner { max-width: 42rem; margin: 0 auto; }
+
+  .post-list { list-style: none; margin: 0; padding: 0; }
+
+  .post-item {
+    opacity: 0;
+    animation: slideUp 0.5s ease forwards;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .post-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .post-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 -1rem;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--color-accent) 0%, transparent);
+    transition: background 0.2s;
+    z-index: 0;
+  }
+  .post-card:hover::before {
+    background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  }
+
+  .post-card-left, .post-card-body, .post-card-right { position: relative; z-index: 1; }
+
+  .post-number {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+    width: 1.5rem;
+  }
+
+  .post-card-body { flex: 1; }
+
+  .post-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    margin-bottom: 0.4rem;
+    transition: color 0.2s;
+  }
+  .post-card:hover .post-card-title { color: var(--color-accent); }
+
+  .post-card-desc {
+    font-family: var(--font-serif);
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  .tag {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .post-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    min-width: 5rem;
+  }
+
+  .post-card-date {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    color: var(--color-muted);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .post-arrow {
+    font-size: 1rem;
+    color: var(--color-border);
+    transition: color 0.2s, transform 0.2s;
+  }
+  .post-card:hover .post-arrow {
+    color: var(--color-accent);
+    transform: translateX(4px);
+  }
+
+  /* ── All writings link ── */
+  .all-writings-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+  }
+
+  .all-writings-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.2s, gap 0.2s;
+  }
+  .all-writings-link:hover {
+    color: var(--color-accent);
+    gap: 0.75rem;
+  }
+
+  .empty-state {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-muted);
+    text-align: center;
+    padding: 4rem 0;
+  }
 </style>
