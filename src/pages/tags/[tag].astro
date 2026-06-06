@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { readingTime } from '../../utils/readingTime';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const tags = [...new Set(posts.flatMap(p => p.data.tags ?? []))];
+  return tags.map(tag => ({
+    params: { tag },
+    props: { tag, posts: posts.filter(p => p.data.tags?.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const sorted = posts.sort((a,b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+---
+
+<BaseLayout title={`#${tag} — FelixTheForge`}>
+  <div class="fade-in page-wrap">
+    <div class="tag-header">
+      <a href="/tags" class="back">← All tags</a>
+      <h1 class="tag-title">#{tag}</h1>
+      <p class="tag-sub">{sorted.length} {sorted.length === 1 ? 'post' : 'posts'}</p>
+    </div>
+
+    <ul class="post-list">
+      {sorted.map(post => (
+        <li>
+          <a href={`/blog/${post.id}`} class="post-item">
+            {post.data.cover && <img src={post.data.cover} alt="" class="item-img" loading="lazy"/>}
+            <div class="item-body">
+              <div class="item-meta">
+                <time>{new Date(post.data.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</time>
+                <span>·</span><span>{readingTime(post.body ?? '')}</span>
+              </div>
+              <h2 class="item-title">{post.data.title}</h2>
+              {post.data.description && <p class="item-desc">{post.data.description}</p>}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrap { max-width: 42rem; margin: 0 auto; padding: 4rem 0; }
+  .tag-header { margin-bottom: 3rem; }
+  .back { font-family: var(--font-sans); font-size: .75rem; color: var(--color-muted); text-decoration: none; letter-spacing: .1em; text-transform: uppercase; }
+  .back:hover { color: var(--color-ink); }
+  .tag-title { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 500; margin: 1rem 0 .25rem; }
+  .tag-sub { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); }
+  .post-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+  .post-item {
+    display: flex; gap: 1.25rem; align-items: center;
+    padding: 1.5rem 0; border-bottom: 1px solid var(--color-border);
+    text-decoration: none; transition: background .2s; border-radius: 4px;
+  }
+  .post-item:hover { background: color-mix(in srgb, var(--color-accent) 4%, transparent); padding-left: .5rem; }
+  .item-img { width: 5rem; height: 3.5rem; object-fit: cover; border-radius: 3px; flex-shrink: 0; }
+  .item-body { flex: 1; }
+  .item-meta { font-family: var(--font-sans); font-size: .68rem; color: var(--color-muted); display: flex; gap: .4rem; margin-bottom: .35rem; }
+  .item-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 500; color: var(--color-ink); margin-bottom: .25rem; transition: color .2s; }
+  .post-item:hover .item-title { color: var(--color-accent); }
+  .item-desc { font-family: var(--font-serif); font-size: .875rem; color: var(--color-muted); line-height: 1.5; }
+</style>
