@@ -27,12 +27,16 @@ export const SITE = {
   heroBg: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80',
   aboutBg: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1800&q=80',
 
-  // 🎵 背景音乐 — 替换成你自己的 mp3 URL（可以放仓库 /public/music/xxx.mp3）
+  // 🎵 背景音乐
+  // source: 'youtube' → 用 YouTube 视频（合法，无版权风险）
+  //         'file'    → 用本地 mp3（放 /public/music/xxx.mp3，url 写 '/music/xxx.mp3'）
   music: {
     enabled: true,
-    title:   'Ambient',
-    artist:  'Lo-fi loop',
-    url:     'https://cdn.pixabay.com/audio/2023/06/06/audio_1f3a4cb8f3.mp3',
+    source:  'youtube' as 'youtube' | 'file',
+    title:   'Echo',
+    artist:  'Jason Walker',
+    youtubeId: 'ktnJ4zuxXy0',   // YouTube 视频 ID
+    url:     '',                 // 文件模式才填
   },
 };
 

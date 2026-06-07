@@ -19,6 +19,9 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml"/>
+  {SITE.music?.enabled && SITE.music.source === 'youtube' && (
+    <meta name="yt-video-id" content={SITE.music.youtubeId}/>
+  )}
   <script is:inline>
     (function(){
       var t=localStorage.getItem('theme')||'light';
@@ -94,7 +97,12 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
         <p class="music-title">{SITE.music.title}</p>
         <p class="music-artist">{SITE.music.artist}</p>
       </div>
-      <audio id="music-audio" src={SITE.music.url} loop preload="metadata"></audio>
+      {SITE.music.source === 'file' && (
+        <audio id="music-audio" src={SITE.music.url} loop preload="metadata"></audio>
+      )}
+      {SITE.music.source === 'youtube' && (
+        <div id="yt-player-host" aria-hidden="true"></div>
+      )}
     </div>
   )}
 
@@ -194,62 +202,137 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     setTimeout(() => r.remove(), 700);
   });
 
-  // ─── Music player ───
-  const audio = document.getElementById('music-audio') as HTMLAudioElement | null;
-  const btn   = document.getElementById('music-toggle');
-  const playIcon  = document.getElementById('music-play-icon');
-  const pauseIcon = document.getElementById('music-pause-icon');
-  const player    = document.getElementById('music-player');
-  if (audio && btn) {
-    audio.volume = 0.3;
+  // ─── Music player (supports <audio> and YouTube) ───
+  {
+    const btn       = document.getElementById('music-toggle');
+    const playIcon  = document.getElementById('music-play-icon');
+    const pauseIcon = document.getElementById('music-pause-icon');
+    const player    = document.getElementById('music-player');
+    const audio     = document.getElementById('music-audio') as HTMLAudioElement | null;
+    const ytHost    = document.getElementById('yt-player-host');
 
-    // Remember user's preference across pages / sessions
     const MUSIC_KEY = 'music-state';   // 'playing' | 'paused' | null
     const TIME_KEY  = 'music-time';
 
-    // Resume from last position if user was playing
-    const lastTime = parseFloat(localStorage.getItem(TIME_KEY) || '0');
-    if (lastTime > 0) audio.currentTime = lastTime;
+    // Unified play / pause / state interface
+    const ctrl = {
+      isPlaying: false,
+      play: () => {},
+      pause: () => {},
+      getTime: () => 0,
+      setTime: (_t: number) => {},
+    };
 
-    // Save position periodically while playing
-    setInterval(() => {
-      if (!audio.paused) localStorage.setItem(TIME_KEY, String(audio.currentTime));
-    }, 2000);
+    function onPlay() {
+      ctrl.isPlaying = true;
+      playIcon!.style.display = 'none';
+      pauseIcon!.style.display = 'block';
+      player?.classList.add('playing');
+    }
+    function onPause() {
+      ctrl.isPlaying = false;
+      playIcon!.style.display = 'block';
+      pauseIcon!.style.display = 'none';
+      player?.classList.remove('playing');
+    }
 
-    btn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play().then(() => localStorage.setItem(MUSIC_KEY, 'playing')).catch(()=>{});
-      } else {
-        audio.pause();
+    // ── Mode A: native <audio> ──
+    if (audio) {
+      audio.volume = 0.3;
+      const lastTime = parseFloat(localStorage.getItem(TIME_KEY) || '0');
+      if (lastTime > 0) audio.currentTime = lastTime;
+      audio.addEventListener('play', onPlay);
+      audio.addEventListener('pause', onPause);
+      ctrl.play    = () => audio.play().catch(()=>{});
+      ctrl.pause   = () => audio.pause();
+      ctrl.getTime = () => audio.currentTime;
+      ctrl.setTime = (t) => { audio.currentTime = t; };
+    }
+
+    // ── Mode B: YouTube IFrame Player ──
+    let yt: any = null;
+    if (ytHost) {
+      // Insert iframe target
+      ytHost.innerHTML = '<div id="yt-player-iframe"></div>';
+      // Load IFrame API
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+
+      (window as any).onYouTubeIframeAPIReady = () => {
+        const VIDEO_ID = (document.querySelector('meta[name="yt-video-id"]') as HTMLMetaElement)?.content || '';
+        yt = new (window as any).YT.Player('yt-player-iframe', {
+          height: '0', width: '0', videoId: VIDEO_ID,
+          playerVars: {
+            autoplay: 0, controls: 0, disablekb: 1, fs: 0,
+            iv_load_policy: 3, modestbranding: 1, playsinline: 1,
+            rel: 0, loop: 1, playlist: VIDEO_ID,
+          },
+          events: {
+            onReady: () => {
+              yt.setVolume(30);
+              const lastT = parseFloat(localStorage.getItem(TIME_KEY) || '0');
+              if (lastT > 0) try { yt.seekTo(lastT, true); } catch {}
+
+              ctrl.play    = () => yt.playVideo();
+              ctrl.pause   = () => yt.pauseVideo();
+              ctrl.getTime = () => { try { return yt.getCurrentTime() || 0; } catch { return 0; } };
+              ctrl.setTime = (t) => { try { yt.seekTo(t, true); } catch {} };
+
+              // Auto-resume if user was playing
+              const wasPlaying = localStorage.getItem(MUSIC_KEY) === 'playing';
+              if (wasPlaying) {
+                yt.playVideo();
+                // YouTube might reject autoplay with sound → wait for first interaction
+                setTimeout(() => {
+                  if (yt.getPlayerState && yt.getPlayerState() !== 1) {
+                    const resume = () => {
+                      yt.playVideo();
+                      ['click','keydown','touchstart'].forEach(e => removeEventListener(e, resume));
+                    };
+                    ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
+                  }
+                }, 600);
+              }
+            },
+            onStateChange: (e: any) => {
+              // 1 = playing, 2 = paused, 0 = ended
+              if (e.data === 1) onPlay();
+              else if (e.data === 2 || e.data === 0) onPause();
+            },
+          },
+        });
+      };
+    }
+
+    // Button click — works for both modes
+    btn?.addEventListener('click', () => {
+      if (ctrl.isPlaying) {
+        ctrl.pause();
         localStorage.setItem(MUSIC_KEY, 'paused');
+      } else {
+        ctrl.play();
+        localStorage.setItem(MUSIC_KEY, 'playing');
       }
     });
 
-    audio.addEventListener('play', () => {
-      playIcon!.style.display  = 'none';
-      pauseIcon!.style.display = 'block';
-      player?.classList.add('playing');
-    });
-    audio.addEventListener('pause', () => {
-      playIcon!.style.display  = 'block';
-      pauseIcon!.style.display = 'none';
-      player?.classList.remove('playing');
-    });
+    // Save playback position
+    setInterval(() => {
+      if (ctrl.isPlaying) localStorage.setItem(TIME_KEY, String(ctrl.getTime()));
+    }, 2000);
 
-    // Auto-resume after first user interaction (browser autoplay policy)
-    // 1. If user was playing before, resume on first click/keypress anywhere
-    // 2. Otherwise, only play when they explicitly click the button
-    const wasPlaying = localStorage.getItem(MUSIC_KEY) === 'playing';
-    if (wasPlaying) {
-      // Try silent autoplay (works on some browsers if previously interacted)
-      audio.play().catch(() => {
-        // Fallback: wait for first interaction
-        const resume = () => {
-          audio.play().catch(()=>{});
-          ['click','keydown','touchstart'].forEach(e => removeEventListener(e, resume));
-        };
-        ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
-      });
+    // Auto-resume for native audio
+    if (audio) {
+      const wasPlaying = localStorage.getItem(MUSIC_KEY) === 'playing';
+      if (wasPlaying) {
+        audio.play().catch(() => {
+          const resume = () => {
+            audio.play().catch(()=>{});
+            ['click','keydown','touchstart'].forEach(e => removeEventListener(e, resume));
+          };
+          ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
+        });
+      }
     }
   }
 </script>
@@ -430,6 +513,15 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   @keyframes ripple {
     0%   { width: 0;     height: 0;     opacity: .9; }
     100% { width: 180px; height: 180px; opacity: 0; }
+  }
+
+  /* Hidden YouTube iframe host — audio only, no visuals */
+  #yt-player-host {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* ── Music player — minimal collapsed pill, expands on hover/play ── */
