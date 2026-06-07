@@ -32,12 +32,13 @@ export const SITE = {
   //         'file'    → 用本地 mp3（放 /public/music/xxx.mp3，url 写 '/music/xxx.mp3'）
   music: {
     enabled: true,
-    source:  'youtube' as 'youtube' | 'file',
+    source:  'bilibili' as 'youtube' | 'bilibili' | 'file',
     title:   'Echo',
     artist:  'Jason Walker',
-    youtubeId: 'ktnJ4zuxXy0',   // YouTube 视频 ID
-    url:     '',                 // 文件模式才填
-    autoStart: true,             // 首次访问，第一次点击 / 按键 / 触屏 → 自动播放
+    youtubeId:    'ktnJ4zuxXy0',     // YouTube 视频 ID（source = youtube 用）
+    bilibiliBvid: 'BV1Ag4y1p7Bn',    // B站 BV 号（source = bilibili 用，国内可访问）
+    url:          '',                 // 本地文件路径（source = file 用）
+    autoStart: true,
   },
 };
 

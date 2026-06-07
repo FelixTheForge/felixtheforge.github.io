@@ -23,6 +23,9 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   {SITE.music?.enabled && SITE.music.source === 'youtube' && (
     <meta name="yt-video-id" content={SITE.music.youtubeId}/>
   )}
+  {SITE.music?.enabled && SITE.music.source === 'bilibili' && (
+    <meta name="bili-bvid" content={SITE.music.bilibiliBvid}/>
+  )}
   {SITE.music?.enabled && SITE.music.autoStart && (
     <meta name="music-autostart" content="1"/>
   )}
@@ -113,6 +116,9 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
       )}
       {SITE.music.source === 'youtube' && (
         <div id="yt-player-host" aria-hidden="true"></div>
+      )}
+      {SITE.music.source === 'bilibili' && (
+        <div id="bili-player-host" aria-hidden="true"></div>
       )}
     </div>
   )}
@@ -359,6 +365,45 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
           },
         });
       };
+    }
+
+    // ── Mode C: Bilibili Player (no JS API — use src toggle) ──
+    const biliHost = document.getElementById('bili-player-host');
+    if (biliHost) {
+      const BVID = (document.querySelector('meta[name="bili-bvid"]') as HTMLMetaElement)?.content || '';
+      const biliSrc = `https://player.bilibili.com/player.html?bvid=${BVID}&autoplay=1&danmaku=0&high_quality=1&page=1&as_wide=1&hideCoverInfo=1&muted=0`;
+
+      // Build a real iframe element we can swap src on
+      const iframe = document.createElement('iframe');
+      iframe.id = 'bili-player-iframe';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('scrolling', 'no');
+      iframe.setAttribute('allowfullscreen', 'true');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media');
+      iframe.setAttribute('referrerpolicy', 'no-referrer');
+      iframe.src = '';                                 // empty → silent until user clicks play
+      biliHost.appendChild(iframe);
+
+      ctrl.play = () => {
+        iframe.src = biliSrc + '&_=' + Date.now();    // cache-bust so reload restarts cleanly
+        onPlay();
+      };
+      ctrl.pause = () => {
+        iframe.src = '';                              // empty src → stops audio
+        onPause();
+      };
+      ctrl.getTime = () => 0;                          // no API to read position
+      ctrl.setTime = () => {};
+
+      // Auto-resume if user was previously playing — wait for first interaction
+      const wasPlaying = localStorage.getItem(MUSIC_KEY) === 'playing';
+      if (wasPlaying) {
+        const resume = () => {
+          ctrl.play();
+          ['click','keydown','touchstart'].forEach(e => removeEventListener(e, resume));
+        };
+        ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
+      }
     }
 
     // Button click — works for both modes
@@ -704,6 +749,20 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* Hidden Bilibili iframe host — off-screen but real size so mobile browsers
+     don't suspend audio. iframe inside gets sized via these wrapper rules. */
+  #bili-player-host {
+    position: fixed;
+    left: -9999px; top: -9999px;
+    width: 320px; height: 180px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  #bili-player-iframe {
+    width: 100%; height: 100%;
+    border: none;
   }
 
   /* ── Music player — minimal collapsed pill, expands on hover/play ── */
