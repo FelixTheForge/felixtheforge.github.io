@@ -66,7 +66,9 @@ export const MINECRAFT = {
   mcVersion:   'MC 1.21.x',
   qqGroup:     '123456789',                          // 你的 QQ 群号
   qrCode:      '/minecraft/qq-group-qr.png',         // QQ 群二维码，放 public/minecraft/ 下
-  bannerImg:   'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=1800&q=80', // 头图
+  bannerImg:   '/minecraft/banner.jpg',              // Hero 大图（日落岛屿）
+  sceneCherry: '/minecraft/scene-cherry.jpg',        // 樱花树场景
+  sceneRain:   '/minecraft/scene-rain.jpg',          // 雨水草地场景
 
   // 📂 资源 / 网盘文件
   files: [
@@ -115,11 +117,17 @@ export const MINECRAFT = {
 
   // 🖼️ 群友截图墙 — 把图放 public/minecraft/gallery/ 下
   gallery: [
-    { src: 'https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?w=800&q=80', caption: 'Spawn village' },
-    { src: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80', caption: 'Mountain base' },
-    { src: 'https://images.unsplash.com/photo-1614680376408-12c9d2d8acb8?w=800&q=80', caption: 'Nether highway' },
-    { src: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&q=80',  caption: 'End raid night' },
-    { src: 'https://images.unsplash.com/photo-1606503153255-59d8b8b82176?w=800&q=80',  caption: 'Redstone factory' },
-    { src: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80',  caption: 'Group portrait' },
+    { src: '/minecraft/banner.jpg',        caption: 'Sunset isles' },
+    { src: '/minecraft/scene-cherry.jpg',  caption: 'Cherry grove' },
+    { src: '/minecraft/scene-rain.jpg',    caption: 'Rainy meadow' },
+    { src: '/minecraft/scene-flowers.jpg', caption: 'Field of bloom' },
+  ],
+
+  // 🌅 壁纸墙 — 可下载的桌面壁纸
+  wallpapers: [
+    { src: '/minecraft/banner.jpg',        title: 'Sunset Isles',  titleZh: '日落群岛',  res: '4K' },
+    { src: '/minecraft/scene-cherry.jpg',  title: 'Cherry Grove',  titleZh: '樱花林',    res: '4K' },
+    { src: '/minecraft/scene-rain.jpg',    title: 'Rainy Meadow',  titleZh: '雨中草地',  res: '4K' },
+    { src: '/minecraft/scene-flowers.jpg', title: 'Field of Bloom',titleZh: '繁花原野',  res: '4K' },
   ],
 };

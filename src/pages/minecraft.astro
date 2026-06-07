@@ -68,8 +68,30 @@ import { MINECRAFT } from '../config/site';
       </div>
     </section>
 
+    <!-- ═══════════════ WALLPAPERS ═══════════════ -->
+    <section class="mc-section mc-section-noise">
+      <header class="mc-section-head">
+        <h2 class="mc-h2" data-i18n-mc="wall-h">WALLPAPERS</h2>
+        <p class="mc-section-sub" data-i18n-mc="wall-sub">Curated desktop scenes from the server.</p>
+      </header>
+      <div class="mc-wall-grid">
+        {MINECRAFT.wallpapers.map(w => (
+          <div class="mc-wall">
+            <img src={w.src} alt={w.title} loading="lazy"/>
+            <div class="mc-wall-info">
+              <span class="mc-wall-title" data-zh={w.titleZh}>{w.title}</span>
+              <a href={w.src} download class="mc-wall-dl">
+                <span>{w.res}</span>
+                <span>⬇</span>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
     <!-- ═══════════════ FILES ═══════════════ -->
-    <section class="mc-section mc-section-stone">
+    <section class="mc-section mc-section-stone" style={`background-image: linear-gradient(rgba(29,31,36,.92), rgba(29,31,36,.92)), url('${MINECRAFT.sceneCherry}')`}>
       <header class="mc-section-head">
         <h2 class="mc-h2" data-i18n-mc="files-h">RESOURCES</h2>
         <p class="mc-section-sub" data-i18n-mc="files-sub">Mod packs, textures, and config files.</p>
@@ -98,7 +120,7 @@ import { MINECRAFT } from '../config/site';
     </section>
 
     <!-- ═══════════════ DOCS ═══════════════ -->
-    <section class="mc-section">
+    <section class="mc-section mc-section-rain" style={`background-image: linear-gradient(rgba(29,31,36,.94), rgba(29,31,36,.94)), url('${MINECRAFT.sceneRain}')`}>
       <header class="mc-section-head">
         <h2 class="mc-h2" data-i18n-mc="docs-h">GUIDES</h2>
         <p class="mc-section-sub" data-i18n-mc="docs-sub">Setup walkthroughs and FAQs.</p>
@@ -129,6 +151,8 @@ import { MINECRAFT } from '../config/site';
       'scan': 'SCAN TO JOIN',
       'gallery-h': 'SCREENSHOTS',
       'gallery-sub': 'Moments from our world.',
+      'wall-h': 'WALLPAPERS',
+      'wall-sub': 'Curated desktop scenes from the server.',
       'files-h': 'RESOURCES',
       'files-sub': 'Mod packs, textures, and config files.',
       'docs-h': 'GUIDES',
@@ -143,6 +167,8 @@ import { MINECRAFT } from '../config/site';
       'scan': '扫码加入',
       'gallery-h': '群友截图',
       'gallery-sub': '来自我们世界的瞬间。',
+      'wall-h': '壁纸下载',
+      'wall-sub': '精选的服务器场景桌面壁纸。',
       'files-h': '资源下载',
       'files-sub': '整合包、材质、配置文件。',
       'docs-h': '操作文档',
@@ -223,9 +249,16 @@ import { MINECRAFT } from '../config/site';
     border-bottom: 4px solid var(--mc-line);
   }
   .mc-hero-bg {
-    position: absolute; inset: 0;
+    position: absolute; inset: -5%;            /* extra space for parallax */
     background-size: cover; background-position: center;
-    filter: brightness(.55) saturate(.85);
+    filter: brightness(.55) saturate(.95) contrast(1.05);
+    transform: translateZ(0);
+    will-change: transform;
+    animation: mcHeroZoom 28s ease-in-out infinite alternate;
+  }
+  @keyframes mcHeroZoom {
+    from { transform: scale(1.02); }
+    to   { transform: scale(1.12); }
   }
   .mc-hero-overlay {
     position: absolute; inset: 0;
@@ -398,11 +431,17 @@ import { MINECRAFT } from '../config/site';
     padding: 4rem 1.5rem;
     border-bottom: 4px solid var(--mc-line);
   }
-  .mc-section-stone {
+  /* Section with image bg — image fixed for parallax-ish feel, overlay set inline */
+  .mc-section-stone, .mc-section-rain {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  .mc-section-noise {
     background:
-      repeating-linear-gradient(0deg,
-        rgba(0,0,0,.04) 0 32px,
-        rgba(255,255,255,.015) 32px 64px),
+      repeating-linear-gradient(45deg,
+        rgba(255,255,255,.018) 0 2px,
+        transparent 2px 6px),
       var(--mc-bg-2);
   }
   .mc-section-head {
@@ -546,8 +585,73 @@ import { MINECRAFT } from '../config/site';
   .mc-doc-arrow { color: var(--mc-text-dim); transition: transform .15s, color .15s; }
   .mc-doc:hover .mc-doc-arrow { color: var(--mc-accent); transform: translateX(3px); }
 
+  /* ── Wallpapers ── */
+  .mc-wall-grid {
+    max-width: 68rem; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .mc-wall {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border: 1px solid var(--mc-stone-lt);
+    box-shadow:
+      inset 1px 1px 0 var(--mc-stone),
+      inset -1px -1px 0 var(--mc-line),
+      0 8px 24px rgba(0,0,0,.4);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .mc-wall:hover {
+    transform: translateY(-4px);
+    border-color: var(--mc-accent);
+    box-shadow:
+      inset 1px 1px 0 var(--mc-stone),
+      inset -1px -1px 0 var(--mc-line),
+      0 16px 32px rgba(0,0,0,.5),
+      0 0 0 1px rgba(78,175,82,.2);
+  }
+  .mc-wall img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .5s ease;
+  }
+  .mc-wall:hover img { transform: scale(1.06); }
+  .mc-wall-info {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .75rem 1rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.85) 100%);
+    opacity: 0; transform: translateY(8px);
+    transition: opacity .25s, transform .25s;
+  }
+  .mc-wall:hover .mc-wall-info { opacity: 1; transform: translateY(0); }
+  .mc-wall-title {
+    font-family: var(--mc-pix);
+    font-size: .6rem;
+    color: #fff;
+    letter-spacing: .1em;
+    text-shadow: 2px 2px 0 #000;
+    -webkit-font-smoothing: none;
+  }
+  .mc-wall-dl {
+    display: inline-flex; align-items: center; gap: .35rem;
+    font-family: var(--mc-pix);
+    font-size: .55rem;
+    letter-spacing: .1em;
+    color: var(--mc-accent-2);
+    text-decoration: none;
+    background: rgba(0,0,0,.55);
+    padding: .35rem .55rem;
+    border: 1px solid var(--mc-accent);
+    -webkit-font-smoothing: none;
+    transition: background .15s;
+  }
+  .mc-wall-dl:hover { background: var(--mc-accent); color: #fff; }
+
   /* ── Responsive ── */
   @media (max-width: 640px) {
+    .mc-section-stone, .mc-section-rain { background-attachment: scroll; }
     .mc-join { grid-template-columns: 1fr; text-align: center; }
     .mc-qr { margin: 0 auto; }
     .mc-join-actions { justify-content: center; }
