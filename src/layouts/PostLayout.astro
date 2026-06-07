@@ -4,13 +4,19 @@ import Comments from '../components/Comments.astro';
 import { readingTime } from '../utils/readingTime';
 import { SITE } from '../config/site';
 
+interface Heading { depth: number; slug: string; text: string; }
 interface Props {
   title: string; date: string; description?: string;
   tags?: string[]; cover?: string; body?: string;
+  headings?: Heading[];
 }
-const { title, date, description, tags=[], cover, body='' } = Astro.props;
+const { title, date, description, tags=[], cover, body='', headings=[] } = Astro.props;
 const rt = readingTime(body);
 const formatted = new Date(date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+// TOC: only show when there are at least 3 H2/H3 headings
+const tocItems = headings.filter(h => h.depth === 2 || h.depth === 3);
+const showToc = tocItems.length >= 3;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -38,6 +44,23 @@ const formatted = new Date(date).toLocaleDateString('en-US',{year:'numeric',mont
             <p class="sb-date">{formatted}</p>
             <p class="sb-rt">{rt}</p>
           </div>
+          {showToc && (
+            <>
+              <div class="sb-divider"></div>
+              <nav class="sb-toc" aria-label="Table of contents">
+                <p class="sb-toc-label" data-i18n="toc.label">On this page</p>
+                <ul class="sb-toc-list">
+                  {tocItems.map(h => (
+                    <li class={`sb-toc-item sb-toc-d${h.depth}`}>
+                      <a href={`#${h.slug}`} class="sb-toc-link" data-toc-slug={h.slug}>
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </>
+          )}
           <div class="sb-divider"></div>
           <div class="sb-actions">
             {SITE.social.github && (
@@ -104,6 +127,59 @@ const formatted = new Date(date).toLocaleDateString('en-US',{year:'numeric',mont
       setTimeout(() => copyBtn.classList.remove('copied'), 1500);
     } catch {}
   });
+
+  // ─── TOC: active-section highlight + smooth scroll ───
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.sb-toc-link');
+  if (tocLinks.length) {
+    const tocBySlug = new Map<string, HTMLAnchorElement>();
+    tocLinks.forEach(a => tocBySlug.set(a.dataset.tocSlug!, a));
+
+    // Collect all heading elements that are in the TOC
+    const targets: HTMLElement[] = [];
+    tocBySlug.forEach((_, slug) => {
+      const h = document.getElementById(slug);
+      if (h) targets.push(h);
+    });
+
+    let activeSlug = '';
+    function setActive(slug: string) {
+      if (slug === activeSlug) return;
+      if (activeSlug) tocBySlug.get(activeSlug)?.classList.remove('active');
+      tocBySlug.get(slug)?.classList.add('active');
+      activeSlug = slug;
+    }
+
+    const io = new IntersectionObserver(entries => {
+      // Find the topmost heading currently visible above the fold (~25% from top)
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible.length) {
+        setActive(visible[0].target.id);
+      } else {
+        // No heading visible — find the last one passed
+        const passed = targets.filter(el => el.getBoundingClientRect().top < 100);
+        if (passed.length) setActive(passed[passed.length - 1].id);
+      }
+    }, {
+      rootMargin: '-80px 0px -65% 0px',  // upper line at navbar bottom, lower at 35% of viewport
+      threshold: 0,
+    });
+    targets.forEach(t => io.observe(t));
+
+    // Smooth scroll on click
+    tocLinks.forEach(a => {
+      a.addEventListener('click', (e) => {
+        const slug = a.dataset.tocSlug!;
+        const target = document.getElementById(slug);
+        if (!target) return;
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY - 88;
+        window.scrollTo({ top, behavior: 'smooth' });
+        history.pushState(null, '', `#${slug}`);
+      });
+    });
+  }
 </script>
 
 <style>
@@ -188,6 +264,67 @@ const formatted = new Date(date).toLocaleDateString('en-US',{year:'numeric',mont
   .sb-meta { display: flex; flex-direction: column; gap: .15rem; }
   .sb-date { font-size: .7rem; color: var(--ink-2); font-weight: 500; }
   .sb-rt   { font-size: .65rem; color: var(--ink-4); }
+
+  /* ── TOC ── */
+  .sb-toc {
+    width: 100%;
+    text-align: left;
+    max-height: 50vh;
+    overflow-y: auto;
+    /* hide scrollbar but keep scrollable */
+    scrollbar-width: thin;
+  }
+  .sb-toc::-webkit-scrollbar { width: 3px; }
+  .sb-toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  .sb-toc-label {
+    font-size: .65rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-4);
+    margin-bottom: .65rem;
+  }
+  .sb-toc-list {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: .15rem;
+    position: relative;
+  }
+  .sb-toc-list::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .sb-toc-item { position: relative; }
+  .sb-toc-d3 { padding-left: 1rem; }
+  .sb-toc-link {
+    display: block;
+    position: relative;
+    font-size: .75rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+    text-decoration: none;
+    padding: .25rem 0 .25rem .85rem;
+    border-radius: 4px;
+    transition: color .15s;
+  }
+  .sb-toc-link::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%; transform: translateY(-50%);
+    width: 1px; height: 0;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: height .2s;
+  }
+  .sb-toc-link:hover { color: var(--ink); }
+  .sb-toc-link.active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .sb-toc-link.active::before {
+    height: 16px;
+    width: 2px;
+  }
 
   .sb-actions {
     display: flex; gap: .375rem; align-items: center;
