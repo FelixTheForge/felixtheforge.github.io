@@ -76,6 +76,16 @@ const socialImage = ogImage
   {SITE.music?.enabled && SITE.music.autoStart && (
     <meta name="music-autostart" content="1"/>
   )}
+
+  {/* Cloudflare Web Analytics beacon (when token is configured) */}
+  {SITE.cloudflareAnalytics && SITE.cloudflareAnalytics !== 'REPLACE_ME' && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token": "${SITE.cloudflareAnalytics}"}`}
+    ></script>
+  )}
   <ClientRouter />
 
   <script is:inline>

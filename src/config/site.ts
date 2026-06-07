@@ -44,6 +44,15 @@ export const SITE = {
     inputPosition: 'top' as 'top' | 'bottom',     // 输入框在顶 / 底
   },
 
+  // 📊 Cloudflare Web Analytics — 免费、无 cookie、隐私友好
+  // 配置步骤：
+  //   1. 打开 https://dash.cloudflare.com → Analytics & Logs → Web Analytics
+  //   2. Add a site → URL 填 https://felixtheforge.github.io
+  //   3. 拿到 beacon token（形如 `abcdef1234567890`）填到下面
+  //   4. 推送 → 几分钟后 dashboard 里就能看到访问数据
+  // 留空 / 'REPLACE_ME' 时不注入脚本（不影响功能）
+  cloudflareAnalytics: 'REPLACE_ME',
+
   // 🎵 背景音乐
   // source: 'youtube' → 用 YouTube 视频（合法，无版权风险）
   //         'file'    → 用本地 mp3（放 /public/music/xxx.mp3，url 写 '/music/xxx.mp3'）
@@ -88,7 +97,7 @@ export const MINECRAFT = {
   // 🟢 服务器地址 — 留空 / 'EXAMPLE' 时显示占位静态数据
   // 填上后会通过 mcsrvstat.us API 实时查询在线人数（每 60 秒刷新一次）
   // 示例：'mc.hypixel.net' 或 'play.myserver.com:25566'
-  serverAddress: 'EXAMPLE',
+  serverAddress: '47.122.92.249:60001',
   // -md (1280w ~100KB) for hero / section backgrounds — full quality kept as fallback download
   bannerImg:   '/minecraft/banner-md.jpg',
   sceneCherry: '/minecraft/scene-cherry-md.jpg',
