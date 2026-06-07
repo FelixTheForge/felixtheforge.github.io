@@ -186,12 +186,14 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
 
   /* ── Blog hero header ── */
   .blog-hero { margin-bottom: 2.5rem; }
-  .blog-title { margin: 0 0 .85rem; line-height: 1; }
+  .blog-title { margin: 0 0 .5rem; line-height: 1.15; }   /* room for g/y/p descenders */
   .blog-title-grad {
     display: inline-block;
     font-size: clamp(3rem, 7vw, 4.5rem);
     font-weight: 800;
     letter-spacing: -.04em;
+    line-height: 1.15;
+    padding-bottom: .08em;                                 /* extra safety for clipped descenders */
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-4) 60%, var(--accent-5) 100%);
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
