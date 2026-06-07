@@ -1,0 +1,274 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BOOKS, SITE } from '../config/site';
+
+const reading  = BOOKS.filter(b => b.status === 'reading');
+const finished = BOOKS.filter(b => b.status === 'finished');
+const wishlist = BOOKS.filter(b => b.status === 'wishlist');
+---
+<BaseLayout title={`Reading — ${SITE.title}`}>
+  <div class="page-wrap">
+    <header class="reading-hero fade-up">
+      <h1 class="reading-title grad-text" data-i18n="nav.reading">Reading</h1>
+      <p class="reading-sub">
+        <span class="bs-num">{reading.length}</span>
+        <span data-zh="本在读">reading</span>
+        <span class="bs-sep">·</span>
+        <span class="bs-num">{finished.length}</span>
+        <span data-zh="本读完">finished</span>
+        <span class="bs-sep">·</span>
+        <span class="bs-num">{wishlist.length}</span>
+        <span data-zh="本想读">on the list</span>
+      </p>
+    </header>
+
+    {reading.length > 0 && (
+      <section class="shelf fade-up" style="animation-delay:.1s">
+        <h2 class="shelf-title">
+          <span class="shelf-dot reading"></span>
+          <span data-zh="正在读">Currently reading</span>
+        </h2>
+        <div class="book-grid">
+          {reading.map(b => (
+            <article class="book book-reading">
+              <div class="book-cover-wrap">
+                <img src={b.cover} alt={b.title} class="book-cover" loading="lazy"/>
+                <div class="book-spine"></div>
+              </div>
+              <div class="book-info">
+                <h3 class="book-title" data-zh={b.titleZh}>{b.title}</h3>
+                <p class="book-author">{b.author}</p>
+                {b.note && <p class="book-note" data-zh={b.note} data-en={b.noteEn || ''}>{b.noteEn || b.note}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {finished.length > 0 && (
+      <section class="shelf fade-up" style="animation-delay:.2s">
+        <h2 class="shelf-title">
+          <span class="shelf-dot finished"></span>
+          <span data-zh="读完">Finished</span>
+        </h2>
+        <div class="book-grid">
+          {finished.map(b => (
+            <article class="book">
+              <div class="book-cover-wrap">
+                <img src={b.cover} alt={b.title} class="book-cover" loading="lazy"/>
+                <div class="book-spine"></div>
+              </div>
+              <div class="book-info">
+                <h3 class="book-title" data-zh={b.titleZh}>{b.title}</h3>
+                <p class="book-author">{b.author}</p>
+                {b.rating && (
+                  <p class="book-stars" title={`${b.rating}/5`}>
+                    {Array.from({length:5}).map((_,i) => (
+                      <span class={i < b.rating! ? 'star-on' : 'star-off'}>★</span>
+                    ))}
+                  </p>
+                )}
+                {b.note && <p class="book-note" data-zh={b.note} data-en={b.noteEn || ''}>{b.noteEn || b.note}</p>}
+                {b.finishedDate && <p class="book-date">{b.finishedDate}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {wishlist.length > 0 && (
+      <section class="shelf fade-up" style="animation-delay:.3s">
+        <h2 class="shelf-title">
+          <span class="shelf-dot wishlist"></span>
+          <span data-zh="想读">Want to read</span>
+        </h2>
+        <div class="book-grid">
+          {wishlist.map(b => (
+            <article class="book book-wishlist">
+              <div class="book-cover-wrap">
+                <img src={b.cover} alt={b.title} class="book-cover" loading="lazy"/>
+                <div class="book-spine"></div>
+              </div>
+              <div class="book-info">
+                <h3 class="book-title" data-zh={b.titleZh}>{b.title}</h3>
+                <p class="book-author">{b.author}</p>
+                {b.note && <p class="book-note" data-zh={b.note} data-en={b.noteEn || ''}>{b.noteEn || b.note}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  function syncLangReading() {
+    const lang = localStorage.getItem('lang') || 'en';
+    document.querySelectorAll('[data-zh]').forEach(el => {
+      const h = el as HTMLElement;
+      if (!h.dataset.en) h.dataset.en = h.textContent || '';
+      h.textContent = lang === 'zh' ? (h.dataset.zh || '') : (h.dataset.en || '');
+    });
+  }
+  syncLangReading();
+  document.getElementById('lang-btn')?.addEventListener('click', () => setTimeout(syncLangReading, 0));
+  document.addEventListener('astro:after-swap', syncLangReading);
+</script>
+
+<style>
+  .page-wrap { max-width: 64rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  .reading-hero { margin-bottom: 3rem; }
+  .reading-title {
+    font-size: clamp(3rem, 7vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -.04em;
+    line-height: 1.15;
+    padding-bottom: .08em;
+    margin: 0 0 .75rem;
+  }
+  .reading-sub {
+    font-size: .9375rem;
+    color: var(--ink-3);
+    display: flex; flex-wrap: wrap;
+    align-items: baseline;
+    gap: .35rem;
+  }
+  .bs-num { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .bs-sep { color: var(--ink-4); opacity: .6; margin: 0 .1rem; }
+
+  /* ── Shelves ── */
+  .shelf { margin-bottom: 3.5rem; }
+  .shelf-title {
+    font-size: .8rem; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex; align-items: center; gap: .5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .shelf-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .shelf-dot.reading  { background: var(--accent);   box-shadow: 0 0 8px var(--accent); }
+  .shelf-dot.finished { background: var(--accent-2); }
+  .shelf-dot.wishlist { background: var(--accent-5); }
+
+  /* ── Book grid ── */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem 1.5rem;
+  }
+  @media (max-width: 640px) {
+    .book-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem .75rem; }
+    .reading-title { font-size: clamp(2.25rem, 8vw, 3rem); }
+  }
+
+  /* ── Single book ── */
+  .book {
+    display: flex; flex-direction: column;
+    gap: 1rem;
+  }
+  .book-cover-wrap {
+    position: relative;
+    aspect-ratio: 2/3;
+    perspective: 1000px;
+    transition: transform .4s cubic-bezier(.25,.46,.45,.94);
+  }
+  .book:hover .book-cover-wrap {
+    transform: translateY(-4px) rotateY(-4deg);
+  }
+  .book-cover {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 3px 6px 6px 3px;
+    box-shadow:
+      -2px 0 0 rgba(0,0,0,.04),
+      0 1px 2px rgba(0,0,0,.06),
+      0 8px 24px rgba(0,0,0,.18),
+      0 20px 40px rgba(0,0,0,.08);
+    transition: box-shadow .4s;
+  }
+  .book:hover .book-cover {
+    box-shadow:
+      -2px 0 0 rgba(0,0,0,.04),
+      0 4px 8px rgba(0,0,0,.1),
+      0 16px 40px rgba(0,0,0,.25),
+      0 32px 64px rgba(0,0,0,.12);
+  }
+  [data-theme="dark"] .book-cover {
+    box-shadow:
+      -2px 0 0 rgba(0,0,0,.4),
+      0 8px 24px rgba(0,0,0,.4),
+      0 20px 40px rgba(0,0,0,.2);
+  }
+
+  /* Book spine (left edge gradient strip — gives 3D book feel) */
+  .book-spine {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: linear-gradient(90deg,
+      rgba(0,0,0,.18) 0%,
+      rgba(0,0,0,.06) 40%,
+      transparent 100%);
+    border-radius: 3px 0 0 3px;
+    pointer-events: none;
+  }
+
+  /* Wishlist dimmer */
+  .book-wishlist .book-cover { opacity: .65; filter: saturate(.85); }
+  .book-wishlist:hover .book-cover { opacity: 1; filter: saturate(1); }
+
+  /* Reading badge (subtle pulse) */
+  .book-reading .book-cover-wrap::after {
+    content: '';
+    position: absolute; top: 10px; right: 10px;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--bg-card), 0 0 8px var(--accent);
+    animation: bookPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes bookPulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: .6; transform: scale(.85); }
+  }
+
+  /* ── Info ── */
+  .book-info { padding: 0 .15rem; }
+  .book-title {
+    font-size: .9375rem; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em;
+    line-height: 1.35;
+    margin-bottom: .2rem;
+  }
+  .book-author {
+    font-size: .75rem; color: var(--ink-3);
+    margin-bottom: .5rem;
+  }
+  .book-stars {
+    font-size: .75rem; letter-spacing: .05em;
+    margin-bottom: .35rem;
+  }
+  .star-on  { color: var(--accent-5); }
+  .star-off { color: var(--ink-4); opacity: .35; }
+  .book-note {
+    font-size: .75rem; color: var(--ink-2);
+    line-height: 1.55;
+    font-style: italic;
+  }
+  .book-date {
+    font-size: .65rem;
+    color: var(--ink-4);
+    letter-spacing: .1em;
+    margin-top: .35rem;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+</style>

@@ -68,6 +68,42 @@ export const SITE = {
   },
 };
 
+// 📚 阅读列表 — 在这里添加你在看 / 看过的书
+// status: 'reading'（在读）| 'finished'（读完）| 'wishlist'（想读）
+// rating: 1~5（仅 finished 显示）
+// cover: 在 https://search.douban.com 找书 → 复制封面图 URL
+export const BOOKS = [
+  {
+    title:    'Designing Data-Intensive Applications',
+    titleZh:  '数据密集型应用系统设计',
+    author:   'Martin Kleppmann',
+    cover:    'https://img1.doubanio.com/view/subject/l/public/s29675812.jpg',
+    status:   'reading' as 'reading' | 'finished' | 'wishlist',
+    note:     '工程师必读，分布式系统的圣经。',
+    noteEn:   'A must-read for engineers — the distributed systems bible.',
+  },
+  {
+    title:    'The Pragmatic Programmer',
+    titleZh:  '程序员修炼之道',
+    author:   'David Thomas, Andrew Hunt',
+    cover:    'https://img2.doubanio.com/view/subject/l/public/s33665583.jpg',
+    status:   'finished' as 'reading' | 'finished' | 'wishlist',
+    rating:   5,
+    note:     '不变的真理。每年重读一遍都有新感悟。',
+    noteEn:   'Timeless truths. New insights every re-read.',
+    finishedDate: '2025-03',
+  },
+  {
+    title:    'Project Hail Mary',
+    titleZh:  '挽救计划',
+    author:   'Andy Weir',
+    cover:    'https://img1.doubanio.com/view/subject/l/public/s34002005.jpg',
+    status:   'wishlist' as 'reading' | 'finished' | 'wishlist',
+    note:     '看完《火星救援》之后必读。',
+    noteEn:   'A must-read after finishing The Martian.',
+  },
+];
+
 // 🔗 友链 — 在这里添加 / 修改 / 删除你的朋友
 export const FRIENDS = [
   {
@@ -85,7 +121,7 @@ export const MINECRAFT = {
   tagline:     'A Minecraft community for builders.',
   taglineZh:   '一个属于建造者的 Minecraft 社群。',
   mcVersion:   'MC 1.21.x',
-  qqGroup:     '123456789',                          // 你的 QQ 群号
+  qqGroup:     '683601215',                          // 你的 QQ 群号
   qrCode:      '/minecraft/qq-group-qr.png',
   // 🟢 服务器地址 — 留空 / 'EXAMPLE' 时显示占位静态数据
   // 填上后会通过 mcsrvstat.us API 实时查询在线人数（每 60 秒刷新一次）
@@ -166,13 +202,9 @@ export const MINECRAFT = {
     { title: 'Server rules',            titleZh: '服务器规则',   icon: '📜', url: '#' },
   ],
 
-  // 🖼️ 群友截图墙 — thumb 显示用，full 点开查看用
-  gallery: [
-    { thumb: '/minecraft/banner-sm.jpg',        full: '/minecraft/banner.jpg',        caption: 'Sunset isles' },
-    { thumb: '/minecraft/scene-cherry-sm.jpg',  full: '/minecraft/scene-cherry.jpg',  caption: 'Cherry grove' },
-    { thumb: '/minecraft/scene-rain-sm.jpg',    full: '/minecraft/scene-rain.jpg',    caption: 'Rainy meadow' },
-    { thumb: '/minecraft/scene-flowers-sm.jpg', full: '/minecraft/scene-flowers.jpg', caption: 'Field of bloom' },
-  ],
+  // 🖼️ 群友截图墙 — 暂未上传，留空时整个区块自动隐藏。
+  // 把真实截图扔进 public/minecraft/gallery/，然后在这里加 { thumb, full, caption } 项。
+  gallery: [] as { thumb: string; full: string; caption: string }[],
 
   // 🌅 壁纸墙 — preview 小图省流量，download 指向高清原图
   wallpapers: [

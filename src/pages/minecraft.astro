@@ -79,24 +79,26 @@ import { MINECRAFT } from '../config/site';
       </div>
     </section>
 
-    <!-- ═══════════════ GALLERY ═══════════════ -->
-    <section id="gallery" class="mc-section">
-      <header class="mc-section-head">
-        <h2 class="mc-h2" data-i18n-mc="gallery-h">SCREENSHOTS</h2>
-        <p class="mc-section-sub" data-i18n-mc="gallery-sub">Moments from our world.</p>
-      </header>
+    {MINECRAFT.gallery.length > 0 && (
+      <!-- ═══════════════ GALLERY ═══════════════ -->
+      <section id="gallery" class="mc-section">
+        <header class="mc-section-head">
+          <h2 class="mc-h2" data-i18n-mc="gallery-h">SCREENSHOTS</h2>
+          <p class="mc-section-sub" data-i18n-mc="gallery-sub">Moments from our world.</p>
+        </header>
 
-      <div class="mc-gallery">
-        {MINECRAFT.gallery.map(g => (
-          <a href={g.full} target="_blank" rel="noopener" class="mc-shot">
-            <img src={g.thumb} alt={g.caption} loading="lazy" decoding="async" width="640" height="400"/>
-            <div class="mc-shot-overlay">
-              <span class="mc-shot-caption">{g.caption}</span>
-            </div>
-          </a>
-        ))}
-      </div>
-    </section>
+        <div class="mc-gallery">
+          {MINECRAFT.gallery.map(g => (
+            <a href={g.full} target="_blank" rel="noopener" class="mc-shot">
+              <img src={g.thumb} alt={g.caption} loading="lazy" decoding="async" width="640" height="400"/>
+              <div class="mc-shot-overlay">
+                <span class="mc-shot-caption">{g.caption}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <!-- ═══════════════ PITCH — "What we are" ═══════════════ -->
     <section class="mc-pitch-section">

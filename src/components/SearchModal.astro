@@ -1,0 +1,191 @@
+---
+// Pagefind UI assets — auto-generated at build time
+---
+
+<div id="search-modal" class="search-modal" aria-hidden="true" role="dialog">
+  <div class="search-backdrop" data-search-close></div>
+  <div class="search-panel">
+    <div id="pagefind-search"></div>
+    <kbd class="search-hint">ESC</kbd>
+  </div>
+</div>
+
+<script>
+  // Lazy-load Pagefind UI only when modal opens (saves ~50KB on initial load)
+  let inited = false;
+  function initPagefind() {
+    if (inited) return;
+    inited = true;
+    // CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/pagefind/pagefind-ui.css';
+    document.head.appendChild(link);
+    // JS — script tag avoids Vite's bundler analysis
+    const s = document.createElement('script');
+    s.src = '/pagefind/pagefind-ui.js';
+    s.onload = () => {
+      // @ts-ignore — global injected by the script
+      new window.PagefindUI({
+        element: '#pagefind-search',
+        showImages: false,
+        showSubResults: true,
+        excerptLength: 30,
+        resetStyles: false,
+        processTerm: (t: string) => t.toLowerCase(),
+      });
+      setTimeout(() => {
+        const inp = document.querySelector('#pagefind-search input') as HTMLInputElement | null;
+        inp?.focus();
+      }, 50);
+    };
+    document.head.appendChild(s);
+  }
+
+  const modal = document.getElementById('search-modal')!;
+
+  function openSearch() {
+    initPagefind();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      const inp = document.querySelector('#pagefind-search input') as HTMLInputElement | null;
+      inp?.focus();
+    }, 60);
+  }
+  function closeSearch() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  // Trigger: button click anywhere with [data-search-open]
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.closest('[data-search-open]')) { e.preventDefault(); openSearch(); }
+    if (t.closest('[data-search-close]')) closeSearch();
+  });
+
+  // Trigger: Cmd/Ctrl + K
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      modal.classList.contains('open') ? closeSearch() : openSearch();
+    }
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeSearch();
+  });
+
+  // Survive view transitions
+  document.addEventListener('astro:after-swap', () => {
+    if (modal.classList.contains('open')) closeSearch();
+  });
+</script>
+
+<style is:global>
+  .search-modal {
+    position: fixed; inset: 0; z-index: 200;
+    display: none;
+    align-items: flex-start; justify-content: center;
+    padding-top: 12vh;
+  }
+  .search-modal.open { display: flex; animation: searchFade .2s ease both; }
+  @keyframes searchFade { from { opacity: 0; } to { opacity: 1; } }
+
+  .search-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(8px);
+  }
+
+  .search-panel {
+    position: relative;
+    width: min(36rem, calc(100% - 2rem));
+    max-height: 70vh;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow:
+      0 4px 16px rgba(0,0,0,.1),
+      0 24px 64px rgba(0,0,0,.25),
+      inset 0 1px 0 rgba(255,255,255,.6);
+    padding: 1rem;
+    animation: searchPop .25s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes searchPop {
+    from { opacity: 0; transform: translateY(-8px) scale(.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  [data-theme="dark"] .search-panel {
+    box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 32px 80px rgba(0,0,0,.6);
+  }
+
+  .search-hint {
+    position: absolute; top: 1.5rem; right: 1.75rem;
+    font-size: .65rem; font-weight: 600;
+    color: var(--ink-4);
+    background: var(--border);
+    padding: .15rem .4rem;
+    border-radius: 4px;
+    font-family: ui-monospace, 'SF Mono', monospace;
+    pointer-events: none;
+    letter-spacing: .05em;
+  }
+
+  /* ── Override Pagefind UI to match Apple aesthetic ── */
+  #pagefind-search {
+    --pagefind-ui-scale: .85;
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-text: var(--ink);
+    --pagefind-ui-background: transparent;
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-tag: var(--bg-tag);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: var(--radius-md);
+    --pagefind-ui-font: var(--font-sans);
+    max-height: calc(70vh - 2rem);
+    overflow-y: auto;
+  }
+  #pagefind-search .pagefind-ui__form::before {
+    background-color: var(--ink-3);
+  }
+  #pagefind-search .pagefind-ui__search-input {
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  #pagefind-search .pagefind-ui__search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,113,227,.15);
+  }
+  #pagefind-search .pagefind-ui__result {
+    border-color: var(--border);
+    padding: .85rem 0;
+  }
+  #pagefind-search .pagefind-ui__result-link {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  #pagefind-search .pagefind-ui__result-link:hover {
+    color: var(--accent);
+  }
+  #pagefind-search .pagefind-ui__result-excerpt {
+    color: var(--ink-3);
+    font-size: .8125rem;
+  }
+  #pagefind-search mark {
+    background: rgba(255,159,10,.25);
+    color: var(--ink);
+    padding: 0 .1em;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .search-modal { padding-top: 6vh; }
+    .search-panel { width: calc(100% - 1rem); padding: .75rem; }
+    .search-hint { display: none; }
+  }
+</style>

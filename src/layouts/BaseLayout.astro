@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { SITE } from '../config/site';
 import { ClientRouter } from 'astro:transitions';
+import SearchModal from '../components/SearchModal.astro';
 
 interface Props {
   title: string;
@@ -116,6 +117,7 @@ const socialImage = ogImage
       <ul class="nav-links" id="nav-links">
         <li><a href="/"          class="nav-item" data-i18n="nav.home">Home</a></li>
         <li><a href="/blog"      class="nav-item" data-i18n="nav.blog">Blog</a></li>
+        <li><a href="/reading"   class="nav-item" data-i18n="nav.reading">Reading</a></li>
         <li><a href="/tags"      class="nav-item" data-i18n="nav.tags">Tags</a></li>
         <li><a href="/minecraft" class="nav-item" data-i18n="nav.minecraft">Minecraft</a></li>
         <li><a href="/friends"   class="nav-item" data-i18n="nav.friends">Friends</a></li>
@@ -123,6 +125,11 @@ const socialImage = ogImage
       </ul>
 
       <div class="nav-actions">
+        <button class="nav-act" data-search-open title="Search (Ctrl+K)" aria-label="Search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </button>
         <button id="lang-btn" class="nav-act" title="Switch language">
           <span id="lang-label">EN</span>
         </button>
@@ -154,6 +161,8 @@ const socialImage = ogImage
   <main>
     <slot />
   </main>
+
+  <SearchModal />
 
   {SITE.music?.enabled && (
     <div id="music-player" class="music-player" aria-label="Music player" transition:persist="music-player">
@@ -188,6 +197,7 @@ const socialImage = ogImage
       </div>
       <div class="footer-links">
         <a href="/blog"      class="footer-link" data-i18n="nav.blog">Blog</a>
+        <a href="/reading"   class="footer-link" data-i18n="nav.reading">Reading</a>
         <a href="/tags"      class="footer-link" data-i18n="nav.tags">Tags</a>
         <a href="/minecraft" class="footer-link" data-i18n="nav.minecraft">Minecraft</a>
         <a href="/friends"   class="footer-link" data-i18n="nav.friends">Friends</a>
@@ -206,8 +216,8 @@ const socialImage = ogImage
   // transition (re-binds buttons in the freshly swapped navbar)
   // ══════════════════════════════════════════════════════════════
   const I18N: Record<string, Record<string,string>> = {
-    en: { 'nav.home':'Home','nav.blog':'Blog','nav.tags':'Tags','nav.minecraft':'Minecraft','nav.friends':'Friends','nav.about':'About','toc.label':'On this page' },
-    zh: { 'nav.home':'首页','nav.blog':'文章','nav.tags':'标签','nav.minecraft':'我的世界','nav.friends':'友链','nav.about':'关于','toc.label':'目录' },
+    en: { 'nav.home':'Home','nav.blog':'Blog','nav.reading':'Reading','nav.tags':'Tags','nav.minecraft':'Minecraft','nav.friends':'Friends','nav.about':'About','toc.label':'On this page' },
+    zh: { 'nav.home':'首页','nav.blog':'文章','nav.reading':'阅读','nav.tags':'标签','nav.minecraft':'我的世界','nav.friends':'友链','nav.about':'关于','toc.label':'目录' },
   };
 
   function applyLang(lang: string) {
