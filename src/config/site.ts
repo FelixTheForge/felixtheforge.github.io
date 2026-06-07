@@ -51,7 +51,7 @@ export const SITE = {
   //   3. 拿到 beacon token（形如 `abcdef1234567890`）填到下面
   //   4. 推送 → 几分钟后 dashboard 里就能看到访问数据
   // 留空 / 'REPLACE_ME' 时不注入脚本（不影响功能）
-  cloudflareAnalytics: 'REPLACE_ME',
+  cloudflareAnalytics: '5128963535444ef3b13a30917f6fb0ec',
 
   // 🎵 背景音乐
   // source: 'youtube' → 用 YouTube 视频（合法，无版权风险）
@@ -70,13 +70,6 @@ export const SITE = {
 
 // 🔗 友链 — 在这里添加 / 修改 / 删除你的朋友
 export const FRIENDS = [
-  {
-    name:   'Charlie Fei',
-    url:    'https://charliefei.github.io/en/',
-    avatar: 'https://github.com/charliefei.png',
-    bio:    "Charlie's writings on tech, life, and craft.",
-    color:  '#10b981',
-  },
   {
     name:   'Hem',
     url:    'https://hem.asia/',
