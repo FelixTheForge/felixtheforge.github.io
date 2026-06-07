@@ -71,6 +71,31 @@ export const MINECRAFT = {
   sceneCherry: '/minecraft/scene-cherry.jpg',        // 樱花树场景
   sceneRain:   '/minecraft/scene-rain.jpg',          // 雨水草地场景
 
+  // ⚡ 服务器特性标签（在 hero 显示，让用户一眼看懂玩什么）
+  tags:   ['Survival', 'Building', 'Redstone', 'Shaders', 'Multiplayer', 'Long-term'],
+  tagsZh: ['生存', '建造', '红石', '光影', '联机', '长期'],
+
+  // 📊 群组数据（第一屏显眼位置，让人一眼看出活跃度）
+  highlights: [
+    { value: '300+',     label: 'Members', labelZh: '群友' },
+    { value: '2yr+',     label: 'Active',  labelZh: '运营' },
+    { value: '24/7',     label: 'Uptime',  labelZh: '在线' },
+    { value: '1.21.x',   label: 'Version', labelZh: '版本' },
+  ],
+
+  // 🎯 我们在做什么 — 三句话定义群组玩法（hero 下方第一眼看到）
+  pitch: [
+    { icon: '🏰', title: 'Long-term Survival', titleZh: '长期生存',
+      desc: 'Build from scratch on a world that never resets.',
+      descZh: '从零开始建设家园，世界永不重置。' },
+    { icon: '🤝', title: 'Friendly Players',   titleZh: '友好玩家',
+      desc: '300+ active members, zero toxic PVP.',
+      descZh: '300+ 活跃群友，没有阴间 PVP。' },
+    { icon: '✨', title: 'Vanilla-Plus',        titleZh: '原汁原味',
+      desc: 'A few QoL mods + shaders, vanilla feel preserved.',
+      descZh: '少量 QoL 模组 + 光影，保留原版手感。' },
+  ],
+
   // 📂 资源 / 网盘文件
   files: [
     {

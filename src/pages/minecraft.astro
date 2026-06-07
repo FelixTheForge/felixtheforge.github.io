@@ -11,15 +11,42 @@ import { MINECRAFT } from '../config/site';
       <div class="mc-hero-bg" style={`background-image:url('${MINECRAFT.bannerImg}')`}></div>
       <div class="mc-hero-overlay"></div>
 
+      <!-- Floating decorative pixel blocks -->
+      <div class="mc-float-blocks" aria-hidden="true">
+        <div class="mc-fb mc-fb-1">⛏</div>
+        <div class="mc-fb mc-fb-2">🟩</div>
+        <div class="mc-fb mc-fb-3">💎</div>
+        <div class="mc-fb mc-fb-4">🟫</div>
+        <div class="mc-fb mc-fb-5">⚒</div>
+      </div>
+
       <div class="mc-hero-inner">
         <div class="mc-pix-tag">
           <span class="mc-block-square"></span>
-          <span>{MINECRAFT.mcVersion}</span>
+          <span>LIVE · {MINECRAFT.mcVersion}</span>
+          <span class="mc-status-dot"></span>
         </div>
 
         <h1 class="mc-title">{MINECRAFT.name}</h1>
 
         <p class="mc-tagline" id="mc-tagline">{MINECRAFT.tagline}</p>
+
+        <!-- Feature tags row — instant "what we're about" -->
+        <div class="mc-feat-tags">
+          {MINECRAFT.tags.map((t,i) => (
+            <span class="mc-feat-tag" data-zh={MINECRAFT.tagsZh[i]}>{t}</span>
+          ))}
+        </div>
+
+        <!-- Highlights — community at a glance -->
+        <div class="mc-highlights">
+          {MINECRAFT.highlights.map(h => (
+            <div class="mc-hl">
+              <span class="mc-hl-value">{h.value}</span>
+              <span class="mc-hl-label" data-zh={h.labelZh}>{h.label}</span>
+            </div>
+          ))}
+        </div>
 
         <!-- Join card (QQ group + QR) -->
         <div class="mc-join">
@@ -64,6 +91,19 @@ import { MINECRAFT } from '../config/site';
               <span class="mc-shot-caption">{g.caption}</span>
             </div>
           </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ═══════════════ PITCH — "What we are" ═══════════════ -->
+    <section class="mc-pitch-section">
+      <div class="mc-pitch-grid">
+        {MINECRAFT.pitch.map(p => (
+          <div class="mc-pitch-card">
+            <div class="mc-pitch-icon">{p.icon}</div>
+            <h3 class="mc-pitch-title" data-zh={p.titleZh}>{p.title}</h3>
+            <p class="mc-pitch-desc" data-zh={p.descZh}>{p.desc}</p>
+          </div>
         ))}
       </div>
     </section>
@@ -249,9 +289,9 @@ import { MINECRAFT } from '../config/site';
     border-bottom: 4px solid var(--mc-line);
   }
   .mc-hero-bg {
-    position: absolute; inset: -5%;            /* extra space for parallax */
+    position: absolute; inset: -5%;
     background-size: cover; background-position: center;
-    filter: brightness(.55) saturate(.95) contrast(1.05);
+    filter: brightness(.72) saturate(1.1) contrast(1.08);   /* less dim, more vibrant */
     transform: translateZ(0);
     will-change: transform;
     animation: mcHeroZoom 28s ease-in-out infinite alternate;
@@ -269,6 +309,171 @@ import { MINECRAFT } from '../config/site';
   .mc-hero-inner {
     position: relative; z-index: 1;
     max-width: 68rem; margin: 0 auto;
+  }
+
+  /* ── Floating decorative blocks ── */
+  .mc-float-blocks {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 1;
+  }
+  .mc-fb {
+    position: absolute;
+    font-size: 2.5rem;
+    opacity: .35;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,.5));
+    animation: mcFloat 8s ease-in-out infinite;
+  }
+  .mc-fb-1 { top: 18%; right: 10%; animation-delay: 0s;   font-size: 2.75rem; }
+  .mc-fb-2 { top: 35%; right: 6%;  animation-delay: 1.5s; font-size: 2rem; }
+  .mc-fb-3 { top: 60%; right: 18%; animation-delay: 3s;   font-size: 2.25rem; }
+  .mc-fb-4 { top: 75%; right: 8%;  animation-delay: 1s;   font-size: 1.75rem; }
+  .mc-fb-5 { top: 25%; right: 22%; animation-delay: 2.5s; font-size: 2.25rem; }
+  @keyframes mcFloat {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50%     { transform: translateY(-15px) rotate(3deg); }
+  }
+  @media (max-width: 768px) { .mc-float-blocks { display: none; } }
+
+  /* ── Live status dot ── */
+  .mc-status-dot {
+    width: 6px; height: 6px;
+    background: #30d158;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #30d158;
+    animation: mcPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes mcPulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: .5; transform: scale(.85); }
+  }
+
+  /* ── Feature tags row ── */
+  .mc-feat-tags {
+    display: flex; flex-wrap: wrap; gap: .4rem;
+    margin: 1.5rem 0 2rem;
+    max-width: 38rem;
+  }
+  .mc-feat-tag {
+    font-family: var(--mc-pix);
+    font-size: .55rem;
+    padding: .4rem .65rem;
+    background: rgba(78,175,82,.15);
+    color: var(--mc-accent-2);
+    border: 1px solid rgba(78,175,82,.4);
+    letter-spacing: .12em;
+    -webkit-font-smoothing: none;
+    text-shadow: 1px 1px 0 #000;
+  }
+  /* Cycle accent colors across tags for variety */
+  .mc-feat-tag:nth-child(2) { background: rgba(88,166,255,.15); color: var(--mc-blue); border-color: rgba(88,166,255,.4); }
+  .mc-feat-tag:nth-child(3) { background: rgba(255,170,0,.15);  color: var(--mc-gold); border-color: rgba(255,170,0,.4); }
+  .mc-feat-tag:nth-child(4) { background: rgba(191,90,242,.15); color: #d896ff;       border-color: rgba(191,90,242,.4); }
+  .mc-feat-tag:nth-child(5) { background: rgba(255,55,95,.15);  color: #ff7a98;       border-color: rgba(255,55,95,.4); }
+
+  /* ── Highlights / stat strip ── */
+  .mc-highlights {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 0;
+    margin-bottom: 2.5rem;
+    padding: 1rem 1.25rem;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.1);
+    width: fit-content;
+    border-radius: 4px;
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,.05), 0 8px 24px rgba(0,0,0,.4);
+  }
+  .mc-hl {
+    display: flex; flex-direction: column;
+    padding: 0 1.5rem;
+    border-right: 1px solid rgba(255,255,255,.1);
+  }
+  .mc-hl:last-child { border-right: none; }
+  .mc-hl-value {
+    font-family: var(--mc-pix);
+    font-size: 1.125rem;
+    color: var(--mc-gold);
+    letter-spacing: .02em;
+    text-shadow: 2px 2px 0 #000;
+    -webkit-font-smoothing: none;
+    line-height: 1.1;
+  }
+  .mc-hl-label {
+    font-family: var(--mc-pix);
+    font-size: .5rem;
+    color: var(--mc-text-dim);
+    letter-spacing: .15em;
+    margin-top: .35rem;
+    -webkit-font-smoothing: none;
+  }
+  @media (max-width: 640px) {
+    .mc-highlights { width: 100%; padding: .75rem; }
+    .mc-hl { padding: 0 .65rem; }
+    .mc-hl-value { font-size: .85rem; }
+    .mc-hl-label { font-size: .4rem; }
+  }
+
+  /* ── Pitch section — "what we're about" ── */
+  .mc-pitch-section {
+    padding: 4rem 1.5rem;
+    background:
+      linear-gradient(180deg, var(--mc-bg) 0%, var(--mc-bg-2) 100%);
+    border-bottom: 4px solid var(--mc-line);
+  }
+  .mc-pitch-grid {
+    max-width: 68rem; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 768px) {
+    .mc-pitch-grid { grid-template-columns: 1fr; }
+    .mc-pitch-section { padding: 3rem 1rem; }
+  }
+  .mc-pitch-card {
+    background: var(--mc-bg-3);
+    border: 1px solid var(--mc-stone-lt);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow:
+      inset 2px 2px 0 var(--mc-stone),
+      inset -2px -2px 0 var(--mc-line),
+      6px 6px 0 rgba(0,0,0,.4);
+    transition: transform .2s, border-color .2s;
+    position: relative;
+  }
+  .mc-pitch-card:hover {
+    transform: translate(-2px,-3px);
+    border-color: var(--mc-accent);
+    box-shadow:
+      inset 2px 2px 0 var(--mc-stone),
+      inset -2px -2px 0 var(--mc-line),
+      8px 8px 0 rgba(0,0,0,.5),
+      0 0 0 1px rgba(78,175,82,.2);
+  }
+  .mc-pitch-card:nth-child(1) { border-top: 3px solid var(--mc-accent); }
+  .mc-pitch-card:nth-child(2) { border-top: 3px solid var(--mc-blue); }
+  .mc-pitch-card:nth-child(3) { border-top: 3px solid var(--mc-gold); }
+  .mc-pitch-icon {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.4));
+  }
+  .mc-pitch-title {
+    font-family: var(--mc-pix);
+    font-size: .8rem;
+    color: var(--mc-text);
+    letter-spacing: .1em;
+    margin-bottom: .75rem;
+    text-shadow: 2px 2px 0 #000;
+    -webkit-font-smoothing: none;
+  }
+  .mc-pitch-desc {
+    font-size: .875rem;
+    color: var(--mc-text-dim);
+    line-height: 1.65;
   }
 
   /* ── Pixel tag (top badge) ── */
