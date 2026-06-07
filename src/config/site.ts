@@ -19,10 +19,14 @@ export const SITE = {
   mottoEn:    'Each striving on our own path —\na thousand miles apart, one wind we share.',
   mottoSourceZh: '— 范云 · 《赠张徐州稷》',
   mottoSourceEn: '— Fan Yun, Liang dynasty',
+  // 想加新平台 → 在这里添 URL；想隐藏 → 把 URL 改成空串 ''
+  // 顺序决定 navbar 显示顺序
   social: {
-    github:  'https://github.com/FelixTheForge',
-    twitter: '',
-    email:   '',
+    github:   'https://github.com/FelixTheForge',
+    twitter:  'https://x.com/Felixqxxl',
+    facebook: 'https://www.facebook.com/profile.php?id=61590359290581',
+    douyin:   'https://www.douyin.com/user/self?from_tab_name=main',
+    email:    '',
   },
   heroBg: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80',
   aboutBg: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1800&q=80',
