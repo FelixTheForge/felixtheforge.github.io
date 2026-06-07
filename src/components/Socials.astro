@@ -11,9 +11,11 @@
 import { SITE } from '../config/site';
 
 interface Props {
-  className?: string;   // applied to each anchor
+  className?: string;       // applied to each anchor
+  only?: string[];          // only render these platform keys (e.g. ['github'])
+  exclude?: string[];       // skip these platform keys
 }
-const { className = '' } = Astro.props;
+const { className = '', only, exclude = [] } = Astro.props;
 
 // Inline SVG icons (single-color, fill currentColor)
 const ICONS: Record<string, { label: string; svg: string; rel?: string; hrefPrefix?: string }> = {
@@ -41,9 +43,12 @@ const ICONS: Record<string, { label: string; svg: string; rel?: string; hrefPref
 };
 
 // Build list in config order, skipping empty URLs / platforms with no icon
-const entries = Object.entries(SITE.social || {}).filter(
-  ([key, url]) => url && ICONS[key],
-);
+const entries = Object.entries(SITE.social || {}).filter(([key, url]) => {
+  if (!url || !ICONS[key]) return false;
+  if (only && !only.includes(key)) return false;
+  if (exclude.includes(key)) return false;
+  return true;
+});
 ---
 
 {entries.map(([key, url]) => {

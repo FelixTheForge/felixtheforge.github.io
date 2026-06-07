@@ -4,10 +4,13 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
 ---
 <BaseLayout title={`Friends — ${SITE.title}`}>
 
-  <!-- Ambient orbs behind content (same trick as /blog) -->
+  <!-- Ambient orbs + mesh — 4 colored blurs, slow drift -->
   <div class="friends-ambient" aria-hidden="true">
     <span class="orb orb-1"></span>
     <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+    <span class="orb orb-4"></span>
+    <div class="friends-grid-pattern"></div>
   </div>
 
   <div class="page-wrap">
@@ -25,10 +28,20 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
     </header>
 
     <!-- ── Real friends ── -->
-    <section class="fade-up" style="animation-delay:.1s">
+    <section class="friends-section fade-up" style="animation-delay:.1s">
       <div class="section-label">
-        <span class="section-dot people"></span>
-        <span class="section-text" data-i18n-custom="friends-people-label">People I know</span>
+        <span class="section-icon people">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </span>
+        <div class="section-text-block">
+          <span class="section-text" data-i18n-custom="friends-people-label">People I know</span>
+          <span class="section-subtext" data-i18n-custom="friends-people-subtext">Folks I've actually exchanged words with.</span>
+        </div>
         <span class="section-count">{FRIENDS.length}</span>
       </div>
 
@@ -71,10 +84,17 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
 
     <!-- ── Inspirations (people / sites I don't personally know) ── -->
     {INSPIRATIONS && INSPIRATIONS.length > 0 && (
-      <section class="fade-up" style="animation-delay:.2s">
+      <section class="friends-section inspire-section fade-up" style="animation-delay:.2s">
         <div class="section-label">
-          <span class="section-dot inspire"></span>
-          <span class="section-text" data-i18n-custom="friends-inspire-label">Sites I keep coming back to</span>
+          <span class="section-icon inspire">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </span>
+          <div class="section-text-block">
+            <span class="section-text" data-i18n-custom="friends-inspire-label">Sites I keep coming back to</span>
+            <span class="section-subtext" data-i18n-custom="friends-inspire-subtext">No personal ties — just consistently great.</span>
+          </div>
           <span class="section-count">{INSPIRATIONS.length}</span>
         </div>
 
@@ -129,7 +149,9 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
       'friends-eyebrow':         'The web is a quiet party',
       'friends-intro':           'A short list of people whose corners of the internet I keep coming back to. Not influencers, not networking — just folks worth knowing.',
       'friends-people-label':    'People I know',
+      'friends-people-subtext':  "Folks I've actually exchanged words with.",
       'friends-inspire-label':   'Sites I keep coming back to',
+      'friends-inspire-subtext': 'No personal ties — just consistently great.',
       'friends-exchange-title':  'Want to exchange links?',
       'friends-exchange-sub':    'Drop me a note via GitHub or email. I read everything.',
       'friends-via-github':      'via GitHub',
@@ -139,7 +161,9 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
       'friends-eyebrow':         '互联网是一场安静的派对',
       'friends-intro':           '一些我反复回访的、互联网角落里的人。不是网红，也不是社交关系 — 只是值得认识的人。',
       'friends-people-label':    '我认识的人',
+      'friends-people-subtext':  '真正聊过几句的人。',
       'friends-inspire-label':   '反复回访的站',
+      'friends-inspire-subtext': '没有私交 — 只是它们一直很好。',
       'friends-exchange-title':  '想交换友链？',
       'friends-exchange-sub':    '通过 GitHub 或邮件给我留言，我会一一查看。',
       'friends-via-github':      '通过 GitHub',
@@ -165,22 +189,65 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
 </script>
 
 <style>
-  /* ── Ambient orbs ── */
+  /* ── Ambient: 4 drifting orbs + a faint grid backdrop ── */
   .friends-ambient {
     position: absolute; inset: 0;
     pointer-events: none; z-index: 0;
     overflow: hidden;
   }
+  .friends-grid-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,113,227,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,113,227,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+  [data-theme="dark"] .friends-grid-pattern {
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  }
   .orb {
     position: absolute;
-    width: 28vw; height: 28vw;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: .3;
+    filter: blur(90px);
+    opacity: .35;
+    will-change: transform;
   }
-  .orb-1 { top: -10vw; right: -8vw;  background: radial-gradient(circle, rgba(139,92,246,.45), transparent 70%); }
-  .orb-2 { bottom: -8vw; left: -5vw; background: radial-gradient(circle, rgba(0,113,227,.35), transparent 70%); }
-  [data-theme="dark"] .orb { opacity: .5; }
+  .orb-1 {
+    width: 32vw; height: 32vw;
+    top: -10vw; right: -10vw;
+    background: radial-gradient(circle, rgba(139,92,246,.55), transparent 70%);
+    animation: orbFloat1 24s ease-in-out infinite alternate;
+  }
+  .orb-2 {
+    width: 28vw; height: 28vw;
+    bottom: -8vw; left: -6vw;
+    background: radial-gradient(circle, rgba(0,113,227,.45), transparent 70%);
+    animation: orbFloat2 30s ease-in-out infinite alternate;
+  }
+  .orb-3 {
+    width: 22vw; height: 22vw;
+    top: 38vh; left: 30%;
+    background: radial-gradient(circle, rgba(236,72,153,.32), transparent 70%);
+    animation: orbFloat3 26s ease-in-out infinite alternate;
+    opacity: .25;
+  }
+  .orb-4 {
+    width: 18vw; height: 18vw;
+    top: 70vh; right: 18%;
+    background: radial-gradient(circle, rgba(255,159,10,.3), transparent 70%);
+    animation: orbFloat4 28s ease-in-out infinite alternate;
+    opacity: .22;
+  }
+  @keyframes orbFloat1 { from { transform: translate(0,0) scale(1); } to { transform: translate(-4vw, 5vh) scale(1.1); } }
+  @keyframes orbFloat2 { from { transform: translate(0,0) scale(1); } to { transform: translate(5vw,-4vh) scale(1.08); } }
+  @keyframes orbFloat3 { from { transform: translate(0,0) scale(1); } to { transform: translate(-6vw, 4vh) scale(1.12); } }
+  @keyframes orbFloat4 { from { transform: translate(0,0) scale(1); } to { transform: translate(3vw,-3vh) scale(1.05); } }
+  [data-theme="dark"] .orb { opacity: .55; }
+  [data-theme="dark"] .orb-3, [data-theme="dark"] .orb-4 { opacity: .35; }
 
   .page-wrap {
     position: relative; z-index: 1;
@@ -217,28 +284,60 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
     max-width: 36rem;
   }
 
-  /* ── Section label ── */
+  /* ── Section ── */
+  .friends-section { margin-top: 3rem; }
+  .friends-section.inspire-section { margin-top: 3.5rem; }
+
   .section-label {
-    display: flex; align-items: center; gap: .65rem;
-    margin: 2rem 0 1.5rem;
-    padding-bottom: .85rem;
+    display: flex; align-items: center; gap: .9rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--border);
+    position: relative;
   }
-  .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .section-dot.people  { background: var(--accent-4); box-shadow: 0 0 8px var(--accent-4); }
-  .section-dot.inspire { background: var(--accent-5); }
+  /* The bottom border gets a colored 60px lead-in matching this section's accent */
+  .section-label::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -1px;
+    width: 60px; height: 2px;
+    background: var(--section-accent, var(--accent-4));
+    border-radius: 2px;
+  }
+  .inspire-section .section-label { --section-accent: var(--accent-5); }
+
+  /* Icon chip */
+  .section-icon {
+    width: 32px; height: 32px;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--section-accent, var(--accent-4)) 40%, transparent);
+  }
+  .section-icon.people  { background: linear-gradient(135deg, var(--accent-4) 0%, #ec4899 100%); }
+  .section-icon.inspire { background: linear-gradient(135deg, var(--accent-5) 0%, #ffd60a 100%); }
+
+  .section-text-block { flex: 1; display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
   .section-text {
-    font-size: .85rem; font-weight: 600;
-    letter-spacing: .08em; text-transform: uppercase;
-    color: var(--ink-2);
+    font-size: .95rem; font-weight: 700;
+    letter-spacing: -.01em;
+    color: var(--ink);
+  }
+  .section-subtext {
+    font-size: .75rem;
+    color: var(--ink-3);
+    line-height: 1.4;
   }
   .section-count {
-    margin-left: auto;
-    font-size: .7rem; font-weight: 600;
-    color: var(--ink-4);
-    padding: .15rem .5rem;
-    background: var(--border);
+    font-size: .7rem; font-weight: 700;
+    color: var(--ink-3);
+    padding: .25rem .65rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 999px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
   }
 
   /* ── Friend cards ── */
