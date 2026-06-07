@@ -27,6 +27,23 @@ export const SITE = {
   heroBg: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80',
   aboutBg: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1800&q=80',
 
+  // 💬 评论系统 (Giscus — 用 GitHub Discussions 作后端)
+  // 配置步骤：
+  //   1. 仓库 Settings → Features → 勾上 Discussions
+  //   2. 装 https://github.com/apps/giscus 到这个仓库
+  //   3. 去 https://giscus.app/zh-CN 填表，拿到 4 个 ID
+  //   4. 把 repoId + categoryId 填到下面，category 改成你建的 Discussion 类别名
+  giscus: {
+    enabled:    true,
+    repo:       'FelixTheForge/felixtheforge.github.io',
+    repoId:     'REPLACE_ME_REPO_ID',           // 形如 R_kgDOxxxxxxxxx
+    category:   'Announcements',                 // GitHub Discussions 里的类别名
+    categoryId: 'REPLACE_ME_CATEGORY_ID',         // 形如 DIC_kwDOxxxxxx
+    mapping:    'pathname' as const,              // 用 URL 路径关联 Discussion
+    reactions:  true,                              // 允许 emoji 反应
+    inputPosition: 'top' as 'top' | 'bottom',     // 输入框在顶 / 底
+  },
+
   // 🎵 背景音乐
   // source: 'youtube' → 用 YouTube 视频（合法，无版权风险）
   //         'file'    → 用本地 mp3（放 /public/music/xxx.mp3，url 写 '/music/xxx.mp3'）

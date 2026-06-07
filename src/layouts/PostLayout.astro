@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import Comments from '../components/Comments.astro';
 import { readingTime } from '../utils/readingTime';
 import { SITE } from '../config/site';
 
@@ -83,6 +84,8 @@ const formatted = new Date(date).toLocaleDateString('en-US',{year:'numeric',mont
       </div>
     </div>
   </article>
+
+  <Comments />
 </BaseLayout>
 
 <script>

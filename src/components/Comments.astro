@@ -1,0 +1,110 @@
+---
+import { SITE } from '../config/site';
+const g = SITE.giscus;
+const enabled = g?.enabled
+  && g.repoId !== 'REPLACE_ME_REPO_ID'
+  && g.categoryId !== 'REPLACE_ME_CATEGORY_ID';
+---
+
+{enabled && (
+  <section class="comments-section" data-pagefind-ignore>
+    <div class="comments-divider">
+      <span class="comments-divider-line"></span>
+      <span class="comments-divider-text" data-zh="评论">Comments</span>
+      <span class="comments-divider-line"></span>
+    </div>
+
+    <div id="giscus-host"></div>
+  </section>
+)}
+
+{enabled && (
+  <script
+    is:inline
+    define:vars={{
+      cfg: {
+        repo:       g!.repo,
+        repoId:     g!.repoId,
+        category:   g!.category,
+        categoryId: g!.categoryId,
+        mapping:    g!.mapping,
+        reactions:  g!.reactions,
+        inputPosition: g!.inputPosition,
+      }
+    }}
+  >
+    /* eslint-disable */
+    (function () {
+      function loadGiscus() {
+        var host = document.getElementById('giscus-host');
+        if (!host) return;
+        host.innerHTML = ''; // clean prev iframe on view-transition swap
+
+        var theme = document.documentElement.getAttribute('data-theme') === 'dark'
+                      ? 'dark_dimmed'
+                      : 'light';
+        var lang  = (localStorage.getItem('lang') || 'en') === 'zh' ? 'zh-CN' : 'en';
+
+        var s = document.createElement('script');
+        s.src = 'https://giscus.app/client.js';
+        s.crossOrigin = 'anonymous';
+        s.async = true;
+        s.setAttribute('data-repo',         cfg.repo);
+        s.setAttribute('data-repo-id',      cfg.repoId);
+        s.setAttribute('data-category',     cfg.category);
+        s.setAttribute('data-category-id',  cfg.categoryId);
+        s.setAttribute('data-mapping',      cfg.mapping);
+        s.setAttribute('data-strict',       '0');
+        s.setAttribute('data-reactions-enabled', cfg.reactions ? '1' : '0');
+        s.setAttribute('data-emit-metadata','0');
+        s.setAttribute('data-input-position', cfg.inputPosition);
+        s.setAttribute('data-theme',        theme);
+        s.setAttribute('data-lang',         lang);
+        s.setAttribute('data-loading',      'lazy');
+        host.appendChild(s);
+      }
+
+      loadGiscus();
+      document.addEventListener('astro:after-swap', loadGiscus);
+
+      // Theme sync: when user toggles theme, push the new theme into giscus
+      function syncTheme() {
+        var iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        var theme = document.documentElement.getAttribute('data-theme') === 'dark'
+                      ? 'dark_dimmed' : 'light';
+        iframe.contentWindow.postMessage(
+          { giscus: { setConfig: { theme: theme } } },
+          'https://giscus.app'
+        );
+      }
+      var observer = new MutationObserver(function (m) {
+        for (var i = 0; i < m.length; i++) {
+          if (m[i].attributeName === 'data-theme') { syncTheme(); break; }
+        }
+      });
+      observer.observe(document.documentElement, { attributes: true });
+    })();
+  </script>
+)}
+
+<style>
+  .comments-section {
+    max-width: 46rem;
+    margin: 4rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .comments-divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .comments-divider-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .comments-divider-text {
+    font-size: .8125rem; font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+</style>
