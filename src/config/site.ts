@@ -80,7 +80,7 @@ export const MINECRAFT = {
   highlights: [
     { value: '300+',     label: 'Members', labelZh: '群友' },
     { value: '2yr+',     label: 'Running', labelZh: '运营' },
-    { value: '24/7',     label: 'Uptime',  labelZh: '在线' },
+    { value: '24/7',     label: 'Online',  labelZh: '在线' },
     { value: '1.21.x',   label: 'Version', labelZh: '版本' },
   ],
 
