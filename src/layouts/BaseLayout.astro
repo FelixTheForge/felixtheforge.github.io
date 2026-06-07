@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SITE } from '../config/site';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title: string;
@@ -25,6 +26,8 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   {SITE.music?.enabled && SITE.music.autoStart && (
     <meta name="music-autostart" content="1"/>
   )}
+  <ClientRouter />
+
   <script is:inline>
     (function(){
       var t=localStorage.getItem('theme')||'light';
@@ -88,7 +91,7 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   </main>
 
   {SITE.music?.enabled && (
-    <div id="music-player" class="music-player" aria-label="Music player">
+    <div id="music-player" class="music-player" aria-label="Music player" transition:persist="music-player">
       <button id="music-toggle" class="music-toggle" aria-label="Play / pause">
         <svg id="music-play-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         <svg id="music-pause-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
@@ -130,6 +133,10 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
 </html>
 
 <script>
+  // ══════════════════════════════════════════════════════════════
+  // PER-PAGE init — runs on initial load AND on every Astro view
+  // transition (re-binds buttons in the freshly swapped navbar)
+  // ══════════════════════════════════════════════════════════════
   const I18N: Record<string, Record<string,string>> = {
     en: { 'nav.home':'Home','nav.blog':'Blog','nav.tags':'Tags','nav.minecraft':'Minecraft','nav.friends':'Friends','nav.about':'About' },
     zh: { 'nav.home':'首页','nav.blog':'文章','nav.tags':'标签','nav.minecraft':'我的世界','nav.friends':'友链','nav.about':'关于' },
@@ -147,66 +154,83 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     });
   }
 
-  applyLang(localStorage.getItem('lang') || 'en');
+  function bindPerPage() {
+    // i18n
+    applyLang(localStorage.getItem('lang') || 'en');
 
-  document.getElementById('lang-btn')!.addEventListener('click', () => {
-    applyLang(localStorage.getItem('lang') === 'zh' ? 'en' : 'zh');
-  });
+    // navbar buttons (fresh DOM each navigation)
+    document.getElementById('lang-btn')?.addEventListener('click', () => {
+      applyLang(localStorage.getItem('lang') === 'zh' ? 'en' : 'zh');
+    });
+    document.getElementById('theme-btn')?.addEventListener('click', () => {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
 
-  document.getElementById('theme-btn')!.addEventListener('click', () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-  });
+    // navbar scroll state (re-set since navbar element changed)
+    syncNavbarScrolled();
+  }
 
-  // Navbar scroll state — transparent → frosted glass
-  const navbar = document.getElementById('navbar')!;
-  function onScroll() {
+  // Run now and on every view transition swap
+  bindPerPage();
+  document.addEventListener('astro:after-swap', bindPerPage);
+
+  // ══════════════════════════════════════════════════════════════
+  // ONE-TIME global setup — window-level listeners, music player
+  // Guarded so it never re-runs across navigations
+  // ══════════════════════════════════════════════════════════════
+  function syncNavbarScrolled() {
+    const navbar = document.getElementById('navbar');
+    if (!navbar) return;
     if (window.scrollY > 24) navbar.classList.add('scrolled');
     else navbar.classList.remove('scrolled');
   }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
 
-  // ─── Custom scroll indicator (right edge) ───
-  let scrollHideTimer: number | undefined;
-  const htmlEl = document.documentElement;
-  const scrollIndicator = document.getElementById('scroll-indicator');
-  function updateScrollIndicator() {
-    if (!scrollIndicator) return;
-    const scrolled = window.scrollY;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if (maxScroll <= 0) { scrollIndicator.style.height = '0'; return; }
-    const vh = window.innerHeight;
-    const thumbHeight = Math.max(40, vh * (vh / document.documentElement.scrollHeight));
-    const trackHeight = vh - thumbHeight - 8;
-    const top = (scrolled / maxScroll) * trackHeight + 4;
-    scrollIndicator.style.height = thumbHeight + 'px';
-    scrollIndicator.style.top = top + 'px';
+  if (!(window as any).__felixInited) {
+    (window as any).__felixInited = true;
+
+    const htmlEl = document.documentElement;
+    let scrollHideTimer: number | undefined;
+
+    function updateScrollIndicator() {
+      const scrollIndicator = document.getElementById('scroll-indicator');
+      if (!scrollIndicator) return;
+      const scrolled = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0) { scrollIndicator.style.height = '0'; return; }
+      const vh = window.innerHeight;
+      const thumbHeight = Math.max(40, vh * (vh / document.documentElement.scrollHeight));
+      const trackHeight = vh - thumbHeight - 8;
+      const top = (scrolled / maxScroll) * trackHeight + 4;
+      scrollIndicator.style.height = thumbHeight + 'px';
+      scrollIndicator.style.top = top + 'px';
+    }
+
+    window.addEventListener('scroll', () => {
+      syncNavbarScrolled();
+      htmlEl.classList.add('is-scrolling');
+      updateScrollIndicator();
+      clearTimeout(scrollHideTimer);
+      scrollHideTimer = window.setTimeout(() => htmlEl.classList.remove('is-scrolling'), 900);
+    }, { passive: true });
+    window.addEventListener('resize', updateScrollIndicator);
+    setTimeout(updateScrollIndicator, 50);
+
+    // Click ripple
+    addEventListener('click', e => {
+      const r = document.createElement('span');
+      r.className = 'cursor-ripple';
+      r.style.left = e.clientX + 'px';
+      r.style.top  = e.clientY + 'px';
+      document.body.appendChild(r);
+      setTimeout(() => r.remove(), 700);
+    });
   }
-  window.addEventListener('scroll', () => {
-    htmlEl.classList.add('is-scrolling');
-    updateScrollIndicator();
-    clearTimeout(scrollHideTimer);
-    scrollHideTimer = window.setTimeout(() => {
-      htmlEl.classList.remove('is-scrolling');
-    }, 900);
-  }, { passive: true });
-  window.addEventListener('resize', updateScrollIndicator);
-  updateScrollIndicator();
 
-  // ─── Click ripple (keeps the satisfying click feedback, no custom cursor) ───
-  addEventListener('click', e => {
-    const r = document.createElement('span');
-    r.className = 'cursor-ripple';
-    r.style.left = e.clientX + 'px';
-    r.style.top  = e.clientY + 'px';
-    document.body.appendChild(r);
-    setTimeout(() => r.remove(), 700);
-  });
-
-  // ─── Music player (supports <audio> and YouTube) ───
-  {
+  // ─── Music player (supports <audio> and YouTube) — ONE-TIME setup
+  if (!(window as any).__musicInited) {
+    (window as any).__musicInited = true;
     const btn       = document.getElementById('music-toggle');
     const playIcon  = document.getElementById('music-play-icon');
     const pauseIcon = document.getElementById('music-pause-icon');
