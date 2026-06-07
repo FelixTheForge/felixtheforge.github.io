@@ -53,7 +53,7 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
         <span class="logo-text">{SITE.title}</span>
       </a>
 
-      <ul class="nav-links">
+      <ul class="nav-links" id="nav-links">
         <li><a href="/"          class="nav-item" data-i18n="nav.home">Home</a></li>
         <li><a href="/blog"      class="nav-item" data-i18n="nav.blog">Blog</a></li>
         <li><a href="/tags"      class="nav-item" data-i18n="nav.tags">Tags</a></li>
@@ -61,6 +61,11 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
         <li><a href="/friends"   class="nav-item" data-i18n="nav.friends">Friends</a></li>
         <li><a href="/about"     class="nav-item" data-i18n="nav.about">About</a></li>
       </ul>
+
+      <!-- Hamburger for mobile -->
+      <button id="nav-burger" class="nav-burger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
 
       <div class="nav-actions">
         <button id="lang-btn" class="nav-act" title="Switch language">
@@ -166,6 +171,23 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
       const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+    });
+
+    // Hamburger menu toggle (mobile)
+    const burger = document.getElementById('nav-burger');
+    const navLinks = document.getElementById('nav-links');
+    burger?.addEventListener('click', () => {
+      const open = navLinks?.classList.toggle('open');
+      burger.classList.toggle('open', !!open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    // Close menu when clicking a link
+    navLinks?.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        burger?.classList.remove('open');
+        burger?.setAttribute('aria-expanded', 'false');
+      });
     });
 
     // navbar scroll state (re-set since navbar element changed)
@@ -547,9 +569,92 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   }
   .footer-link:hover { color: var(--ink); }
 
-  @media (max-width: 640px) {
-    .nav-links { display: none; }
-    .nav-inner { gap: .75rem; }
+  /* ── Hamburger button ── */
+  .nav-burger {
+    display: none;
+    width: 36px; height: 36px;
+    background: transparent; border: none; cursor: pointer;
+    padding: 0;
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 4px;
+    border-radius: 999px;
+    transition: background .15s;
+  }
+  .nav-burger:hover { background: rgba(0,0,0,.05); }
+  [data-theme="dark"] .nav-burger:hover { background: rgba(255,255,255,.08); }
+  .nav-burger span {
+    display: block;
+    width: 18px; height: 2px;
+    background: var(--ink-2);
+    border-radius: 2px;
+    transition: transform .25s, opacity .2s;
+  }
+  .navbar[data-transparent="true"]:not(.scrolled) .nav-burger span {
+    background: rgba(255,255,255,.95);
+  }
+  .nav-burger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-burger.open span:nth-child(2) { opacity: 0; }
+  .nav-burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  /* ────────────────  Mobile (< 768px) ──────────────── */
+  @media (max-width: 768px) {
+    .nav-inner { gap: .5rem; padding: 0 .75rem 0 1rem; }
+    .nav-burger { display: flex; }
+
+    /* Collapsed mobile menu — slides down below navbar */
+    .nav-links {
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      flex-direction: column;
+      gap: 0;
+      padding: .5rem;
+      margin-top: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 32px rgba(0,0,0,.15);
+      opacity: 0;
+      transform: translateY(-8px) scale(.98);
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+    }
+    .nav-links.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .nav-links li { width: 100%; }
+    .nav-item {
+      display: block;
+      width: 100%;
+      padding: .65rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      text-align: left;
+    }
+    /* In transparent-nav (over hero) mode, the dropdown still needs solid bg */
+    .navbar[data-transparent="true"]:not(.scrolled) .nav-links {
+      background: rgba(28,28,42,.92);
+      border-color: rgba(255,255,255,.1);
+    }
+    .navbar[data-transparent="true"]:not(.scrolled) .nav-item {
+      color: rgba(255,255,255,.9);
+    }
+
+    .logo-text { font-size: .875rem; }
+    .nav-act { width: 32px; height: 32px; }
+
+    /* Footer stacks on mobile */
+    .footer-inner { flex-direction: column; text-align: center; gap: .75rem; }
+    .footer-links { justify-content: center; flex-wrap: wrap; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 380px) {
+    .nav-inner { gap: .25rem; }
+    .nav-act { width: 30px; height: 30px; }
+    .nav-act svg { width: 13px; height: 13px; }
+    .logo-mark { display: none; }
   }
 
 

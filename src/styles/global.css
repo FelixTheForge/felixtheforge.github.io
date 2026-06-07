@@ -297,3 +297,75 @@
 
 [data-theme="light"] .icon-moon,
 [data-theme="dark"]  .icon-sun  { display: none; }
+
+/* ══════════════════════════════════
+   Mobile responsive — global fixes
+══════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Prevent horizontal overflow from any image / element */
+  img, video, iframe { max-width: 100%; height: auto; }
+
+  /* Most multi-column layouts collapse to 1 column */
+  .featured-card,
+  .post-grid,
+  .content-grid,
+  .feat-img-wrap + .feat-body,
+  .friends-grid,
+  .interests {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce hero on mobile portrait */
+  .hero {
+    min-height: 560px !important;
+    padding-top: 6rem;
+  }
+  .hero-title {
+    font-size: clamp(2.25rem, 9vw, 3.5rem) !important;
+    line-height: 1.1;
+  }
+  .hero-sub { font-size: .95rem !important; }
+  .hero-cta { flex-direction: column; align-items: flex-start; }
+  .hero-cta .btn-primary, .hero-cta .btn-outline {
+    padding: .7rem 1.4rem;
+    font-size: .875rem;
+  }
+
+  /* Featured card on mobile */
+  .featured-card { grid-template-columns: 1fr; }
+  .feat-img-wrap { aspect-ratio: 16/10; }
+  .feat-body { padding: 1.5rem !important; }
+  .feat-title { font-size: 1.25rem !important; }
+
+  /* Post cards / page wraps */
+  .page-wrap { padding: 3rem 1rem 4rem !important; }
+  .page-title { font-size: clamp(2rem, 7vw, 2.75rem) !important; }
+  .post-container { padding: 0 1rem !important; }
+  .post-title { font-size: clamp(1.5rem, 6vw, 2.25rem) !important; }
+
+  /* Profile strip stacks */
+  .profile-inner {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 1.75rem !important;
+  }
+  .profile-actions { justify-content: center; flex-wrap: wrap; }
+
+  /* About page profile card */
+  .profile-top { flex-direction: column !important; text-align: center; gap: 1rem !important; }
+
+  /* Footer wrap */
+  .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+  .footer-links { justify-content: center; flex-wrap: wrap; gap: 1rem !important; }
+
+  /* Music player slightly smaller */
+  .music-player { right: 14px !important; bottom: 14px !important; }
+
+  /* Post detail sidebar already hidden < 900px in PostLayout */
+}
+
+@media (max-width: 480px) {
+  .page-wrap { padding: 2.5rem .75rem 3rem !important; }
+  .feat-body { padding: 1.25rem !important; }
+  .card-body { padding: 1rem !important; }
+}

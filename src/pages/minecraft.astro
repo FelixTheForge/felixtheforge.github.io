@@ -650,8 +650,53 @@ import { MINECRAFT } from '../config/site';
   .mc-wall-dl:hover { background: var(--mc-accent); color: #fff; }
 
   /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .mc-root { margin-top: -80px; }
+    .mc-hero { padding: 7rem 1rem 3rem; }
+    .mc-title { font-size: clamp(1.5rem,8vw,2.25rem); }
+    .mc-tagline { font-size: .875rem; }
+    .mc-join { padding: 1.25rem; max-width: 100%; }
+    .mc-group-no { font-size: 1.1rem; }
+    .mc-section { padding: 3rem 1rem; }
+    .mc-section-head { margin-bottom: 1.75rem; }
+    .mc-h2 { font-size: 1rem; }
+    .mc-section-sub { font-size: .8125rem; margin-top: .5rem; }
+
+    /* Wallpapers/gallery → smaller columns on mobile */
+    .mc-wall-grid, .mc-gallery {
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem;
+    }
+    .mc-wall-info { opacity: 1; transform: translateY(0); padding: .5rem; }
+    .mc-wall-title { font-size: .5rem; }
+    .mc-wall-dl { font-size: .5rem; padding: .25rem .4rem; }
+
+    /* Docs */
+    .mc-docs { grid-template-columns: 1fr; }
+  }
+
   @media (max-width: 640px) {
     .mc-section-stone, .mc-section-rain { background-attachment: scroll; }
+
+    /* Join card stacks vertically */
+    .mc-join { grid-template-columns: 1fr; text-align: center; }
+    .mc-qr { margin: 0 auto; }
+    .mc-join-actions { justify-content: center; }
+
+    /* File cards stack icon/body/button vertically and centered */
+    .mc-file-card {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: .75rem;
+      padding: 1rem;
+    }
+    .mc-file-icon { margin: 0 auto; }
+    .mc-file-tags { justify-content: center; }
+    .mc-file-btn { justify-self: center; }
+
+    /* Wallpapers → 1 column on very small */
+    .mc-wall-grid { grid-template-columns: 1fr; }
+    .mc-gallery { grid-template-columns: 1fr 1fr; }
     .mc-join { grid-template-columns: 1fr; text-align: center; }
     .mc-qr { margin: 0 auto; }
     .mc-join-actions { justify-content: center; }
