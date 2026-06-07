@@ -45,4 +45,35 @@ export const FRIENDS = [
     bio:    "Charlie's writings on tech, life, and craft.",
     color:  '#10b981',
   },
+  {
+    name:   'Hem',
+    url:    'https://hem.asia/',
+    avatar: 'https://hem.asia/favicon.ico',
+    bio:    'Hem — a friend on the web.',
+    color:  '#8b5cf6',
+  },
 ];
+
+// ⛏️ 我的世界辅助 — 在这里改板块信息
+export const MINECRAFT = {
+  name:        'ForgeCraft',
+  tagline:     'A premium Minecraft utility client',
+  taglineZh:   '高端的 Minecraft 辅助客户端',
+  version:     'v2.7.4',
+  mcVersion:   'MC 1.21.x',
+  downloadUrl: '#',
+  features: [
+    { icon: '⚔️', title: 'Combat',    titleZh: '战斗',  desc: 'KillAura, AutoClicker, Reach, Velocity' },
+    { icon: '🧭', title: 'Movement',  titleZh: '移动',  desc: 'Fly, Speed, NoFall, Sprint, Step' },
+    { icon: '👁️', title: 'Render',    titleZh: '渲染',  desc: 'ESP, Tracers, Chams, Xray, NameTags' },
+    { icon: '🎯', title: 'Player',    titleZh: '玩家',  desc: 'AutoFish, AntiAFK, FastBreak, Scaffold' },
+    { icon: '🌍', title: 'World',     titleZh: '世界',  desc: 'Nuker, AutoTool, Timer, Chest Stealer' },
+    { icon: '💎', title: 'Misc',      titleZh: '杂项',  desc: 'ClickGUI, Themes, Macros, Capes' },
+  ],
+  stats: [
+    { label: 'Users',   labelZh: '用户',   value: '12K+' },
+    { label: 'Modules', labelZh: '模块',   value: '80+'  },
+    { label: 'Updates', labelZh: '更新',   value: 'Weekly' },
+    { label: 'Rating',  labelZh: '评分',   value: '4.9' },
+  ],
+};

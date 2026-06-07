@@ -45,11 +45,12 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
       </a>
 
       <ul class="nav-links">
-        <li><a href="/"        class="nav-item" data-i18n="nav.home">Home</a></li>
-        <li><a href="/blog"    class="nav-item" data-i18n="nav.blog">Blog</a></li>
-        <li><a href="/tags"    class="nav-item" data-i18n="nav.tags">Tags</a></li>
-        <li><a href="/friends" class="nav-item" data-i18n="nav.friends">Friends</a></li>
-        <li><a href="/about"   class="nav-item" data-i18n="nav.about">About</a></li>
+        <li><a href="/"          class="nav-item" data-i18n="nav.home">Home</a></li>
+        <li><a href="/blog"      class="nav-item" data-i18n="nav.blog">Blog</a></li>
+        <li><a href="/tags"      class="nav-item" data-i18n="nav.tags">Tags</a></li>
+        <li><a href="/minecraft" class="nav-item" data-i18n="nav.minecraft">Minecraft</a></li>
+        <li><a href="/friends"   class="nav-item" data-i18n="nav.friends">Friends</a></li>
+        <li><a href="/about"     class="nav-item" data-i18n="nav.about">About</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -104,11 +105,12 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
         <p class="footer-copy">© {new Date().getFullYear()} · Built with Astro</p>
       </div>
       <div class="footer-links">
-        <a href="/blog"    class="footer-link" data-i18n="nav.blog">Blog</a>
-        <a href="/tags"    class="footer-link" data-i18n="nav.tags">Tags</a>
-        <a href="/friends" class="footer-link" data-i18n="nav.friends">Friends</a>
-        <a href="/about"   class="footer-link" data-i18n="nav.about">About</a>
-        <a href="/rss.xml" class="footer-link">RSS</a>
+        <a href="/blog"      class="footer-link" data-i18n="nav.blog">Blog</a>
+        <a href="/tags"      class="footer-link" data-i18n="nav.tags">Tags</a>
+        <a href="/minecraft" class="footer-link" data-i18n="nav.minecraft">Minecraft</a>
+        <a href="/friends"   class="footer-link" data-i18n="nav.friends">Friends</a>
+        <a href="/about"     class="footer-link" data-i18n="nav.about">About</a>
+        <a href="/rss.xml"   class="footer-link">RSS</a>
       </div>
     </div>
   </footer>
@@ -118,8 +120,8 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
 
 <script>
   const I18N: Record<string, Record<string,string>> = {
-    en: { 'nav.home':'Home','nav.blog':'Blog','nav.tags':'Tags','nav.friends':'Friends','nav.about':'About' },
-    zh: { 'nav.home':'首页','nav.blog':'文章','nav.tags':'标签','nav.friends':'友链','nav.about':'关于' },
+    en: { 'nav.home':'Home','nav.blog':'Blog','nav.tags':'Tags','nav.minecraft':'Minecraft','nav.friends':'Friends','nav.about':'About' },
+    zh: { 'nav.home':'首页','nav.blog':'文章','nav.tags':'标签','nav.minecraft':'我的世界','nav.friends':'友链','nav.about':'关于' },
   };
 
   function applyLang(lang: string) {
