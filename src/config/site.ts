@@ -37,6 +37,7 @@ export const SITE = {
     artist:  'Jason Walker',
     youtubeId: 'ktnJ4zuxXy0',   // YouTube 视频 ID
     url:     '',                 // 文件模式才填
+    autoStart: true,             // 首次访问，第一次点击 / 按键 / 触屏 → 自动播放
   },
 };
 

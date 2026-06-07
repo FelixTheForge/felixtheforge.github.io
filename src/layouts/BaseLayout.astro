@@ -22,6 +22,9 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   {SITE.music?.enabled && SITE.music.source === 'youtube' && (
     <meta name="yt-video-id" content={SITE.music.youtubeId}/>
   )}
+  {SITE.music?.enabled && SITE.music.autoStart && (
+    <meta name="music-autostart" content="1"/>
+  )}
   <script is:inline>
     (function(){
       var t=localStorage.getItem('theme')||'light';
@@ -333,6 +336,21 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
           ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
         });
       }
+    }
+
+    // Auto-start on FIRST user interaction (configurable via SITE.music.autoStart)
+    // — fires once when the user has never explicitly paused
+    const AUTO_START = document.querySelector('meta[name="music-autostart"]')?.getAttribute('content') === '1';
+    const explicitPause = localStorage.getItem(MUSIC_KEY) === 'paused';
+    if (AUTO_START && !explicitPause) {
+      const autoUnlock = () => {
+        if (!ctrl.isPlaying) {
+          ctrl.play();
+          localStorage.setItem(MUSIC_KEY, 'playing');
+        }
+        ['click','keydown','touchstart'].forEach(e => document.removeEventListener(e, autoUnlock, true));
+      };
+      ['click','keydown','touchstart'].forEach(e => document.addEventListener(e, autoUnlock, { once: true, capture: true }));
     }
   }
 </script>
