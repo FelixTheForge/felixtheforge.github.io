@@ -79,7 +79,7 @@ export const MINECRAFT = {
   // 📊 群组数据（第一屏显眼位置，让人一眼看出活跃度）
   highlights: [
     { value: '300+',     label: 'Members', labelZh: '群友' },
-    { value: '2yr+',     label: 'Active',  labelZh: '运营' },
+    { value: '2yr+',     label: 'Running', labelZh: '运营' },
     { value: '24/7',     label: 'Uptime',  labelZh: '在线' },
     { value: '1.21.x',   label: 'Version', labelZh: '版本' },
   ],

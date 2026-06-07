@@ -8,6 +8,20 @@ const posts = (await getCollection('blog'))
   .sort((a,b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 const years = [...new Set(posts.map(p => new Date(p.data.date).getFullYear()))];
 
+// Stats
+const totalMinutes = posts.reduce((sum, p) => {
+  const words = (p.body ?? '').split(/\s+/).length;
+  return sum + Math.max(1, Math.round(words / 200));
+}, 0);
+const allTags = new Set(posts.flatMap(p => p.data.tags ?? []));
+const tagCount = allTags.size;
+const lastUpdate = posts[0] ? new Date(posts[0].data.date) : null;
+
+// Featured = newest post (top-of-page hero card)
+const featured = posts[0];
+const rest = posts.slice(1);
+const restYears = [...new Set(rest.map(p => new Date(p.data.date).getFullYear()))];
+
 // Tag color accent cycling
 const tagColors = ['#0071e3','#bf5af2','#30d158','#ff9f0a','#ff375f','#5e5ce6','#00c7be'];
 const tagMap: Record<string,string> = {};
@@ -16,21 +30,89 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
 ---
 
 <BaseLayout title={`Blog — ${SITE.title}`}>
+
+  <!-- Decorative ambient gradient (page-level) -->
+  <div class="blog-ambient" aria-hidden="true">
+    <span class="blog-orb blog-orb-1"></span>
+    <span class="blog-orb blog-orb-2"></span>
+    <span class="blog-orb blog-orb-3"></span>
+  </div>
+
   <div class="page-wrap">
-    <header class="page-header fade-up">
-      <h1 class="page-title grad-text" data-i18n="nav.blog">Blog</h1>
-      <p class="page-sub">{posts.length} posts · keep reading</p>
+
+    <!-- ── Stylized header with stats ── -->
+    <header class="blog-hero fade-up">
+      <span class="blog-eyebrow" data-i18n-custom="blog-eyebrow">Writing journal</span>
+      <h1 class="blog-title">
+        <span class="blog-title-grad" data-i18n="nav.blog">Blog</span>
+      </h1>
+      <p class="blog-sub" id="blog-sub">{posts.length} posts · keep reading</p>
+
+      <div class="blog-stats">
+        <div class="blog-stat">
+          <span class="blog-stat-value">{posts.length}</span>
+          <span class="blog-stat-label" data-zh="文章">Posts</span>
+        </div>
+        <div class="blog-stat-divider"></div>
+        <div class="blog-stat">
+          <span class="blog-stat-value">{totalMinutes}<small>m</small></span>
+          <span class="blog-stat-label" data-zh="阅读">Reading</span>
+        </div>
+        <div class="blog-stat-divider"></div>
+        <div class="blog-stat">
+          <span class="blog-stat-value">{tagCount}</span>
+          <span class="blog-stat-label" data-zh="标签">Tags</span>
+        </div>
+        {lastUpdate && (
+          <>
+            <div class="blog-stat-divider"></div>
+            <div class="blog-stat">
+              <span class="blog-stat-value">{lastUpdate.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+              <span class="blog-stat-label" data-zh="最新">Last</span>
+            </div>
+          </>
+        )}
+      </div>
     </header>
 
-    {years.map((year,yi) => (
-      <section class="year-section fade-up" style={`animation-delay:${yi*0.08}s`}>
+    <!-- ── Featured (most recent) — larger card ── -->
+    {featured && (
+      <a href={`/blog/${featured.id}`} class="blog-featured fade-up" style="animation-delay:.1s">
+        {featured.data.cover && (
+          <div class="bf-img-wrap">
+            <img src={featured.data.cover} alt="" class="bf-img" loading="lazy"/>
+            <div class="bf-img-fade"></div>
+          </div>
+        )}
+        <div class="bf-body">
+          <div class="bf-meta-top">
+            <span class="bf-newest" data-i18n-custom="blog-newest">★ Latest</span>
+            <span class="bf-date">{new Date(featured.data.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</span>
+          </div>
+          <div class="bf-tags">
+            {featured.data.tags?.slice(0,3).map(t => (
+              <span class="pill" style={`color:${tagMap[t]};background:${tagMap[t]}18;`}>{t}</span>
+            ))}
+          </div>
+          <h2 class="bf-title">{featured.data.title}</h2>
+          {featured.data.description && <p class="bf-desc">{featured.data.description}</p>}
+          <span class="bf-cta" data-i18n-custom="blog-read-on">Read on →</span>
+        </div>
+      </a>
+    )}
+
+    {restYears.map((year,yi) => (
+      <section class="year-section fade-up" style={`animation-delay:${.2 + yi*0.08}s`}>
         <div class="year-label">
           <span class="year-text">{year}</span>
           <div class="year-line"></div>
+          <span class="year-count">
+            {rest.filter(p => new Date(p.data.date).getFullYear() === year).length}
+          </span>
         </div>
         <div class="post-list">
-          {posts.filter(p => new Date(p.data.date).getFullYear() === year).map((post,pi) => (
-            <a href={`/blog/${post.id}`} class="post-row" style={`animation-delay:${(yi*4+pi)*0.06}s`}>
+          {rest.filter(p => new Date(p.data.date).getFullYear() === year).map((post,pi) => (
+            <a href={`/blog/${post.id}`} class="post-row" style={`animation-delay:${(yi*4+pi)*0.05}s`}>
               {post.data.cover && (
                 <div class="row-thumb-wrap">
                   <img src={post.data.cover} alt="" class="row-thumb" loading="lazy"/>
@@ -58,21 +140,226 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
   </div>
 </BaseLayout>
 
-<style>
-  .page-wrap { max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
-  .page-header { margin-bottom: 3rem; }
-  .page-title { font-size: clamp(2.5rem,5vw,3.5rem); font-weight: 800; letter-spacing: -.04em; margin-bottom: .5rem; }
-  .page-sub { font-size: .9375rem; color: var(--ink-3); }
+<script>
+  const I18N_CUSTOM: Record<string, Record<string,string>> = {
+    en: {
+      'blog-eyebrow': 'Writing journal',
+      'blog-newest':  '★ Latest',
+      'blog-read-on': 'Read on →',
+    },
+    zh: {
+      'blog-eyebrow': '写作日志',
+      'blog-newest':  '★ 最新',
+      'blog-read-on': '继续阅读 →',
+    },
+  };
+  function syncBlog() {
+    const lang = localStorage.getItem('lang') || 'en';
+    const m = I18N_CUSTOM[lang];
+    document.querySelectorAll('[data-i18n-custom]').forEach(el => {
+      const k = el.getAttribute('data-i18n-custom')!;
+      if (m[k]) el.textContent = m[k];
+    });
+    document.querySelectorAll('[data-zh]').forEach(el => {
+      if (!(el as HTMLElement).dataset.en) (el as HTMLElement).dataset.en = el.textContent || '';
+      el.textContent = lang === 'zh'
+        ? (el as HTMLElement).dataset.zh || el.textContent || ''
+        : (el as HTMLElement).dataset.en || el.textContent || '';
+    });
+    // Subtitle
+    const sub = document.getElementById('blog-sub');
+    if (sub) {
+      const n = sub.dataset.count || sub.textContent?.match(/\d+/)?.[0] || '';
+      if (!sub.dataset.count) sub.dataset.count = n;
+      sub.textContent = lang === 'zh'
+        ? `共 ${sub.dataset.count} 篇 · 继续阅读`
+        : `${sub.dataset.count} posts · keep reading`;
+    }
+  }
+  syncBlog();
+  document.getElementById('lang-btn')?.addEventListener('click', () => setTimeout(syncBlog, 0));
+</script>
 
+<style>
+  /* ── Ambient gradient orbs behind content ── */
+  .blog-ambient {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .blog-orb {
+    position: absolute;
+    width: 28vw; height: 28vw;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: .35;
+  }
+  .blog-orb-1 { top: -8vw; left: -8vw;  background: radial-gradient(circle, rgba(0,113,227,.5), transparent 70%); }
+  .blog-orb-2 { top: 30vh; right: -10vw; background: radial-gradient(circle, rgba(191,90,242,.4), transparent 70%); }
+  .blog-orb-3 { bottom: -8vw; left: 30%; background: radial-gradient(circle, rgba(255,159,10,.3), transparent 70%); }
+  [data-theme="dark"] .blog-orb { opacity: .5; }
+
+  .page-wrap {
+    position: relative; z-index: 1;
+    max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem;
+  }
+
+  /* ── Blog hero header ── */
+  .blog-hero { margin-bottom: 2.5rem; }
+  .blog-eyebrow {
+    display: inline-block;
+    font-size: .7rem; font-weight: 700; letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: .25rem .65rem;
+    background: rgba(0,113,227,.1);
+    border: 1px solid rgba(0,113,227,.25);
+    border-radius: 999px;
+    margin-bottom: 1.25rem;
+  }
+  .blog-title { margin: 0 0 .5rem; line-height: 1; }
+  .blog-title-grad {
+    display: inline-block;
+    font-size: clamp(3rem, 7vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -.04em;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-4) 60%, var(--accent-5) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .blog-sub { font-size: .9375rem; color: var(--ink-3); margin-bottom: 1.5rem; }
+
+  .blog-stats {
+    display: flex; align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: .9rem 1.25rem;
+    width: fit-content;
+    box-shadow: 0 4px 12px rgba(0,0,0,.04), inset 0 1px 0 rgba(255,255,255,.6);
+    gap: 0;
+    max-width: 100%; overflow: hidden;
+  }
+  [data-theme="dark"] .blog-stats { box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+  .blog-stat {
+    display: flex; flex-direction: column;
+    padding: 0 1.1rem;
+    min-width: 0;
+  }
+  .blog-stat:first-child { padding-left: 0; }
+  .blog-stat:last-child  { padding-right: 0; }
+  .blog-stat-divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+  .blog-stat-value {
+    font-size: 1.125rem; font-weight: 700;
+    color: var(--ink); letter-spacing: -.02em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .blog-stat-value small { font-size: .65em; font-weight: 600; color: var(--ink-3); }
+  .blog-stat-label {
+    font-size: .65rem; font-weight: 500;
+    color: var(--ink-4); letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-top: .15rem;
+  }
+
+  /* ── Featured (latest) card ── */
+  .blog-featured {
+    display: grid; grid-template-columns: 1.15fr 1fr;
+    gap: 0;
+    overflow: hidden;
+    text-decoration: none;
+    margin-bottom: 3rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.04),
+      0 8px 24px rgba(0,113,227,.08),
+      inset 0 1px 0 rgba(255,255,255,.6);
+    transition: transform .35s cubic-bezier(.25,.46,.45,.94),
+                box-shadow .35s, border-color .25s;
+    position: relative;
+  }
+  .blog-featured::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-4), var(--accent-5));
+  }
+  .blog-featured:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,113,227,.25);
+    box-shadow:
+      0 4px 8px rgba(0,0,0,.06),
+      0 24px 56px rgba(0,113,227,.18),
+      0 8px 16px rgba(191,90,242,.08),
+      inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  [data-theme="dark"] .blog-featured {
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.4),
+      0 8px 24px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .bf-img-wrap { position: relative; overflow: hidden; min-height: 240px; }
+  .bf-img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; min-height: 240px; }
+  .blog-featured:hover .bf-img { transform: scale(1.05); }
+  .bf-img-fade {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 50%, rgba(0,113,227,.05) 100%);
+  }
+  .bf-body { padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
+  .bf-meta-top {
+    display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .bf-newest {
+    font-size: .68rem; font-weight: 700; letter-spacing: .1em;
+    color: var(--accent-5);
+    background: rgba(255,159,10,.12);
+    border: 1px solid rgba(255,159,10,.3);
+    padding: .2rem .55rem;
+    border-radius: 4px;
+  }
+  .bf-date { font-size: .8125rem; color: var(--ink-4); font-weight: 500; }
+  .bf-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; }
+  .bf-title {
+    font-size: 1.5rem; font-weight: 700; color: var(--ink);
+    letter-spacing: -.025em; line-height: 1.25;
+    margin-bottom: .65rem; transition: color .2s;
+  }
+  .blog-featured:hover .bf-title { color: var(--accent); }
+  .bf-desc { font-size: .9375rem; color: var(--ink-3); line-height: 1.6; margin-bottom: 1.25rem; }
+  .bf-cta {
+    font-size: .875rem; font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent-4));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Year sections ── */
   .year-section { margin-bottom: 3rem; }
   .year-label { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
   .year-text {
-    font-size: .75rem; font-weight: 700; letter-spacing: .08em;
-    background: var(--grad-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    text-transform: uppercase; flex-shrink: 0;
+    font-size: .85rem; font-weight: 700; letter-spacing: .05em;
+    background: var(--grad-1);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    flex-shrink: 0;
   }
-  .year-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent) 0%, transparent 100%); opacity: .3; }
+  .year-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: .3;
+  }
+  .year-count {
+    font-size: .65rem; font-weight: 600;
+    color: var(--ink-4); letter-spacing: .1em;
+    flex-shrink: 0;
+    padding: .15rem .5rem;
+    background: var(--border);
+    border-radius: 999px;
+  }
 
+  /* ── Compact list rows ── */
   .post-list { display: flex; flex-direction: column; gap: .75rem; }
 
   .post-row {
@@ -87,8 +374,7 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
     position: relative; overflow: hidden;
   }
   .post-row::before {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: var(--grad-1); opacity: 0;
     transition: opacity .25s;
   }
@@ -115,4 +401,17 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
   .row-rt { font-size: .7rem; color: var(--ink-4); }
   .row-arrow { color: var(--ink-4); transition: transform .2s, color .2s; }
   .post-row:hover .row-arrow { transform: translateX(4px); color: var(--accent); }
+
+  /* ── Mobile ── */
+  @media (max-width: 640px) {
+    .blog-featured { grid-template-columns: 1fr; }
+    .bf-img-wrap { min-height: 180px; }
+    .bf-img { min-height: 180px; }
+    .bf-body { padding: 1.5rem; }
+    .bf-title { font-size: 1.25rem; }
+    .blog-stats { padding: .7rem .9rem; flex-wrap: wrap; }
+    .blog-stat { padding: 0 .75rem; }
+    .blog-stat-value { font-size: 1rem; }
+    .blog-stat-label { font-size: .55rem; }
+  }
 </style>
