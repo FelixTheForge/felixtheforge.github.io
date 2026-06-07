@@ -82,19 +82,19 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   </main>
 
   {SITE.music?.enabled && (
-    <div id="music-player" class="music-player">
-      <button id="music-toggle" class="music-btn" aria-label="Play music">
-        <svg id="music-play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="music-pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    <div id="music-player" class="music-player" aria-label="Music player">
+      <button id="music-toggle" class="music-toggle" aria-label="Play / pause">
+        <svg id="music-play-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="music-pause-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+        <div class="music-vis" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
       </button>
-      <div class="music-info">
+      <div class="music-meta">
         <p class="music-title">{SITE.music.title}</p>
         <p class="music-artist">{SITE.music.artist}</p>
       </div>
-      <div class="music-vis">
-        <span></span><span></span><span></span><span></span>
-      </div>
-      <audio id="music-audio" src={SITE.music.url} loop preload="none"></audio>
+      <audio id="music-audio" src={SITE.music.url} loop preload="metadata"></audio>
     </div>
   )}
 
@@ -201,11 +201,30 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   const pauseIcon = document.getElementById('music-pause-icon');
   const player    = document.getElementById('music-player');
   if (audio && btn) {
-    audio.volume = 0.35;
+    audio.volume = 0.3;
+
+    // Remember user's preference across pages / sessions
+    const MUSIC_KEY = 'music-state';   // 'playing' | 'paused' | null
+    const TIME_KEY  = 'music-time';
+
+    // Resume from last position if user was playing
+    const lastTime = parseFloat(localStorage.getItem(TIME_KEY) || '0');
+    if (lastTime > 0) audio.currentTime = lastTime;
+
+    // Save position periodically while playing
+    setInterval(() => {
+      if (!audio.paused) localStorage.setItem(TIME_KEY, String(audio.currentTime));
+    }, 2000);
+
     btn.addEventListener('click', () => {
-      if (audio.paused) audio.play().catch(()=>{});
-      else audio.pause();
+      if (audio.paused) {
+        audio.play().then(() => localStorage.setItem(MUSIC_KEY, 'playing')).catch(()=>{});
+      } else {
+        audio.pause();
+        localStorage.setItem(MUSIC_KEY, 'paused');
+      }
     });
+
     audio.addEventListener('play', () => {
       playIcon!.style.display  = 'none';
       pauseIcon!.style.display = 'block';
@@ -216,6 +235,22 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
       pauseIcon!.style.display = 'none';
       player?.classList.remove('playing');
     });
+
+    // Auto-resume after first user interaction (browser autoplay policy)
+    // 1. If user was playing before, resume on first click/keypress anywhere
+    // 2. Otherwise, only play when they explicitly click the button
+    const wasPlaying = localStorage.getItem(MUSIC_KEY) === 'playing';
+    if (wasPlaying) {
+      // Try silent autoplay (works on some browsers if previously interacted)
+      audio.play().catch(() => {
+        // Fallback: wait for first interaction
+        const resume = () => {
+          audio.play().catch(()=>{});
+          ['click','keydown','touchstart'].forEach(e => removeEventListener(e, resume));
+        };
+        ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
+      });
+    }
   }
 </script>
 
@@ -397,70 +432,110 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     100% { width: 180px; height: 180px; opacity: 0; }
   }
 
-  /* ── Music player ── */
+  /* ── Music player — minimal collapsed pill, expands on hover/play ── */
   .music-player {
-    position: fixed; left: 24px; bottom: 24px; z-index: 90;
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 16px 8px 8px;
-    background: rgba(255,255,255,.72);
+    position: fixed; right: 20px; bottom: 20px; z-index: 90;
+    display: flex; align-items: center;
+    height: 36px; padding: 0 4px 0 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.65);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
-    border: 1px solid rgba(0,0,0,.06);
-    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.06);
     box-shadow:
       0 1px 2px rgba(0,0,0,.04),
-      0 8px 24px rgba(0,0,0,.08),
-      inset 0 1px 0 rgba(255,255,255,.6);
-    transition: transform .25s, box-shadow .25s;
+      0 4px 16px rgba(0,0,0,.05),
+      inset 0 1px 0 rgba(255,255,255,.5);
+    transition: padding .35s cubic-bezier(.25,.46,.45,.94),
+                background .25s;
+    overflow: hidden;
   }
-  .music-player:hover { transform: translateY(-2px); }
   [data-theme="dark"] .music-player {
-    background: rgba(28,28,42,.72);
-    border-color: rgba(255,255,255,.08);
+    background: rgba(28,28,42,0.7);
+    border-color: rgba(255,255,255,0.08);
     box-shadow:
       0 1px 2px rgba(0,0,0,.4),
-      0 8px 24px rgba(0,0,0,.4),
-      inset 0 1px 0 rgba(255,255,255,.05);
+      0 4px 16px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.04);
   }
-  .music-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--grad-1); color: #fff; border: none; cursor: pointer;
+
+  /* Single toggle button — the only visible thing when collapsed */
+  .music-toggle {
+    width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,113,227,.35);
-    transition: transform .15s, box-shadow .15s;
+    background: transparent; border: none; padding: 0;
+    color: var(--ink-2);
+    border-radius: 50%;
+    cursor: pointer;
     flex-shrink: 0;
+    transition: color .2s, background .2s;
+    position: relative;
   }
-  .music-btn:hover { transform: scale(1.06); box-shadow: 0 6px 16px rgba(0,113,227,.5); }
-  .music-btn:active { transform: scale(.94); }
+  .music-toggle:hover { color: var(--accent); background: rgba(0,113,227,.08); }
+  .music-toggle:active { transform: scale(.92); }
 
-  .music-info { line-height: 1.15; min-width: 0; }
-  .music-title { font-size: .75rem; font-weight: 600; color: var(--ink); }
-  .music-artist { font-size: .6875rem; color: var(--ink-3); }
-
-  /* EQ visualizer bars */
+  /* EQ visualizer — replaces play icon when playing */
   .music-vis {
-    display: flex; align-items: flex-end; gap: 2px; height: 14px;
-    margin-left: 4px; opacity: .4;
-    transition: opacity .3s;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
   }
   .music-vis span {
-    width: 2px; height: 4px; border-radius: 2px;
+    display: block;
+    width: 2px; height: 3px; border-radius: 1px;
     background: var(--accent);
   }
   .music-player.playing .music-vis { opacity: 1; }
+  .music-player.playing #music-play-icon,
+  .music-player.playing #music-pause-icon { opacity: 0; }
   .music-player.playing .music-vis span {
-    animation: eq 1s ease-in-out infinite;
+    animation: eq 1.1s ease-in-out infinite;
   }
-  .music-player.playing .music-vis span:nth-child(1) { animation-delay: 0s;    }
+  .music-player.playing .music-vis span:nth-child(1) { animation-delay: 0s;   }
   .music-player.playing .music-vis span:nth-child(2) { animation-delay: .15s; }
   .music-player.playing .music-vis span:nth-child(3) { animation-delay: .3s;  }
   .music-player.playing .music-vis span:nth-child(4) { animation-delay: .45s; }
   @keyframes eq {
-    0%,100% { height: 4px;  }
-    50%     { height: 14px; }
+    0%,100% { height: 3px;  }
+    50%     { height: 12px; }
+  }
+  /* When hovering the player while playing, show pause icon over the EQ */
+  .music-player.playing:hover .music-vis { opacity: 0; }
+  .music-player.playing:hover #music-pause-icon { opacity: 1; }
+
+  /* Track meta — collapsed by default (width 0), expands on hover/play */
+  .music-meta {
+    display: flex; flex-direction: column; justify-content: center;
+    line-height: 1.15;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width .35s cubic-bezier(.25,.46,.45,.94),
+                margin-left .35s;
+    margin-left: 0;
+  }
+  .music-player:hover .music-meta,
+  .music-player.playing .music-meta {
+    max-width: 180px;
+    margin-left: 6px;
+    padding-right: 10px;
+  }
+  .music-title {
+    font-size: .7rem; font-weight: 600; color: var(--ink);
+    letter-spacing: -.005em;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .music-artist {
+    font-size: .625rem; color: var(--ink-3);
+    overflow: hidden; text-overflow: ellipsis;
   }
 
   @media (max-width: 640px) {
-    .music-info { display: none; }
+    .music-player { right: 12px; bottom: 12px; }
+    .music-player:hover .music-meta,
+    .music-player.playing .music-meta { max-width: 110px; }
   }
 </style>
