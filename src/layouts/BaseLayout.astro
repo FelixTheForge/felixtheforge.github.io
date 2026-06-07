@@ -5,210 +5,460 @@ import { SITE } from '../config/site';
 interface Props {
   title: string;
   description?: string;
-  heroHeader?: boolean;
+  transparentNav?: boolean;  // for hero pages
 }
-
-const { title, description = `${SITE.title} — personal writings`, heroHeader = false } = Astro.props;
+const { title, description = `${SITE.title} — personal writings`, transparentNav = false } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light" data-lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
-    <!-- Prevent flash of wrong theme -->
-    <script is:inline>
-      (function() {
-        const t = localStorage.getItem('theme') || 'light';
-        const l = localStorage.getItem('lang') || 'en';
-        document.documentElement.setAttribute('data-theme', t);
-        document.documentElement.setAttribute('data-lang', l);
-        document.documentElement.lang = l === 'zh' ? 'zh' : 'en';
-      })();
-    </script>
-  </head>
-  <body>
-    <header class={heroHeader ? 'site-header hero-mode' : 'site-header page-mode'}>
-      <nav class="nav-inner">
-        <a href="/" class="site-logo">
-          {SITE.title.replace('TheForge', '')}<span class="logo-accent">TheForge</span>
-        </a>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content={description}/>
+  <title>{title}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml"/>
+  <script is:inline>
+    (function(){
+      var t=localStorage.getItem('theme')||'light';
+      var l=localStorage.getItem('lang')||'en';
+      document.documentElement.setAttribute('data-theme',t);
+      document.documentElement.setAttribute('data-lang',l);
+    })();
+  </script>
+</head>
+<body class={transparentNav ? 'has-hero' : ''}>
 
-        <ul class="nav-links">
-          <li><a href="/" class="nav-link" data-i18n="nav.home">Home</a></li>
-          <li><a href="/blog" class="nav-link" data-i18n="nav.writing">Writing</a></li>
-          <li><a href="/tags" class="nav-link" data-i18n="nav.tags">Tags</a></li>
-          <li><a href="/about" class="nav-link" data-i18n="nav.about">About</a></li>
-        </ul>
+  <!-- Film grain noise overlay -->
+  <div class="noise-overlay"></div>
 
-        <div class="nav-controls">
-          <!-- Language toggle -->
-          <button id="lang-toggle" class="ctrl-btn" title="切换语言 / Switch language" aria-label="Toggle language">
-            <span class="lang-label" id="lang-label">EN</span>
-          </button>
+  <!-- Custom scroll indicator (replaces native scrollbar) -->
+  <div id="scroll-indicator" class="scroll-indicator"></div>
 
-          <!-- Theme toggle -->
-          <button id="theme-toggle" class="ctrl-btn" title="Toggle theme" aria-label="Toggle dark mode">
-            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  <!-- Apple-style navbar: transparent over hero, frosted on scroll -->
+  <nav class="navbar" id="navbar" data-transparent={transparentNav ? 'true' : 'false'}>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-mark">◆</span>
+        <span class="logo-text">{SITE.title}</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/"        class="nav-item" data-i18n="nav.home">Home</a></li>
+        <li><a href="/blog"    class="nav-item" data-i18n="nav.blog">Blog</a></li>
+        <li><a href="/tags"    class="nav-item" data-i18n="nav.tags">Tags</a></li>
+        <li><a href="/friends" class="nav-item" data-i18n="nav.friends">Friends</a></li>
+        <li><a href="/about"   class="nav-item" data-i18n="nav.about">About</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="lang-btn" class="nav-act" title="Switch language">
+          <span id="lang-label">EN</span>
+        </button>
+        <button id="theme-btn" class="nav-act" title="Toggle theme" aria-label="theme">
+          <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        {SITE.social.github && (
+          <a href={SITE.social.github} target="_blank" rel="noopener" class="nav-act" title="GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
             </svg>
-            <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-          </button>
-        </div>
-      </nav>
-    </header>
-
-    <main class={heroHeader ? 'main-hero' : 'main-page'}>
-      <slot />
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <span class="footer-copy">© {new Date().getFullYear()} {SITE.title}</span>
-        <span class="footer-ornament">✦</span>
-        <div class="footer-links">
-          {SITE.social.github && (
-            <a href={SITE.social.github} target="_blank" rel="noopener" class="footer-link" data-i18n="footer.github">GitHub</a>
-          )}
-          <a href="/rss.xml" class="footer-link">RSS</a>
-          <a href="/tags" class="footer-link" data-i18n="nav.tags">Tags</a>
-        </div>
+          </a>
+        )}
       </div>
-    </footer>
-  </body>
+    </div>
+  </nav>
+
+  <main>
+    <slot />
+  </main>
+
+  {SITE.music?.enabled && (
+    <div id="music-player" class="music-player">
+      <button id="music-toggle" class="music-btn" aria-label="Play music">
+        <svg id="music-play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="music-pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+      </button>
+      <div class="music-info">
+        <p class="music-title">{SITE.music.title}</p>
+        <p class="music-artist">{SITE.music.artist}</p>
+      </div>
+      <div class="music-vis">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <audio id="music-audio" src={SITE.music.url} loop preload="none"></audio>
+    </div>
+  )}
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand-block">
+        <p class="footer-brand">{SITE.title}</p>
+        <p class="footer-copy">© {new Date().getFullYear()} · Built with Astro</p>
+      </div>
+      <div class="footer-links">
+        <a href="/blog"    class="footer-link" data-i18n="nav.blog">Blog</a>
+        <a href="/tags"    class="footer-link" data-i18n="nav.tags">Tags</a>
+        <a href="/friends" class="footer-link" data-i18n="nav.friends">Friends</a>
+        <a href="/about"   class="footer-link" data-i18n="nav.about">About</a>
+        <a href="/rss.xml" class="footer-link">RSS</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
 </html>
 
 <script>
-  import { UI, type Lang } from '../config/i18n';
+  const I18N: Record<string, Record<string,string>> = {
+    en: { 'nav.home':'Home','nav.blog':'Blog','nav.tags':'Tags','nav.friends':'Friends','nav.about':'About' },
+    zh: { 'nav.home':'首页','nav.blog':'文章','nav.tags':'标签','nav.friends':'友链','nav.about':'关于' },
+  };
 
-  // ── i18n ──
-  function applyLang(lang: Lang) {
-    document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+  function applyLang(lang: string) {
     localStorage.setItem('lang', lang);
-
+    document.documentElement.setAttribute('data-lang', lang);
     const label = document.getElementById('lang-label');
     if (label) label.textContent = lang === 'zh' ? '中' : 'EN';
-
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n')!;
-      const parts = key.split('.');
-      let val: any = UI[lang];
-      for (const p of parts) val = val?.[p];
+      const val = I18N[lang]?.[key];
       if (val) el.textContent = val;
     });
   }
 
-  const langToggle = document.getElementById('lang-toggle')!;
-  langToggle.addEventListener('click', () => {
-    const current = (localStorage.getItem('lang') || 'en') as Lang;
-    applyLang(current === 'en' ? 'zh' : 'en');
+  applyLang(localStorage.getItem('lang') || 'en');
+
+  document.getElementById('lang-btn')!.addEventListener('click', () => {
+    applyLang(localStorage.getItem('lang') === 'zh' ? 'en' : 'zh');
   });
 
-  // Apply saved language on load
-  applyLang((localStorage.getItem('lang') || 'en') as Lang);
+  document.getElementById('theme-btn')!.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
 
-  // ── Dark mode ──
-  function applyTheme(theme: string) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+  // Navbar scroll state — transparent → frosted glass
+  const navbar = document.getElementById('navbar')!;
+  function onScroll() {
+    if (window.scrollY > 24) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
   }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  document.getElementById('theme-toggle')!.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    applyTheme(current === 'dark' ? 'light' : 'dark');
+  // ─── Custom scroll indicator (right edge) ───
+  let scrollHideTimer: number | undefined;
+  const htmlEl = document.documentElement;
+  const scrollIndicator = document.getElementById('scroll-indicator');
+  function updateScrollIndicator() {
+    if (!scrollIndicator) return;
+    const scrolled = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (maxScroll <= 0) { scrollIndicator.style.height = '0'; return; }
+    const vh = window.innerHeight;
+    const thumbHeight = Math.max(40, vh * (vh / document.documentElement.scrollHeight));
+    const trackHeight = vh - thumbHeight - 8;
+    const top = (scrolled / maxScroll) * trackHeight + 4;
+    scrollIndicator.style.height = thumbHeight + 'px';
+    scrollIndicator.style.top = top + 'px';
+  }
+  window.addEventListener('scroll', () => {
+    htmlEl.classList.add('is-scrolling');
+    updateScrollIndicator();
+    clearTimeout(scrollHideTimer);
+    scrollHideTimer = window.setTimeout(() => {
+      htmlEl.classList.remove('is-scrolling');
+    }, 900);
+  }, { passive: true });
+  window.addEventListener('resize', updateScrollIndicator);
+  updateScrollIndicator();
+
+  // ─── Click ripple (keeps the satisfying click feedback, no custom cursor) ───
+  addEventListener('click', e => {
+    const r = document.createElement('span');
+    r.className = 'cursor-ripple';
+    r.style.left = e.clientX + 'px';
+    r.style.top  = e.clientY + 'px';
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 700);
   });
+
+  // ─── Music player ───
+  const audio = document.getElementById('music-audio') as HTMLAudioElement | null;
+  const btn   = document.getElementById('music-toggle');
+  const playIcon  = document.getElementById('music-play-icon');
+  const pauseIcon = document.getElementById('music-pause-icon');
+  const player    = document.getElementById('music-player');
+  if (audio && btn) {
+    audio.volume = 0.35;
+    btn.addEventListener('click', () => {
+      if (audio.paused) audio.play().catch(()=>{});
+      else audio.pause();
+    });
+    audio.addEventListener('play', () => {
+      playIcon!.style.display  = 'none';
+      pauseIcon!.style.display = 'block';
+      player?.classList.add('playing');
+    });
+    audio.addEventListener('pause', () => {
+      playIcon!.style.display  = 'block';
+      pauseIcon!.style.display = 'none';
+      player?.classList.remove('playing');
+    });
+  }
 </script>
 
 <style>
-  /* ── Header ── */
-  .site-header { z-index: 20; padding: 1.25rem 1.5rem; }
-
-  .hero-mode {
-    position: absolute; top: 0; left: 0; right: 0;
+  /* ──────────────────────────────────────────────
+     Apple-style navbar
+     - Default: frosted glass on light bg
+     - transparent="true" + top: floats over hero (white text, no bg)
+     - scrolled: always frosted glass
+  ────────────────────────────────────────────── */
+  /* ── Floating pill navbar ── */
+  .navbar {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    height: 56px;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: saturate(180%) blur(24px);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 999px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 8px 24px rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: background .3s, border-color .3s, box-shadow .3s, top .3s, transform .3s;
   }
-  .hero-mode .site-logo { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.3); }
-  .hero-mode .logo-accent { color: #a8c5a0; }
-  .hero-mode .nav-link { color: rgba(255,255,255,.65); }
-  .hero-mode .nav-link:hover { color: #fff; }
-  .hero-mode .ctrl-btn { color: rgba(255,255,255,.7); border-color: rgba(255,255,255,.2); }
-  .hero-mode .ctrl-btn:hover { color: #fff; border-color: rgba(255,255,255,.5); }
-
-  .page-mode {
-    position: relative;
-    border-bottom: 1px solid var(--color-border);
+  .navbar.scrolled {
+    top: 14px;
+    background: rgba(255,255,255,0.85);
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.05),
+      0 12px 32px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.7);
   }
-  .page-mode .site-logo { color: var(--color-ink); }
-  .page-mode .logo-accent { color: var(--color-accent); }
-  .page-mode .nav-link { color: var(--color-muted); }
-  .page-mode .nav-link:hover { color: var(--color-ink); }
-  .page-mode .ctrl-btn { color: var(--color-muted); border-color: var(--color-border); }
-  .page-mode .ctrl-btn:hover { color: var(--color-ink); border-color: var(--color-muted); }
+  [data-theme="dark"] .navbar {
+    background: rgba(28,28,42,0.72);
+    border-color: rgba(255,255,255,0.08);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.4),
+      0 8px 24px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  [data-theme="dark"] .navbar.scrolled {
+    background: rgba(28,28,42,0.88);
+  }
+
+  /* Over hero: subtle white-tinted glass that floats elegantly */
+  .navbar[data-transparent="true"]:not(.scrolled) {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.18);
+    box-shadow:
+      0 4px 16px rgba(0,0,0,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .navbar[data-transparent="true"]:not(.scrolled) .logo-text,
+  .navbar[data-transparent="true"]:not(.scrolled) .nav-item,
+  .navbar[data-transparent="true"]:not(.scrolled) .nav-act {
+    color: rgba(255,255,255,0.95);
+  }
+  .navbar[data-transparent="true"]:not(.scrolled) .logo-mark {
+    background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .navbar[data-transparent="true"]:not(.scrolled) .nav-item:hover {
+    color: #fff; background: rgba(255,255,255,0.16);
+  }
+  .navbar[data-transparent="true"]:not(.scrolled) .nav-act:hover {
+    color: #fff; background: rgba(255,255,255,0.18);
+  }
+
+  /* Push content down for non-hero pages */
+  body:not(.has-hero) main { padding-top: 92px; }
 
   .nav-inner {
-    max-width: 56rem; margin: 0 auto;
-    display: flex; align-items: center; gap: 1.5rem;
+    height: 100%;
+    display: flex; align-items: center;
+    padding: 0 .875rem 0 1.5rem;
+    gap: 2rem;
   }
 
-  .site-logo {
-    font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: .04em;
-    text-decoration: none; transition: opacity .2s; flex-shrink: 0;
+  /* ── Logo ── */
+  .nav-logo {
+    display: flex; align-items: center; gap: .4rem;
+    text-decoration: none; flex-shrink: 0;
+    transition: opacity .15s;
+  }
+  .nav-logo:hover { opacity: .7; }
+  .logo-mark {
+    font-size: .875rem; line-height: 1;
+    background: var(--grad-1);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transform: translateY(-1px);
+  }
+  .logo-text {
+    font-weight: 600; font-size: .9375rem; color: var(--ink);
+    letter-spacing: -.01em;
+    transition: color .2s;
   }
 
+  /* ── Links (centered, Apple-style) ── */
   .nav-links {
-    display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; flex: 1;
+    display: flex; gap: .25rem; list-style: none; margin: 0; padding: 0;
+    flex: 1; justify-content: center;
   }
-  .nav-link {
-    font-family: var(--font-sans); font-size: .68rem; text-decoration: none;
-    letter-spacing: .12em; text-transform: uppercase; transition: color .2s;
+  .nav-item {
+    font-size: .9375rem; font-weight: 500; color: var(--ink-2);
+    text-decoration: none;
+    padding: .5rem 1rem;
+    border-radius: 999px;
+    transition: color .15s, background .15s;
+    letter-spacing: -.005em;
   }
+  .nav-item:hover { color: var(--ink); background: rgba(0,0,0,0.04); }
+  [data-theme="dark"] .nav-item:hover { background: rgba(255,255,255,0.06); }
 
-  .nav-controls { display: flex; align-items: center; gap: .5rem; }
-
-  .ctrl-btn {
-    display: flex; align-items: center; justify-content: center;
-    width: 2rem; height: 2rem; border-radius: 4px;
-    background: transparent; border: 1px solid; cursor: pointer;
-    transition: color .2s, border-color .2s, background .2s;
+  /* ── Actions ── */
+  .nav-actions {
+    display: flex; align-items: center; gap: 4px;
+    flex-shrink: 0;
   }
-  .ctrl-btn:hover { background: rgba(128,128,128,.1); }
-
-  .lang-label { font-family: var(--font-sans); font-size: .65rem; font-weight: 600; letter-spacing: .05em; }
-
-  /* Show/hide sun-moon based on theme */
-  :root[data-theme="light"] .icon-moon { display: none; }
-  :root[data-theme="dark"]  .icon-sun  { display: none; }
-
-  /* ── Main ── */
-  .main-hero { flex: 1; padding: 0; }
-  .main-page { flex: 1; padding: 0 1.5rem; }
-
-  body { min-height: 100vh; display: flex; flex-direction: column; }
+  .nav-act {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: transparent; border: none; padding: 0;
+    border-radius: 999px;
+    color: var(--ink-2); cursor: pointer; text-decoration: none;
+    font-size: .75rem; font-weight: 600; letter-spacing: .04em;
+    transition: background .15s, color .15s;
+  }
+  .nav-act:hover { background: rgba(0,0,0,0.04); color: var(--ink); }
+  [data-theme="dark"] .nav-act:hover { background: rgba(255,255,255,0.08); }
 
   /* ── Footer ── */
   .site-footer {
-    padding: 2.5rem 1.5rem; margin-top: 4rem;
-    border-top: 1px solid var(--color-border);
+    padding: 3rem 1.5rem 2.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 5rem;
   }
   .footer-inner {
-    max-width: 56rem; margin: 0 auto;
+    max-width: 64rem; margin: 0 auto;
     display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.25rem;
   }
-  .footer-copy { font-family: var(--font-sans); font-size: .75rem; color: var(--color-muted); }
-  .footer-ornament { color: var(--color-muted); font-size: .75rem; }
-  .footer-links { display: flex; gap: 1.25rem; }
+  .footer-brand-block { display: flex; flex-direction: column; gap: .15rem; }
+  .footer-brand {
+    font-size: .875rem; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em;
+  }
+  .footer-copy { font-size: .75rem; color: var(--ink-4); }
+  .footer-links { display: flex; gap: 1.5rem; }
   .footer-link {
-    font-family: var(--font-sans); font-size: .72rem; color: var(--color-muted);
-    text-decoration: none; letter-spacing: .06em; transition: color .2s;
+    font-size: .75rem; color: var(--ink-3); text-decoration: none;
+    transition: color .15s;
   }
-  .footer-link:hover { color: var(--color-ink); }
+  .footer-link:hover { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav-inner { gap: .75rem; }
+  }
+
+
+  /* Click ripple */
+  .cursor-ripple {
+    position: fixed; pointer-events: none; z-index: 9998;
+    width: 0; height: 0; border-radius: 50%;
+    margin-left: 0; margin-top: 0;
+    background: radial-gradient(circle, rgba(0,113,227,.35) 0%, rgba(191,90,242,.2) 50%, transparent 70%);
+    transform: translate(-50%,-50%);
+    animation: ripple .7s cubic-bezier(.16,.84,.32,1) forwards;
+  }
+  @keyframes ripple {
+    0%   { width: 0;     height: 0;     opacity: .9; }
+    100% { width: 180px; height: 180px; opacity: 0; }
+  }
+
+  /* ── Music player ── */
+  .music-player {
+    position: fixed; left: 24px; bottom: 24px; z-index: 90;
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px 8px 8px;
+    background: rgba(255,255,255,.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 999px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.04),
+      0 8px 24px rgba(0,0,0,.08),
+      inset 0 1px 0 rgba(255,255,255,.6);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .music-player:hover { transform: translateY(-2px); }
+  [data-theme="dark"] .music-player {
+    background: rgba(28,28,42,.72);
+    border-color: rgba(255,255,255,.08);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.4),
+      0 8px 24px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .music-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--grad-1); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,113,227,.35);
+    transition: transform .15s, box-shadow .15s;
+    flex-shrink: 0;
+  }
+  .music-btn:hover { transform: scale(1.06); box-shadow: 0 6px 16px rgba(0,113,227,.5); }
+  .music-btn:active { transform: scale(.94); }
+
+  .music-info { line-height: 1.15; min-width: 0; }
+  .music-title { font-size: .75rem; font-weight: 600; color: var(--ink); }
+  .music-artist { font-size: .6875rem; color: var(--ink-3); }
+
+  /* EQ visualizer bars */
+  .music-vis {
+    display: flex; align-items: flex-end; gap: 2px; height: 14px;
+    margin-left: 4px; opacity: .4;
+    transition: opacity .3s;
+  }
+  .music-vis span {
+    width: 2px; height: 4px; border-radius: 2px;
+    background: var(--accent);
+  }
+  .music-player.playing .music-vis { opacity: 1; }
+  .music-player.playing .music-vis span {
+    animation: eq 1s ease-in-out infinite;
+  }
+  .music-player.playing .music-vis span:nth-child(1) { animation-delay: 0s;    }
+  .music-player.playing .music-vis span:nth-child(2) { animation-delay: .15s; }
+  .music-player.playing .music-vis span:nth-child(3) { animation-delay: .3s;  }
+  .music-player.playing .music-vis span:nth-child(4) { animation-delay: .45s; }
+  @keyframes eq {
+    0%,100% { height: 4px;  }
+    50%     { height: 14px; }
+  }
+
+  @media (max-width: 640px) {
+    .music-info { display: none; }
+  }
 </style>

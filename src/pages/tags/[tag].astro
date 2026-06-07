@@ -5,63 +5,51 @@ import { readingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  const tags = [...new Set(posts.flatMap(p => p.data.tags ?? []))];
-  return tags.map(tag => ({
-    params: { tag },
-    props: { tag, posts: posts.filter(p => p.data.tags?.includes(tag)) },
-  }));
+  const tags = [...new Set(posts.flatMap(p => p.data.tags??[]))];
+  return tags.map(tag => ({ params:{tag}, props:{tag, posts:posts.filter(p=>p.data.tags?.includes(tag))} }));
 }
-
 const { tag, posts } = Astro.props;
-const sorted = posts.sort((a,b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+const sorted = posts.sort((a,b)=>new Date(b.data.date).valueOf()-new Date(a.data.date).valueOf());
 ---
-
 <BaseLayout title={`#${tag} — FelixTheForge`}>
-  <div class="fade-in page-wrap">
-    <div class="tag-header">
-      <a href="/tags" class="back">← All tags</a>
-      <h1 class="tag-title">#{tag}</h1>
-      <p class="tag-sub">{sorted.length} {sorted.length === 1 ? 'post' : 'posts'}</p>
-    </div>
-
-    <ul class="post-list">
+  <div class="page-wrap">
+    <header class="page-header fade-up">
+      <a href="/tags" class="back-link">← Tags</a>
+      <h1 class="page-title">
+        <span class="hash grad-text">#</span>{tag}
+      </h1>
+      <p class="page-sub">{sorted.length} posts</p>
+    </header>
+    <div class="post-list fade-up">
       {sorted.map(post => (
-        <li>
-          <a href={`/blog/${post.id}`} class="post-item">
-            {post.data.cover && <img src={post.data.cover} alt="" class="item-img" loading="lazy"/>}
-            <div class="item-body">
-              <div class="item-meta">
-                <time>{new Date(post.data.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</time>
-                <span>·</span><span>{readingTime(post.body ?? '')}</span>
-              </div>
-              <h2 class="item-title">{post.data.title}</h2>
-              {post.data.description && <p class="item-desc">{post.data.description}</p>}
-            </div>
-          </a>
-        </li>
+        <a href={`/blog/${post.id}`} class="post-row card">
+          {post.data.cover && <img src={post.data.cover} alt="" class="thumb" loading="lazy"/>}
+          <div class="row-body">
+            <h2 class="row-title">{post.data.title}</h2>
+            {post.data.description && <p class="row-desc">{post.data.description}</p>}
+          </div>
+          <div class="row-right">
+            <time>{new Date(post.data.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</time>
+            <span>{readingTime(post.body??'')}</span>
+          </div>
+        </a>
       ))}
-    </ul>
+    </div>
   </div>
 </BaseLayout>
-
 <style>
-  .page-wrap { max-width: 42rem; margin: 0 auto; padding: 4rem 0; }
-  .tag-header { margin-bottom: 3rem; }
-  .back { font-family: var(--font-sans); font-size: .75rem; color: var(--color-muted); text-decoration: none; letter-spacing: .1em; text-transform: uppercase; }
-  .back:hover { color: var(--color-ink); }
-  .tag-title { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 500; margin: 1rem 0 .25rem; }
-  .tag-sub { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); }
-  .post-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
-  .post-item {
-    display: flex; gap: 1.25rem; align-items: center;
-    padding: 1.5rem 0; border-bottom: 1px solid var(--color-border);
-    text-decoration: none; transition: background .2s; border-radius: 4px;
-  }
-  .post-item:hover { background: color-mix(in srgb, var(--color-accent) 4%, transparent); padding-left: .5rem; }
-  .item-img { width: 5rem; height: 3.5rem; object-fit: cover; border-radius: 3px; flex-shrink: 0; }
-  .item-body { flex: 1; }
-  .item-meta { font-family: var(--font-sans); font-size: .68rem; color: var(--color-muted); display: flex; gap: .4rem; margin-bottom: .35rem; }
-  .item-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 500; color: var(--color-ink); margin-bottom: .25rem; transition: color .2s; }
-  .post-item:hover .item-title { color: var(--color-accent); }
-  .item-desc { font-family: var(--font-serif); font-size: .875rem; color: var(--color-muted); line-height: 1.5; }
+  .page-wrap { max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  .back-link { font-size:.875rem; font-weight:500; color:var(--accent); text-decoration:none; }
+  .page-header { margin-bottom:3rem; }
+  .page-title { font-size:clamp(2rem,5vw,3rem); font-weight:800; letter-spacing:-.03em; margin:.75rem 0 .5rem; }
+  .hash { margin-right:.15rem; }
+  .page-sub { font-size:.9375rem; color:var(--ink-3); }
+  .post-list { display:flex; flex-direction:column; gap:.75rem; }
+  .post-row { display:flex; align-items:center; gap:1.25rem; padding:1.25rem 1.5rem; text-decoration:none; border-radius:var(--radius-lg); }
+  .thumb { width:5rem; height:3.375rem; object-fit:cover; border-radius:var(--radius-sm); flex-shrink:0; }
+  .row-body { flex:1; min-width:0; }
+  .row-title { font-size:1rem; font-weight:600; color:var(--ink); letter-spacing:-.01em; margin-bottom:.3rem; transition:color .15s; }
+  .post-row:hover .row-title { color:var(--accent); }
+  .row-desc { font-size:.8125rem; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .row-right { display:flex; flex-direction:column; align-items:flex-end; gap:.25rem; font-size:.75rem; color:var(--ink-4); flex-shrink:0; }
 </style>

@@ -3,6 +3,7 @@ title: "Hello, World"
 date: "2026-06-06"
 description: "Every forge needs a first flame."
 tags: ["meta"]
+cover: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80"
 ---
 
 This is the first post. The forge is lit.

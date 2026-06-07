@@ -3,36 +3,46 @@
  * ║   个人博客配置文件 — 在这里修改你的信息  ║
  * ╚══════════════════════════════════════╝
  */
-
 export const SITE = {
-  /** 网站标题 */
-  title: 'FelixTheForge',
+  title:      'FelixTheForge',
+  url:        'https://felixtheforge.github.io',
+  avatar:     '/avatar.png',
+  role:       'Builder & Writer',          // 职位/标签
+  location:   'Earth',                     // 地点
+  bioEn:      'I build things on the internet and occasionally write about it. Interested in the intersection of technology and craft.',
+  bioZh:      '在互联网上构建东西，偶尔写写文章。关注技术与手艺的交汇点。',
+  heroSubEn:  'Writing about technology, craft,\nand the slow accumulation of ideas.',
+  heroSubZh:  '记录技术、手艺，\n以及缓慢积累的想法。',
 
-  /** 网站地址 */
-  url: 'https://felixtheforge.github.io',
-
-  /** 头像图片地址（可以换成你自己的图片 URL 或 /public 里的文件路径） */
-  avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
-
-  /** 英文简介 */
-  bioEn: 'Builder, thinker, occasional writer. I spend my days crafting software and my evenings reading or making things with my hands.',
-
-  /** 中文简介 */
-  bioZh: '构建者，思考者，偶尔写作。白天写代码，晚上读书或者动手做些东西。',
-
-  /** Hero 区英文副标题 */
-  heroSubEn: 'Writing about technology, craft,\nand the slow accumulation of ideas.',
-
-  /** Hero 区中文副标题 */
-  heroSubZh: '记录技术、手艺，\n以及缓慢积累的想法。',
-
-  /** 社交链接（不用的留空即可） */
+  // 📜 座右铭
+  mottoZh:    '于道各努力，千里自同风。',
+  mottoEn:    'Each striving on our own path —\na thousand miles apart, one wind we share.',
+  mottoSourceZh: '— 范云 · 《赠张徐州稷》',
+  mottoSourceEn: '— Fan Yun, Liang dynasty',
   social: {
-    github:   'https://github.com/FelixTheForge',
-    twitter:  '',
-    email:    '',
+    github:  'https://github.com/FelixTheForge',
+    twitter: '',
+    email:   '',
   },
-
-  /** Hero 背景图（来自 Unsplash，可换成任意图片 URL） */
   heroBg: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80',
+  aboutBg: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1800&q=80',
+
+  // 🎵 背景音乐 — 替换成你自己的 mp3 URL（可以放仓库 /public/music/xxx.mp3）
+  music: {
+    enabled: true,
+    title:   'Ambient',
+    artist:  'Lo-fi loop',
+    url:     'https://cdn.pixabay.com/audio/2023/06/06/audio_1f3a4cb8f3.mp3',
+  },
 };
+
+// 🔗 友链 — 在这里添加 / 修改 / 删除你的朋友
+export const FRIENDS = [
+  {
+    name:   'Charlie Fei',
+    url:    'https://charliefei.github.io/en/',
+    avatar: 'https://github.com/charliefei.png',
+    bio:    "Charlie's writings on tech, life, and craft.",
+    color:  '#10b981',
+  },
+];

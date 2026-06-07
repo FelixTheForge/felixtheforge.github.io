@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { FRIENDS } from '../config/site';
+---
+<BaseLayout title="Friends — FelixTheForge">
+  <div class="page-wrap">
+    <header class="page-header fade-up">
+      <h1 class="page-title grad-text" data-i18n="nav.friends">Friends</h1>
+      <p class="page-sub" data-i18n-custom="friends-sub">People and projects worth knowing.</p>
+    </header>
+
+    <div class="friends-grid fade-up">
+      {FRIENDS.map((f, i) => (
+        <a href={f.url} target="_blank" rel="noopener noreferrer"
+           class="friend-card"
+           style={`--fc:${f.color}; animation-delay:${i*0.06}s`}>
+          <div class="friend-glow"></div>
+          <img src={f.avatar} alt={f.name} class="friend-avatar" loading="lazy"
+               onerror="this.style.background='linear-gradient(135deg,var(--fc),#fff)';this.removeAttribute('src');"/>
+          <div class="friend-body">
+            <h3 class="friend-name">{f.name}</h3>
+            <p class="friend-bio">{f.bio}</p>
+            <span class="friend-url">{new URL(f.url).hostname.replace('www.','')}</span>
+          </div>
+          <svg class="friend-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M7 17L17 7M9 7h8v8"/>
+          </svg>
+        </a>
+      ))}
+    </div>
+
+    <p class="friends-footer fade-up" data-i18n-custom="friends-add">
+      Want to exchange links? Reach me via the GitHub link.
+    </p>
+  </div>
+</BaseLayout>
+
+<script>
+  const I18N_CUSTOM: Record<string, Record<string,string>> = {
+    en: {
+      'friends-sub': 'People and projects worth knowing.',
+      'friends-add': 'Want to exchange links? Reach me via the GitHub link.',
+    },
+    zh: {
+      'friends-sub': '值得认识的人，与值得收藏的项目。',
+      'friends-add': '想交换友链？通过 GitHub 联系我。',
+    },
+  };
+  function syncCustom() {
+    const lang = localStorage.getItem('lang') || 'en';
+    const m = I18N_CUSTOM[lang];
+    document.querySelectorAll('[data-i18n-custom]').forEach(el => {
+      const k = el.getAttribute('data-i18n-custom')!;
+      if (m[k]) el.textContent = m[k];
+    });
+  }
+  syncCustom();
+  document.getElementById('lang-btn')?.addEventListener('click', () => setTimeout(syncCustom, 0));
+</script>
+
+<style>
+  .page-wrap { max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  .page-header { margin-bottom: 3rem; }
+  .page-title {
+    font-size: clamp(2.5rem,5vw,3.5rem); font-weight: 800;
+    letter-spacing: -.04em; margin-bottom: .5rem;
+  }
+  .page-sub { font-size: .9375rem; color: var(--ink-3); }
+
+  /* ── Grid ── */
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+  }
+
+  /* ── Card ── */
+  .friend-card {
+    position: relative;
+    display: flex; align-items: center; gap: .875rem;
+    padding: 1rem 1.125rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.04),
+      0 4px 12px rgba(0,0,0,.05),
+      inset 0 1px 0 rgba(255,255,255,.6);
+    overflow: hidden;
+    transition: transform .25s cubic-bezier(.25,.46,.45,.94),
+                box-shadow .25s, border-color .25s;
+    animation: fadeUp .6s cubic-bezier(.25,.46,.45,.94) both;
+  }
+  .friend-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: color-mix(in srgb, var(--fc) 40%, transparent);
+    box-shadow:
+      0 6px 12px rgba(0,0,0,.06),
+      0 20px 40px color-mix(in srgb, var(--fc) 18%, transparent),
+      inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  [data-theme="dark"] .friend-card {
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.4),
+      0 4px 12px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+
+  /* Colored glow behind card on hover */
+  .friend-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(120% 80% at 100% 0%,
+                                color-mix(in srgb, var(--fc) 12%, transparent) 0%,
+                                transparent 60%);
+    opacity: 0; transition: opacity .3s;
+  }
+  .friend-card:hover .friend-glow { opacity: 1; }
+
+  /* Avatar */
+  .friend-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--fc), color-mix(in srgb, var(--fc) 60%, white));
+    box-shadow: 0 0 0 2px var(--bg-card), 0 4px 10px color-mix(in srgb, var(--fc) 30%, transparent);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .friend-card:hover .friend-avatar { transform: scale(1.08) rotate(-3deg); }
+
+  /* Body */
+  .friend-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+  .friend-name {
+    font-size: .9375rem; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em;
+    margin-bottom: .15rem;
+    transition: color .2s;
+  }
+  .friend-card:hover .friend-name { color: var(--fc); }
+  .friend-bio {
+    font-size: .75rem; color: var(--ink-3); line-height: 1.45;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: .1rem;
+  }
+  .friend-url {
+    font-size: .6875rem; color: var(--ink-4);
+    font-family: var(--font-mono); letter-spacing: -.02em;
+  }
+
+  /* Arrow */
+  .friend-arrow {
+    color: var(--ink-4); flex-shrink: 0;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .25s;
+    position: relative; z-index: 1;
+  }
+  .friend-card:hover .friend-arrow {
+    color: var(--fc);
+    transform: translate(2px,-2px) scale(1.1);
+  }
+
+  /* Footer note */
+  .friends-footer {
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: .8125rem; color: var(--ink-3);
+    text-align: center; font-style: italic;
+  }
+</style>

@@ -2,18 +2,22 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="404 — FelixTheForge">
-  <div class="wrap fade-in">
-    <div class="num">404</div>
+  <div class="wrap fade-up">
+    <p class="num grad-text">404</p>
     <h1 class="title">Page not found</h1>
-    <p class="sub">The forge couldn't find what you were looking for.</p>
-    <a href="/" class="home-link">← Back to home</a>
+    <p class="sub">This page doesn't exist or was moved.</p>
+    <a href="/" class="home-btn">Go home</a>
   </div>
 </BaseLayout>
 <style>
-  .wrap { max-width: 28rem; margin: 0 auto; padding: 8rem 1.5rem; text-align: center; }
-  .num { font-family: var(--font-serif); font-size: 7rem; font-weight: 500; color: var(--color-border); line-height: 1; margin-bottom: 1rem; }
-  .title { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 500; margin-bottom: .75rem; }
-  .sub { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); margin-bottom: 2.5rem; }
-  .home-link { font-family: var(--font-sans); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--color-accent); text-decoration: none; border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent); padding: .65rem 1.5rem; border-radius: 2px; transition: background .2s; }
-  .home-link:hover { background: color-mix(in srgb, var(--color-accent) 8%, transparent); }
+  .wrap { max-width:28rem; margin:8rem auto; text-align:center; padding:0 1.5rem; }
+  .num { font-size:7rem; font-weight:800; letter-spacing:-.05em; line-height:1; margin-bottom:.5rem; }
+  .title { font-size:1.5rem; font-weight:700; color:var(--ink); margin-bottom:.75rem; }
+  .sub { color:var(--ink-3); margin-bottom:2rem; }
+  .home-btn {
+    display:inline-flex; font-size:.9375rem; font-weight:600; text-decoration:none;
+    background:var(--accent); color:#fff; padding:.75rem 2rem; border-radius:var(--radius-md);
+    transition:filter .2s;
+  }
+  .home-btn:hover { filter:brightness(1.1); }
 </style>

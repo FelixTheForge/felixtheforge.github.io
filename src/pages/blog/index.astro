@@ -1,130 +1,117 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageBanner from '../../components/PageBanner.astro';
 import { getCollection } from 'astro:content';
 import { readingTime } from '../../utils/readingTime';
 
 const posts = (await getCollection('blog'))
-  .sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
-
+  .sort((a,b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 const years = [...new Set(posts.map(p => new Date(p.data.date).getFullYear()))];
+
+// Tag color accent cycling
+const tagColors = ['#0071e3','#bf5af2','#30d158','#ff9f0a','#ff375f','#5e5ce6','#00c7be'];
+const tagMap: Record<string,string> = {};
+let ci = 0;
+posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColors[ci++ % tagColors.length]; }));
 ---
 
-<BaseLayout title="Writing — FelixTheForge">
-  <PageBanner
-    title="Writing"
-    subtitle="Ideas, notes, and things worth saying."
-    image="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1400&q=80"
-  />
+<BaseLayout title="Blog — FelixTheForge">
+  <div class="page-wrap">
+    <header class="page-header fade-up">
+      <h1 class="page-title grad-text" data-i18n="nav.blog">Blog</h1>
+      <p class="page-sub">{posts.length} posts · keep reading</p>
+    </header>
 
-  <div class="fade-in page-wrap">
-    <div class="count-line">
-      <span class="count-text" id="blog-count">
-        {posts.length} {posts.length === 1 ? 'piece' : 'pieces'} so far.
-      </span>
-    </div>
-
-    {posts.length === 0 ? (
-      <p class="empty">The forge is heating up.</p>
-    ) : (
-      years.map(year => (
-        <section class="year-group">
-          <div class="year-hd">
-            <span class="year-label">{year}</span>
-            <div class="year-line"></div>
-          </div>
-          <ul class="post-list">
-            {posts
-              .filter(p => new Date(p.data.date).getFullYear() === year)
-              .map(post => (
-                <li>
-                  <a href={`/blog/${post.id}`} class="post-row">
-                    {post.data.cover && (
-                      <img src={post.data.cover} alt="" class="row-thumb" loading="lazy"/>
-                    )}
-                    <div class="row-body">
-                      <h2 class="row-title">{post.data.title}</h2>
-                      {post.data.description && (
-                        <p class="row-desc">{post.data.description}</p>
-                      )}
-                      <div class="row-meta">
-                        {post.data.tags?.slice(0,3).map(t => (
-                          <span class="row-tag">{t}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div class="row-right">
-                      <time class="row-date">
-                        {new Date(post.data.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
-                      </time>
-                      <span class="row-rt">{readingTime(post.body ?? '')}</span>
-                      <span class="row-arrow">→</span>
-                    </div>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </section>
-      ))
-    )}
+    {years.map((year,yi) => (
+      <section class="year-section fade-up" style={`animation-delay:${yi*0.08}s`}>
+        <div class="year-label">
+          <span class="year-text">{year}</span>
+          <div class="year-line"></div>
+        </div>
+        <div class="post-list">
+          {posts.filter(p => new Date(p.data.date).getFullYear() === year).map((post,pi) => (
+            <a href={`/blog/${post.id}`} class="post-row" style={`animation-delay:${(yi*4+pi)*0.06}s`}>
+              {post.data.cover && (
+                <div class="row-thumb-wrap">
+                  <img src={post.data.cover} alt="" class="row-thumb" loading="lazy"/>
+                </div>
+              )}
+              <div class="row-body">
+                <div class="row-tags">
+                  {post.data.tags?.slice(0,2).map(t => (
+                    <span class="pill" style={`color:${tagMap[t]};background:${tagMap[t]}18;`}>{t}</span>
+                  ))}
+                </div>
+                <h2 class="row-title">{post.data.title}</h2>
+                {post.data.description && <p class="row-desc">{post.data.description}</p>}
+              </div>
+              <div class="row-right">
+                <time class="row-date">{new Date(post.data.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</time>
+                <span class="row-rt">{readingTime(post.body??'')}</span>
+                <svg class="row-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
   </div>
 </BaseLayout>
 
 <style>
-  .page-wrap { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+  .page-wrap { max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  .page-header { margin-bottom: 3rem; }
+  .page-title { font-size: clamp(2.5rem,5vw,3.5rem); font-weight: 800; letter-spacing: -.04em; margin-bottom: .5rem; }
+  .page-sub { font-size: .9375rem; color: var(--ink-3); }
 
-  .count-line { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .count-text { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); }
+  .year-section { margin-bottom: 3rem; }
+  .year-label { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+  .year-text {
+    font-size: .75rem; font-weight: 700; letter-spacing: .08em;
+    background: var(--grad-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    text-transform: uppercase; flex-shrink: 0;
+  }
+  .year-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent) 0%, transparent 100%); opacity: .3; }
 
-  .year-group { margin-bottom: 3rem; }
-  .year-hd { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
-  .year-label { font-family: var(--font-sans); font-size: .7rem; color: var(--color-accent); letter-spacing: .12em; font-weight: 500; }
-  .year-line { flex: 1; height: 1px; background: var(--color-border); }
-
-  .post-list { list-style: none; margin: 0; padding: 0; }
+  .post-list { display: flex; flex-direction: column; gap: .75rem; }
 
   .post-row {
     display: flex; align-items: center; gap: 1.25rem;
-    padding: 1.25rem .75rem; border-radius: 6px;
-    border-bottom: 1px solid var(--color-border);
-    text-decoration: none; transition: background .2s;
+    padding: 1.25rem 1.5rem; text-decoration: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    transition: transform .25s cubic-bezier(.25,.46,.45,.94),
+                box-shadow .25s, border-color .25s, background .25s;
+    position: relative; overflow: hidden;
   }
-  .post-row:hover { background: color-mix(in srgb, var(--color-accent) 5%, transparent); }
+  .post-row::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--grad-1); opacity: 0;
+    transition: opacity .25s;
+  }
+  .post-row:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0,113,227,.25);
+  }
+  .post-row:hover::before { opacity: .04; }
 
-  .row-thumb {
-    width: 5.5rem; height: 3.75rem; object-fit: cover;
-    border-radius: 4px; flex-shrink: 0;
-    box-shadow: var(--shadow-sm);
-  }
+  .row-thumb-wrap { flex-shrink: 0; border-radius: var(--radius-sm); overflow: hidden; }
+  .row-thumb { width: 5.5rem; height: 3.75rem; object-fit: cover; transition: transform .4s; }
+  .post-row:hover .row-thumb { transform: scale(1.06); }
 
-  .row-body { flex: 1; min-width: 0; }
-  .row-title {
-    font-family: var(--font-serif); font-size: 1.1rem; font-weight: 500;
-    color: var(--color-ink); margin-bottom: .3rem; transition: color .2s;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .post-row:hover .row-title { color: var(--color-accent); }
-  .row-desc {
-    font-family: var(--font-serif); font-size: .875rem; color: var(--color-muted);
-    line-height: 1.5; margin-bottom: .5rem;
-    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .row-meta { display: flex; gap: .35rem; flex-wrap: wrap; }
-  .row-tag {
-    font-family: var(--font-sans); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    padding: .12rem .4rem; border-radius: 2px;
-  }
+  .row-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+  .row-tags { display: flex; gap: .4rem; margin-bottom: .5rem; }
+  .pill { font-size: .69rem; font-weight: 600; padding: .2rem .6rem; border-radius: 999px; }
+  .row-title { font-size: 1rem; font-weight: 600; color: var(--ink); letter-spacing: -.01em; margin-bottom: .3rem; transition: color .15s; }
+  .post-row:hover .row-title { color: var(--accent); }
+  .row-desc { font-size: .8125rem; color: var(--ink-3); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .row-right {
-    display: flex; flex-direction: column; align-items: flex-end; gap: .3rem;
-    flex-shrink: 0; min-width: 5rem;
-  }
-  .row-date { font-family: var(--font-sans); font-size: .68rem; color: var(--color-muted); white-space: nowrap; }
-  .row-rt { font-family: var(--font-sans); font-size: .62rem; color: color-mix(in srgb, var(--color-muted) 70%, transparent); }
-  .row-arrow { color: var(--color-border); font-size: .9rem; transition: color .2s, transform .2s; }
-  .post-row:hover .row-arrow { color: var(--color-accent); transform: translateX(3px); }
-
-  .empty { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); text-align: center; padding: 4rem 0; }
+  .row-right { display: flex; flex-direction: column; align-items: flex-end; gap: .3rem; flex-shrink: 0; position: relative; z-index: 1; }
+  .row-date { font-size: .75rem; color: var(--ink-4); font-weight: 500; white-space: nowrap; }
+  .row-rt { font-size: .7rem; color: var(--ink-4); }
+  .row-arrow { color: var(--ink-4); transition: transform .2s, color .2s; }
+  .post-row:hover .row-arrow { transform: translateX(4px); color: var(--accent); }
 </style>

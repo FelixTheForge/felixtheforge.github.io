@@ -1,126 +1,239 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageBanner from '../components/PageBanner.astro';
 import { SITE } from '../config/site';
 ---
 <BaseLayout title="About — FelixTheForge">
-  <PageBanner
-    title="About"
-    subtitle="Builder, thinker, occasional writer."
-    image="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1400&q=80"
-    tint="rgba(15,20,30,.58)"
-  />
-  <div class="fade-in about-wrap">
 
-    <!-- Hero -->
-    <div class="about-hero">
-      <img
-        src={SITE.avatar}
-        alt="Felix"
-        class="avatar"
-      />
-      <div class="about-intro">
-        <p class="about-tag">About me</p>
-        <h1 class="about-name">Felix<span class="accent">TheForge</span></h1>
-        <p class="about-bio" id="about-bio-text">{SITE.bioEn}</p>
-        <div class="about-links">
-          <a href="https://github.com/FelixTheForge" target="_blank" rel="noopener" class="alink">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-          </a>
-          <a href="/rss.xml" class="alink">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1" fill="currentColor"/></svg>
-            RSS
-          </a>
+  <!-- ── Atmospheric background ── -->
+  <div class="page-bg-wrap" aria-hidden="true">
+    <div class="page-bg" style={`background-image:url('${SITE.aboutBg}')`}></div>
+    <div class="page-bg-fade"></div>
+  </div>
+
+  <div class="page-wrap">
+
+    <!-- ── Motto ── -->
+    <blockquote class="motto fade-up">
+      <span class="motto-quote-mark">"</span>
+      <p class="motto-text" id="motto-text">{SITE.mottoEn}</p>
+      <p class="motto-source" id="motto-source">{SITE.mottoSourceEn}</p>
+    </blockquote>
+
+    <div class="profile-card card fade-up" style="animation-delay:.1s">
+      <div class="profile-top">
+        <img src={SITE.avatar} alt={SITE.title} class="avatar"/>
+        <div>
+          <h1 class="name">{SITE.title}</h1>
+          <p class="role">{SITE.role}</p>
+          <p class="location">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {SITE.location}
+          </p>
         </div>
       </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- Story -->
-    <div class="prose-blog story">
-      <h2>The longer version</h2>
-      <p>
-        I've been building things on the internet for as long as I can remember. What started as
-        curiosity — how does this website work? — became a practice, then a craft, then a way of thinking.
-      </p>
-      <p>
-        This blog is where I put the things I'm working through. Not polished essays — more like
-        notes from the workshop. Sometimes about code, sometimes about process, sometimes about
-        whatever's been catching my attention.
-      </p>
-      <p>
-        I believe in the value of making things slowly and carefully. In returning to first principles.
-        In writing as a tool for thinking.
-      </p>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- What I'm into -->
-    <div class="interests">
-      <h2 class="interests-title">Currently into</h2>
-      <div class="interests-grid">
-        {[
-          { icon: '⌨️', label: 'TypeScript', desc: 'Type systems as documentation' },
-          { icon: '🌿', label: 'Astro', desc: 'The right tool for content sites' },
-          { icon: '📖', label: 'Long-form reading', desc: 'Books, essays, slow media' },
-          { icon: '🏔️', label: 'Mountains', desc: 'Any chance I get' },
-        ].map(item => (
-          <div class="interest-card">
-            <span class="interest-icon">{item.icon}</span>
-            <div>
-              <div class="interest-label">{item.label}</div>
-              <div class="interest-desc">{item.desc}</div>
-            </div>
-          </div>
-        ))}
+      <p class="bio" id="about-bio">{SITE.bioEn}</p>
+      <div class="social-row">
+        {SITE.social.github && (
+          <a href={SITE.social.github} target="_blank" rel="noopener" class="social-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+        )}
+        <a href="/rss.xml" class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1" fill="currentColor"/></svg>
+          RSS
+        </a>
       </div>
+    </div>
+
+    <div class="content-grid fade-up" style="animation-delay:.15s">
+      <section class="text-section">
+        <h2 class="section-title">The longer version</h2>
+        <div class="prose">
+          <p>I've been building things on the internet for as long as I can remember. What started as curiosity became a practice, then a craft, then a way of thinking.</p>
+          <p>This blog is where I put the things I'm working through. Not polished essays — more like notes from the workshop.</p>
+          <p>I believe in making things slowly and carefully. In returning to first principles. In writing as a tool for thinking.</p>
+        </div>
+      </section>
+
+      <section class="interests-section">
+        <h2 class="section-title">Currently into</h2>
+        <div class="interests">
+          {[
+            {icon:'⌨️', label:'TypeScript', desc:'Types as documentation'},
+            {icon:'🚀', label:'Astro',      desc:'Right tool for content'},
+            {icon:'📖', label:'Long reads', desc:'Books, essays, slow media'},
+            {icon:'🏔️', label:'Mountains',  desc:'Any chance I get'},
+            {icon:'🎵', label:'Music',      desc:'Always in the background'},
+            {icon:'☕', label:'Coffee',     desc:'A necessary constant'},
+          ].map(item => (
+            <div class="interest-item card">
+              <span class="interest-icon">{item.icon}</span>
+              <div>
+                <p class="interest-label">{item.label}</p>
+                <p class="interest-desc">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
 
   </div>
 </BaseLayout>
 
+<script>
+  import { SITE } from '../config/site';
+  function syncBio() {
+    const lang = localStorage.getItem('lang') || 'en';
+    const bio = document.getElementById('about-bio');
+    if (bio) bio.textContent = lang === 'zh' ? SITE.bioZh : SITE.bioEn;
+    const motto = document.getElementById('motto-text');
+    if (motto) motto.textContent = lang === 'zh' ? SITE.mottoZh : SITE.mottoEn;
+    const src = document.getElementById('motto-source');
+    if (src) src.textContent = lang === 'zh' ? SITE.mottoSourceZh : SITE.mottoSourceEn;
+  }
+  syncBio();
+  document.getElementById('lang-btn')?.addEventListener('click', () => setTimeout(syncBio, 0));
+</script>
+
 <style>
-  .about-wrap { max-width: 42rem; margin: 0 auto; padding: 4rem 0 6rem; }
-
-  .about-hero { display: flex; align-items: center; gap: 3rem; margin-bottom: 3rem; }
-  .avatar { width: 7rem; height: 7rem; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 3px solid var(--color-border); }
-  .about-tag { font-family: var(--font-sans); font-size: .65rem; letter-spacing: .25em; text-transform: uppercase; color: var(--color-muted); margin-bottom: .5rem; }
-  .about-name { font-family: var(--font-serif); font-size: 2.25rem; font-weight: 500; margin-bottom: .75rem; }
-  .accent { color: var(--color-accent); }
-  .about-bio { font-family: var(--font-serif); font-size: 1.05rem; color: var(--color-muted); line-height: 1.7; margin-bottom: 1.25rem; }
-  .about-links { display: flex; gap: 1rem; }
-  .alink {
-    display: flex; align-items: center; gap: .4rem;
-    font-family: var(--font-sans); font-size: .75rem; letter-spacing: .08em;
-    color: var(--color-ink); text-decoration: none;
-    border: 1px solid var(--color-border); padding: .4rem .9rem; border-radius: 2px;
-    transition: border-color .2s, color .2s;
+  /* ── Atmospheric background ── */
+  .page-bg-wrap {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 60vh;
+    z-index: 0; pointer-events: none;
+    overflow: hidden;
   }
-  .alink:hover { border-color: var(--color-accent); color: var(--color-accent); }
-
-  .divider { height: 1px; background: var(--color-border); margin: 3rem 0; }
-
-  .story h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; margin-bottom: 1.25rem; }
-
-  .interests-title { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; margin-bottom: 1.5rem; }
-  .interests-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .interest-card {
-    display: flex; align-items: flex-start; gap: .9rem;
-    padding: 1.25rem; border: 1px solid var(--color-border); border-radius: 4px;
-    background: color-mix(in srgb, var(--color-parchment) 50%, white);
-    transition: border-color .2s, transform .2s;
+  .page-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    filter: saturate(.9);
+    animation: bgDrift 30s ease-in-out infinite alternate;
   }
-  .interest-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
-  .interest-icon { font-size: 1.5rem; }
-  .interest-label { font-family: var(--font-sans); font-size: .8rem; font-weight: 500; color: var(--color-ink); letter-spacing: .05em; margin-bottom: .2rem; }
-  .interest-desc { font-family: var(--font-serif); font-size: .875rem; color: var(--color-muted); font-style: italic; }
+  @keyframes bgDrift {
+    from { transform: scale(1.02) translateY(0); }
+    to   { transform: scale(1.08) translateY(-2%); }
+  }
+  .page-bg-fade {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg,
+        rgba(240,242,248,.5) 0%,
+        rgba(240,242,248,.75) 50%,
+        var(--bg) 100%);
+  }
+  [data-theme="dark"] .page-bg-fade {
+    background:
+      linear-gradient(180deg,
+        rgba(9,9,15,.55) 0%,
+        rgba(9,9,15,.8) 50%,
+        var(--bg) 100%);
+  }
+  [data-theme="dark"] .page-bg { filter: brightness(.55) saturate(.85); }
 
-  @media (max-width: 500px) {
-    .about-hero { flex-direction: column; text-align: center; }
-    .about-links { justify-content: center; }
-    .interests-grid { grid-template-columns: 1fr; }
+  .page-wrap {
+    position: relative; z-index: 1;
+    max-width: 56rem; margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  /* ── Motto ── */
+  .motto {
+    position: relative;
+    text-align: center;
+    padding: 2.5rem 1.5rem 2rem;
+    margin: 0 0 2.5rem;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg,
+      rgba(0,113,227,.06) 0%,
+      rgba(191,90,242,.06) 50%,
+      rgba(255,159,10,.05) 100%);
+    border: 1px solid rgba(0,113,227,.1);
+  }
+  .motto::before, .motto::after {
+    content: '';
+    position: absolute; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: .5;
+  }
+  .motto::before { top: .75rem; }
+  .motto::after  { bottom: .75rem; }
+
+  .motto-quote-mark {
+    position: absolute; top: -.5rem; left: 1.5rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 6rem; line-height: 1;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent-4));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: .25;
+    pointer-events: none;
+  }
+
+  .motto-text {
+    font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+    line-height: 1.85;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: .02em;
+    white-space: pre-line;
+    font-family: 'Georgia', 'Songti SC', 'STSong', serif;
+    font-style: italic;
+  }
+  /* When lang is Chinese, swap to a serif Chinese stack and lose italic */
+  html[data-lang="zh"] .motto-text {
+    font-family: 'STKaiti', 'KaiTi', 'Songti SC', 'STSong', 'SimSun', serif;
+    font-style: normal;
+    letter-spacing: .15em;
+  }
+
+  .motto-source {
+    margin-top: 1rem;
+    font-size: .8125rem;
+    color: var(--ink-3);
+    letter-spacing: .05em;
+    font-style: italic;
+  }
+  html[data-lang="zh"] .motto-source {
+    font-family: 'STKaiti', 'KaiTi', 'Songti SC', serif;
+    font-style: normal;
+  }
+
+  .profile-card { padding: 2.5rem; margin-bottom: 2rem; border-radius: var(--radius-xl); }
+  .profile-top { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.25rem; }
+  .avatar { width: 6rem; height: 6rem; border-radius: 50%; object-fit: cover; border: 3px solid var(--border); box-shadow: var(--shadow-md); flex-shrink: 0; }
+  .name { font-size: 1.5rem; font-weight: 700; letter-spacing: -.025em; color: var(--ink); margin-bottom: .25rem; }
+  .role { font-size: .9375rem; font-weight: 500; color: var(--accent); margin-bottom: .375rem; }
+  .location { display: flex; align-items: center; gap: .375rem; font-size: .8125rem; color: var(--ink-3); }
+  .bio { font-size: 1rem; color: var(--ink-2); line-height: 1.7; margin-bottom: 1.5rem; }
+  .social-row { display: flex; gap: .75rem; }
+  .social-btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .875rem; font-weight: 500; color: var(--ink-2); text-decoration: none;
+    background: var(--bg); border: 1px solid var(--border); padding: .5rem 1rem;
+    border-radius: var(--radius-md); transition: background .15s, border-color .15s;
+  }
+  .social-btn:hover { background: var(--bg-elevated); border-color: var(--accent); color: var(--accent); }
+
+  .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .text-section, .interests-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-sm); }
+  .section-title { font-size: 1.125rem; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: 1.25rem; }
+
+  .interests { display: flex; flex-direction: column; gap: .625rem; }
+  .interest-item { display: flex; align-items: center; gap: .875rem; padding: .875rem 1rem; border-radius: var(--radius-md); }
+  .interest-icon { font-size: 1.375rem; flex-shrink: 0; }
+  .interest-label { font-size: .9rem; font-weight: 600; color: var(--ink); margin-bottom: .1rem; }
+  .interest-desc { font-size: .78rem; color: var(--ink-3); }
+
+  @media (max-width: 640px) {
+    .profile-top { flex-direction: column; text-align: center; }
+    .social-row { justify-content: center; }
+    .content-grid { grid-template-columns: 1fr; }
   }
 </style>

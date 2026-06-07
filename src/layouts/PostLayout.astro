@@ -1,159 +1,251 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import { readingTime } from '../utils/readingTime';
+import { SITE } from '../config/site';
 
 interface Props {
-  title: string;
-  date: string;
-  description?: string;
-  tags?: string[];
-  cover?: string;
-  body?: string;
+  title: string; date: string; description?: string;
+  tags?: string[]; cover?: string; body?: string;
 }
-
-const { title, date, description, tags = [], cover, body = '' } = Astro.props;
-
-const formatted = new Date(date).toLocaleDateString('en-US', {
-  year: 'numeric', month: 'long', day: 'numeric',
-});
+const { title, date, description, tags=[], cover, body='' } = Astro.props;
 const rt = readingTime(body);
+const formatted = new Date(date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 ---
 
 <BaseLayout title={title} description={description}>
-  <!-- Reading progress bar -->
-  <div id="progress-bar" class="progress-bar"></div>
+  <div id="reading-bar"></div>
 
-  <article class="fade-in post-article">
+  <article class="post-article">
     {cover && (
-      <div class="post-cover">
-        <img src={cover} alt={title} class="post-cover-img" />
-        <div class="post-cover-overlay"></div>
+      <div class="post-hero">
+        <img src={cover} alt={title} class="post-hero-img"/>
+        <div class="post-hero-fade"></div>
       </div>
     )}
 
-    <div class="post-container">
-      <header class="post-header">
-        <div class="post-meta-row">
-          <time datetime={date}>{formatted}</time>
-          <span>·</span>
-          <span>{rt}</span>
-          {tags.length > 0 && (
-            <>
-              <span>·</span>
-              <div class="meta-tags">
-                {tags.map(t => (
-                  <a href={`/tags/${t}`} class="meta-tag">{t}</a>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-        <h1 class="post-title">{title}</h1>
-        {description && <p class="post-desc">{description}</p>}
-      </header>
+    <div class="post-layout">
 
-      <div class="post-divider"></div>
-
-      <div class="prose-blog">
-        <slot />
-      </div>
-
-      <footer class="post-footer">
-        {tags.length > 0 && (
-          <div class="footer-tags">
-            {tags.map(t => (
-              <a href={`/tags/${t}`} class="footer-tag">{t}</a>
-            ))}
+      <!-- ── Mini sidebar (desktop only) ── -->
+      <aside class="post-sidebar">
+        <div class="sidebar-inner">
+          <img src={SITE.avatar} alt={SITE.title} class="sb-avatar"/>
+          <p class="sb-label">Written by</p>
+          <p class="sb-name">{SITE.title}</p>
+          <p class="sb-role">{SITE.role}</p>
+          <div class="sb-divider"></div>
+          <div class="sb-meta">
+            <p class="sb-date">{formatted}</p>
+            <p class="sb-rt">{rt}</p>
           </div>
-        )}
-        <a href="/blog" class="back-link">← All writings</a>
-      </footer>
+          <div class="sb-divider"></div>
+          <div class="sb-actions">
+            {SITE.social.github && (
+              <a href={SITE.social.github} target="_blank" rel="noopener" class="sb-btn" title="GitHub">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+            )}
+            <button id="copy-link-btn" class="sb-btn" title="Copy link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <a href="/blog" class="sb-btn" title="All posts">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <div class="post-container">
+        <header class="post-header fade-up">
+          <div class="post-tags">
+            {tags.map(t => <a href={`/tags/${t}`} class="pill">{t}</a>)}
+          </div>
+          <h1 class="post-title">{title}</h1>
+          {description && <p class="post-desc">{description}</p>}
+          <div class="post-meta">
+            <time>{formatted}</time>
+            <span class="meta-dot">·</span>
+            <span>{rt}</span>
+          </div>
+        </header>
+
+        <div class="post-divider"></div>
+
+        <div class="prose fade-up" style="animation-delay:.1s">
+          <slot />
+        </div>
+
+        <footer class="post-footer">
+          <div class="footer-tags">
+            {tags.map(t => <a href={`/tags/${t}`} class="pill">{t}</a>)}
+          </div>
+          <a href="/blog" class="back-btn">← All posts</a>
+        </footer>
+      </div>
     </div>
   </article>
 </BaseLayout>
 
 <script>
-  const bar = document.getElementById('progress-bar')!;
-  const article = document.querySelector('.post-article') as HTMLElement;
-
+  const bar = document.getElementById('reading-bar')!;
   window.addEventListener('scroll', () => {
-    const scrollTop = window.scrollY;
-    const docHeight = article.offsetHeight - window.innerHeight;
-    const pct = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
-    bar.style.width = pct + '%';
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  });
+
+  // Copy link button
+  const copyBtn = document.getElementById('copy-link-btn');
+  copyBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      copyBtn.classList.add('copied');
+      setTimeout(() => copyBtn.classList.remove('copied'), 1500);
+    } catch {}
   });
 </script>
 
 <style>
-  .progress-bar {
-    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-    background: var(--color-accent); z-index: 100;
+  #reading-bar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0;
+    background: var(--grad-1); z-index: 200; border-radius: 0 2px 2px 0;
     transition: width .1s linear;
   }
 
-  .post-article { padding-bottom: 5rem; }
+  .post-article { padding-bottom: 6rem; }
 
-  .post-cover {
-    position: relative; width: 100%; height: 55vh; min-height: 320px;
-    overflow: hidden; margin: 0 -1.5rem;
+  .post-hero {
+    position: relative; width: 100%; height: 50vh; min-height: 300px;
+    overflow: hidden;
   }
-  .post-cover-img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-  .post-cover-overlay {
+  .post-hero-img { width: 100%; height: 100%; object-fit: cover; }
+  .post-hero-fade {
     position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(248,245,240,.95) 100%);
+    background: linear-gradient(to bottom, transparent 30%, var(--bg) 100%);
   }
 
-  .post-container { max-width: 42rem; margin: 0 auto; padding: 0 1.5rem; }
-
-  .post-header { padding: 3rem 0 2rem; text-align: center; }
-
-  .post-meta-row {
-    display: flex; align-items: center; justify-content: center;
-    gap: .5rem; flex-wrap: wrap;
-    font-family: var(--font-sans); font-size: .72rem;
-    color: var(--color-muted); letter-spacing: .04em; margin-bottom: 1.25rem;
+  /* ── Layout: sidebar + content ── */
+  .post-layout {
+    max-width: 72rem; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 14rem 1fr;
+    gap: 2rem;
+    padding: 0 1.5rem;
   }
-  .meta-tags { display: flex; gap: .35rem; }
-  .meta-tag {
-    color: var(--color-accent); text-decoration: none;
-    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    padding: .15rem .45rem; border-radius: 2px;
-    font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
-    transition: background .2s;
+  .post-container { max-width: 46rem; padding: 0; }
+
+  /* ── Sidebar ── */
+  .post-sidebar {
+    padding-top: 4rem;
   }
-  .meta-tag:hover { background: color-mix(in srgb, var(--color-accent) 20%, transparent); }
+  .sidebar-inner {
+    position: sticky; top: 96px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    padding: 1.5rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.04),
+      0 4px 12px rgba(0,0,0,.05),
+      inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  [data-theme="dark"] .sidebar-inner {
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.4),
+      0 4px 12px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+
+  .sb-avatar {
+    width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--bg-card);
+    box-shadow: 0 0 0 2px var(--accent), 0 6px 16px rgba(0,113,227,.25);
+    margin-bottom: .875rem;
+  }
+  .sb-label {
+    font-size: .65rem; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-4);
+    margin-bottom: .15rem;
+  }
+  .sb-name {
+    font-size: .9375rem; font-weight: 700;
+    color: var(--ink); letter-spacing: -.01em;
+    margin-bottom: .15rem;
+  }
+  .sb-role {
+    font-size: .7rem; font-weight: 500; color: var(--accent);
+  }
+
+  .sb-divider {
+    width: 32px; height: 1px;
+    background: var(--border);
+    margin: 1rem 0;
+  }
+
+  .sb-meta { display: flex; flex-direction: column; gap: .15rem; }
+  .sb-date { font-size: .7rem; color: var(--ink-2); font-weight: 500; }
+  .sb-rt   { font-size: .65rem; color: var(--ink-4); }
+
+  .sb-actions {
+    display: flex; gap: .375rem; align-items: center;
+  }
+  .sb-btn {
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink-3);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .sb-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,113,227,.3);
+  }
+  .sb-btn.copied {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: #fff;
+  }
+
+  @media (max-width: 900px) {
+    .post-layout { grid-template-columns: 1fr; max-width: 46rem; }
+    .post-sidebar { display: none; }
+  }
+
+  .post-header { padding: 3rem 0 2rem; }
+  .post-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
 
   .post-title {
-    font-family: var(--font-serif); font-size: clamp(1.875rem, 4vw, 2.75rem);
-    font-weight: 500; line-height: 1.25; color: var(--color-ink); margin-bottom: .75rem;
+    font-size: clamp(1.875rem,4vw,2.75rem); font-weight: 700;
+    color: var(--ink); letter-spacing: -.03em; line-height: 1.2; margin-bottom: 1rem;
   }
   .post-desc {
-    font-family: var(--font-serif); font-size: 1.125rem; font-style: italic;
-    color: var(--color-muted);
+    font-size: 1.125rem; color: var(--ink-3); line-height: 1.65; margin-bottom: 1.25rem;
   }
+  .post-meta {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .875rem; color: var(--ink-4); font-weight: 500;
+  }
+  .meta-dot { color: var(--ink-4); }
 
   .post-divider {
-    height: 1px; background: var(--color-border); margin-bottom: 3rem;
+    height: 1px; background: var(--border); margin-bottom: 2.5rem;
   }
 
   .post-footer {
-    margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--color-border);
+    margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
   }
   .footer-tags { display: flex; gap: .5rem; flex-wrap: wrap; }
-  .footer-tag {
-    font-family: var(--font-sans); font-size: .65rem; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--color-accent); text-decoration: none;
-    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-    padding: .25rem .65rem; border-radius: 999px; transition: background .2s;
+  .back-btn {
+    font-size: .875rem; font-weight: 500; color: var(--accent);
+    text-decoration: none; transition: opacity .2s;
   }
-  .footer-tag:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-  .back-link {
-    font-family: var(--font-sans); font-size: .75rem; color: var(--color-muted);
-    text-decoration: none; letter-spacing: .1em; text-transform: uppercase;
-    transition: color .2s;
-  }
-  .back-link:hover { color: var(--color-ink); }
+  .back-btn:hover { opacity: .7; }
 </style>

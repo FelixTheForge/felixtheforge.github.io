@@ -1,50 +1,87 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageBanner from '../../components/PageBanner.astro';
 import { getCollection } from 'astro:content';
-
 const posts = await getCollection('blog');
-const tagMap = new Map<string, number>();
-posts.forEach(p => p.data.tags?.forEach(t => tagMap.set(t, (tagMap.get(t) ?? 0) + 1)));
-const tags = [...tagMap.entries()].sort((a,b) => b[1]-a[1]);
----
+const tagMap = new Map<string,number>();
+posts.forEach(p => p.data.tags?.forEach(t => tagMap.set(t,(tagMap.get(t)??0)+1)));
+const tags = [...tagMap.entries()].sort((a,b)=>b[1]-a[1]);
 
+// Color palette cycling
+const colors = [
+  { bg:'rgba(0,113,227,.1)',   border:'rgba(0,113,227,.25)',   text:'#0071e3' },
+  { bg:'rgba(191,90,242,.1)',  border:'rgba(191,90,242,.25)',  text:'#bf5af2' },
+  { bg:'rgba(48,209,88,.1)',   border:'rgba(48,209,88,.25)',   text:'#1d9e44' },
+  { bg:'rgba(255,159,10,.1)',  border:'rgba(255,159,10,.25)',  text:'#c47700' },
+  { bg:'rgba(255,55,95,.1)',   border:'rgba(255,55,95,.25)',   text:'#ff375f' },
+  { bg:'rgba(94,92,230,.1)',   border:'rgba(94,92,230,.25)',   text:'#5e5ce6' },
+  { bg:'rgba(0,199,190,.1)',   border:'rgba(0,199,190,.25)',   text:'#00a89b' },
+];
+---
 <BaseLayout title="Tags — FelixTheForge">
-  <PageBanner
-    title="Tags"
-    subtitle="Browse by topic."
-    image="https://images.unsplash.com/photo-1476900543704-4312b429f7e3?w=1400&q=80"
-    tint="rgba(20,15,10,.55)"
-  />
-  <div class="fade-in page-wrap">
-    <h1 class="page-title">Tags</h1>
-    <p class="page-sub">{tags.length} topics explored so far.</p>
-    <div class="tags-cloud">
-      {tags.map(([tag, count]) => (
-        <a href={`/tags/${tag}`} class="cloud-tag">
-          {tag}
-          <span class="cloud-count">{count}</span>
-        </a>
-      ))}
+  <div class="page-wrap">
+    <header class="page-header fade-up">
+      <h1 class="page-title grad-text" data-i18n="nav.tags">Tags</h1>
+      <p class="page-sub">{tags.length} topics</p>
+    </header>
+
+    <div class="tags-grid fade-up">
+      {tags.map(([tag, count], i) => {
+        const c = colors[i % colors.length];
+        return (
+          <a href={`/tags/${tag}`} class="tag-card"
+            style={`--tc-bg:${c.bg};--tc-border:${c.border};--tc-text:${c.text}`}>
+            <span class="tag-icon">#</span>
+            <span class="tag-name">{tag}</span>
+            <span class="tag-count">{count}</span>
+          </a>
+        );
+      })}
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .page-wrap { max-width: 42rem; margin: 0 auto; padding: 4rem 0; }
-  .page-title { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 500; margin-bottom: .5rem; }
-  .page-sub { font-family: var(--font-serif); font-style: italic; color: var(--color-muted); margin-bottom: 3rem; }
-  .tags-cloud { display: flex; flex-wrap: wrap; gap: .75rem; }
-  .cloud-tag {
-    display: flex; align-items: center; gap: .4rem;
-    font-family: var(--font-sans); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--color-ink); text-decoration: none;
-    border: 1px solid var(--color-border); padding: .5rem 1rem; border-radius: 2px;
-    transition: border-color .2s, color .2s, background .2s;
+  .page-wrap { max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  .page-header { margin-bottom: 3rem; }
+  .page-title { font-size: clamp(2.5rem,5vw,3.5rem); font-weight: 800; letter-spacing: -.04em; margin-bottom: .5rem; }
+  .page-sub { font-size: .9375rem; color: var(--ink-3); }
+
+  .tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 1rem;
   }
-  .cloud-tag:hover { border-color: var(--color-accent); color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 5%, transparent); }
-  .cloud-count {
-    font-size: .65rem; color: var(--color-muted);
-    background: var(--color-border); padding: .1rem .35rem; border-radius: 999px;
+
+  .tag-card {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: .4rem; padding: 1.25rem 1.25rem 1rem;
+    background: var(--tc-bg);
+    border: 1px solid var(--tc-border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: transform .2s cubic-bezier(.25,.46,.45,.94),
+                box-shadow .2s, filter .2s;
   }
+  .tag-card:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(0,0,0,.12);
+    filter: brightness(1.05);
+  }
+
+  .tag-icon {
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--tc-text); line-height: 1;
+  }
+  .tag-name {
+    font-size: .9375rem; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em;
+  }
+  .tag-count {
+    font-size: .72rem; font-weight: 600;
+    color: var(--tc-text);
+    background: rgba(255,255,255,.6);
+    padding: .15rem .5rem; border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  [data-theme="dark"] .tag-count { background: rgba(0,0,0,.3); }
 </style>

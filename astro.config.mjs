@@ -3,7 +3,5 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://felixtheforge.github.io',
-  vite: {
-    plugins: [tailwindcss()],
-  },
+  vite: { plugins: [tailwindcss()] },
 });
