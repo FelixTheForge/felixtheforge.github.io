@@ -367,43 +367,36 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
       };
     }
 
-    // ── Mode C: Bilibili Player (no JS API — use src toggle) ──
+    // ── Mode C: Bilibili Player (no autoplay for guests; show real player) ──
     const biliHost = document.getElementById('bili-player-host');
     if (biliHost) {
       const BVID = (document.querySelector('meta[name="bili-bvid"]') as HTMLMetaElement)?.content || '';
-      const biliSrc = `https://player.bilibili.com/player.html?bvid=${BVID}&autoplay=1&danmaku=0&high_quality=1&page=1&as_wide=1&hideCoverInfo=1&muted=0`;
+      const biliSrc = `https://player.bilibili.com/player.html?bvid=${BVID}&autoplay=1&danmaku=0&high_quality=1&page=1&as_wide=1&hideCoverInfo=1`;
 
-      // Build a real iframe element we can swap src on
       const iframe = document.createElement('iframe');
       iframe.id = 'bili-player-iframe';
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('scrolling', 'no');
       iframe.setAttribute('allowfullscreen', 'true');
-      iframe.setAttribute('allow', 'autoplay; encrypted-media');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
       iframe.setAttribute('referrerpolicy', 'no-referrer');
-      iframe.src = '';                                 // empty → silent until user clicks play
+      iframe.src = '';
       biliHost.appendChild(iframe);
 
+      // Our button is now a panel-open/close toggle.
+      // The actual play/pause happens inside the Bilibili player itself.
       ctrl.play = () => {
-        iframe.src = biliSrc + '&_=' + Date.now();    // cache-bust so reload restarts cleanly
+        if (!iframe.src) iframe.src = biliSrc + '&_=' + Date.now();
+        document.body.classList.add('bili-open');
         onPlay();
       };
       ctrl.pause = () => {
-        iframe.src = '';                              // empty src → stops audio
+        iframe.src = '';                              // stop audio
+        document.body.classList.remove('bili-open');
         onPause();
       };
-      ctrl.getTime = () => 0;                          // no API to read position
+      ctrl.getTime = () => 0;
       ctrl.setTime = () => {};
-
-      // Auto-resume if user was previously playing — wait for first interaction
-      const wasPlaying = localStorage.getItem(MUSIC_KEY) === 'playing';
-      if (wasPlaying) {
-        const resume = () => {
-          ctrl.play();
-          ['click','keydown','touchstart'].forEach(e => removeEventListener(e, resume));
-        };
-        ['click','keydown','touchstart'].forEach(e => addEventListener(e, resume, { once: true }));
-      }
     }
 
     // Button click — works for both modes
@@ -751,18 +744,41 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     pointer-events: none;
   }
 
-  /* Hidden Bilibili iframe host — off-screen but real size so mobile browsers
-     don't suspend audio. iframe inside gets sized via these wrapper rules. */
+  /* Bilibili player — visible 240×135 widget that slides up above the
+     music pill when the user opens it (B站 won't autoplay for guests
+     so the user has to click play inside the actual player). */
   #bili-player-host {
     position: fixed;
-    left: -9999px; top: -9999px;
-    width: 320px; height: 180px;
-    pointer-events: none;
+    right: 20px; bottom: 68px;
+    width: 240px; height: 135px;
+    border-radius: 12px;
     overflow: hidden;
+    background: #000;
+    box-shadow:
+      0 4px 12px rgba(0,0,0,.15),
+      0 16px 40px rgba(0,0,0,.25);
+    transform: translateY(16px) scale(.92);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .25s cubic-bezier(.25,.46,.45,.94),
+                opacity .2s;
+    z-index: 89;
+  }
+  body.bili-open #bili-player-host {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
   }
   #bili-player-iframe {
     width: 100%; height: 100%;
     border: none;
+    display: block;
+  }
+  @media (max-width: 480px) {
+    #bili-player-host {
+      right: 12px; bottom: 58px;
+      width: 200px; height: 113px;
+    }
   }
 
   /* ── Music player — minimal collapsed pill, expands on hover/play ── */
