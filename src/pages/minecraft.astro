@@ -40,12 +40,15 @@ import { MINECRAFT } from '../config/site';
 
         <!-- Highlights — community at a glance -->
         <div class="mc-highlights">
-          {MINECRAFT.highlights.map(h => (
-            <div class="mc-hl">
-              <span class="mc-hl-value">{h.value}</span>
-              <span class="mc-hl-label" data-zh={h.labelZh}>{h.label}</span>
-            </div>
-          ))}
+          {MINECRAFT.highlights.map(h => {
+            const isOnline = h.label === 'Online';
+            return (
+              <div class="mc-hl">
+                <span class="mc-hl-value" data-mc-online={isOnline ? 'true' : undefined}>{h.value}</span>
+                <span class="mc-hl-label" data-zh={h.labelZh}>{h.label}</span>
+              </div>
+            );
+          })}
         </div>
 
         <!-- Join card (QQ group + QR) -->
@@ -250,6 +253,34 @@ import { MINECRAFT } from '../config/site';
       setTimeout(() => { if (label) label.textContent = original; }, 1400);
     } catch {}
   });
+</script>
+
+<!-- Live server status (uses public mcsrvstat.us API; runs only on this page) -->
+<script is:inline define:vars={{ serverAddress: MINECRAFT.serverAddress }}>
+  (function () {
+    if (!serverAddress || serverAddress === 'EXAMPLE') return;
+    function update() {
+      var el = document.querySelector('[data-mc-online]');
+      if (!el) return;
+      fetch('https://api.mcsrvstat.us/3/' + encodeURIComponent(serverAddress), { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data && data.online) {
+            var cur = (data.players && data.players.online) || 0;
+            var max = (data.players && data.players.max) || 0;
+            el.textContent = max > 0 ? (cur + '/' + max) : String(cur);
+            el.style.color = '';
+          } else {
+            el.textContent = 'Offline';
+            el.style.color = '#ff7a98';
+          }
+        })
+        .catch(function () { /* keep last value */ });
+    }
+    update();
+    setInterval(update, 60000);
+    document.addEventListener('astro:after-swap', update);
+  })();
 </script>
 
 <style>

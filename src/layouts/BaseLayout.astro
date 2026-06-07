@@ -6,9 +6,28 @@ import { ClientRouter } from 'astro:transitions';
 interface Props {
   title: string;
   description?: string;
-  transparentNav?: boolean;  // for hero pages
+  transparentNav?: boolean;       // for hero pages
+  ogImage?: string;                // override for social card image (otherwise SITE.heroBg)
+  ogType?: 'website' | 'article';  // og:type — 'article' for posts
+  publishedTime?: string;          // ISO date — only for og:type=article
+  tags?: string[];                 // article tags for og
 }
-const { title, description = `${SITE.title} — personal writings`, transparentNav = false } = Astro.props;
+const {
+  title,
+  description = `${SITE.title} — personal writings`,
+  transparentNav = false,
+  ogImage,
+  ogType = 'website',
+  publishedTime,
+  tags = [],
+} = Astro.props;
+
+// Absolute URLs are required by Open Graph
+const baseUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonical = baseUrl + Astro.url.pathname;
+const socialImage = ogImage
+  ? (ogImage.startsWith('http') ? ogImage : baseUrl + ogImage)
+  : SITE.heroBg;
 ---
 
 <!doctype html>
@@ -20,6 +39,34 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
   <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml"/>
+  <link rel="canonical" href={canonical}/>
+
+  {/* ── Open Graph ── */}
+  <meta property="og:type"        content={ogType}/>
+  <meta property="og:title"       content={title}/>
+  <meta property="og:description" content={description}/>
+  <meta property="og:url"         content={canonical}/>
+  <meta property="og:site_name"   content={SITE.title}/>
+  <meta property="og:image"       content={socialImage}/>
+  <meta property="og:image:width"  content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:locale"      content="en_US"/>
+  <meta property="og:locale:alternate" content="zh_CN"/>
+  {ogType === 'article' && publishedTime && (
+    <meta property="article:published_time" content={publishedTime}/>
+  )}
+  {ogType === 'article' && (
+    <meta property="article:author" content={SITE.title}/>
+  )}
+  {ogType === 'article' && tags.map(t => (
+    <meta property="article:tag" content={t}/>
+  ))}
+
+  {/* ── Twitter Card ── */}
+  <meta name="twitter:card"        content="summary_large_image"/>
+  <meta name="twitter:title"       content={title}/>
+  <meta name="twitter:description" content={description}/>
+  <meta name="twitter:image"       content={socialImage}/>
   {SITE.music?.enabled && SITE.music.source === 'youtube' && (
     <meta name="yt-video-id" content={SITE.music.youtubeId}/>
   )}

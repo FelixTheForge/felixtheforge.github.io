@@ -85,6 +85,10 @@ export const MINECRAFT = {
   mcVersion:   'MC 1.21.x',
   qqGroup:     '123456789',                          // 你的 QQ 群号
   qrCode:      '/minecraft/qq-group-qr.png',
+  // 🟢 服务器地址 — 留空 / 'EXAMPLE' 时显示占位静态数据
+  // 填上后会通过 mcsrvstat.us API 实时查询在线人数（每 60 秒刷新一次）
+  // 示例：'mc.hypixel.net' 或 'play.myserver.com:25566'
+  serverAddress: 'EXAMPLE',
   // -md (1280w ~100KB) for hero / section backgrounds — full quality kept as fallback download
   bannerImg:   '/minecraft/banner-md.jpg',
   sceneCherry: '/minecraft/scene-cherry-md.jpg',

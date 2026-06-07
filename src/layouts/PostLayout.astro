@@ -19,8 +19,41 @@ const tocItems = headings.filter(h => h.depth === 2 || h.depth === 3);
 const showToc = tocItems.length >= 3;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description || `${title} — ${SITE.title}`}
+  ogImage={cover}
+  ogType="article"
+  publishedTime={new Date(date).toISOString()}
+  tags={tags}
+>
   <div id="reading-bar"></div>
+
+  {/* JSON-LD structured data for rich search results */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description: description,
+    image: cover ? (cover.startsWith('http') ? cover : (Astro.site?.toString().replace(/\/$/, '') ?? '') + cover) : undefined,
+    datePublished: new Date(date).toISOString(),
+    dateModified: new Date(date).toISOString(),
+    author: {
+      '@type': 'Person',
+      name: SITE.title,
+      url: SITE.url,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: SITE.title,
+      url: SITE.url,
+    },
+    keywords: tags.join(', '),
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': (Astro.site?.toString().replace(/\/$/, '') ?? '') + Astro.url.pathname,
+    },
+  })}/>
 
   <article class="post-article">
     {cover && (
