@@ -629,6 +629,7 @@ const socialImage = ogImage
     border-radius: 999px;
     transition: color .15s, background .15s;
     letter-spacing: -.005em;
+    white-space: nowrap;             /* never split a label like 我的世界 char by char */
   }
   .nav-item:hover { color: var(--ink); background: rgba(0,0,0,0.04); }
   [data-theme="dark"] .nav-item:hover { background: rgba(255,255,255,0.06); }
@@ -701,8 +702,8 @@ const socialImage = ogImage
   .nav-burger.open span:nth-child(2) { opacity: 0; }
   .nav-burger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  /* ────────────────  Mobile (< 768px) ──────────────── */
-  @media (max-width: 768px) {
+  /* ────────────────  Narrow / zoomed (< 920px) ──────────────── */
+  @media (max-width: 920px) {
     /* Stretch the pill to nearly full screen width so contents don't cram */
     .navbar {
       left: 12px; right: 12px;
