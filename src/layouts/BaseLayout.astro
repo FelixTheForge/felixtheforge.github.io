@@ -598,12 +598,27 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
 
   /* ────────────────  Mobile (< 768px) ──────────────── */
   @media (max-width: 768px) {
+    /* Stretch the pill to nearly full screen width so contents don't cram */
+    .navbar {
+      left: 12px; right: 12px;
+      transform: none;            /* drop the centering translate */
+      width: auto;
+    }
     .nav-inner {
+      width: 100%;
       gap: 0;
       padding: 0 .5rem 0 1rem;
       justify-content: space-between;
     }
-    .nav-logo { flex: 1; min-width: 0; }
+    .nav-logo {
+      flex: 1; min-width: 0;
+      gap: .35rem;
+    }
+    .logo-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .nav-burger { display: flex; flex-shrink: 0; margin-left: 4px; }
 
     /* Mobile: hide GitHub icon, keep lang & theme essential */

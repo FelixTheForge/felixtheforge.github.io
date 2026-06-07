@@ -39,12 +39,47 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
 
       <div class="hero-cta fade-up" style="animation-delay:.3s">
         <a href="/blog" class="btn-primary" data-i18n-custom="cta-blog">Read Writing</a>
+        <a href="/minecraft" class="btn-mc">
+          <span class="btn-mc-dot"></span>
+          <span data-i18n-custom="cta-mc">Minecraft Server</span>
+        </a>
         <a href="/about" class="btn-outline" data-i18n-custom="cta-about">About Me</a>
       </div>
     </div>
 
     <div class="hero-scroll-hint">
       <div class="scroll-dot"></div>
+    </div>
+  </section>
+
+  <!-- ── Minecraft community teaser (right after hero, high-impact) ── -->
+  <section class="mc-teaser-section">
+    <div class="container">
+      <a href="/minecraft" class="mc-teaser">
+        <div class="mc-teaser-bg" style="background-image:url('/minecraft/banner-md.jpg')"></div>
+        <div class="mc-teaser-overlay"></div>
+        <div class="mc-teaser-deco" aria-hidden="true">
+          <span class="mc-deco mc-deco-1">⛏</span>
+          <span class="mc-deco mc-deco-2">💎</span>
+          <span class="mc-deco mc-deco-3">🟩</span>
+        </div>
+        <div class="mc-teaser-content">
+          <span class="mc-teaser-badge">
+            <span class="mc-teaser-dot"></span>
+            <span data-i18n-custom="mc-teaser-live">LIVE · MC 1.21.x</span>
+          </span>
+          <h2 class="mc-teaser-title">
+            <span class="mc-teaser-title-main">ForgeCraft</span>
+            <span class="mc-teaser-title-sub" data-i18n-custom="mc-teaser-tag">A Minecraft community for builders.</span>
+          </h2>
+          <div class="mc-teaser-meta">
+            <span class="mc-teaser-stat"><strong>300+</strong> <em data-i18n-custom="mc-teaser-members">members</em></span>
+            <span class="mc-teaser-stat"><strong>2yr+</strong> <em data-i18n-custom="mc-teaser-active">active</em></span>
+            <span class="mc-teaser-stat"><strong>24/7</strong> <em data-i18n-custom="mc-teaser-online">online</em></span>
+          </div>
+          <span class="mc-teaser-cta" data-i18n-custom="mc-teaser-cta">Enter the server →</span>
+        </div>
+      </a>
     </div>
   </section>
 
@@ -125,37 +160,6 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
     </section>
   )}
 
-  <!-- ── Minecraft community teaser ── -->
-  <section class="mc-teaser-section">
-    <div class="container">
-      <a href="/minecraft" class="mc-teaser">
-        <div class="mc-teaser-bg" style="background-image:url('/minecraft/banner-md.jpg')"></div>
-        <div class="mc-teaser-overlay"></div>
-        <div class="mc-teaser-deco" aria-hidden="true">
-          <span class="mc-deco mc-deco-1">⛏</span>
-          <span class="mc-deco mc-deco-2">💎</span>
-          <span class="mc-deco mc-deco-3">🟩</span>
-        </div>
-        <div class="mc-teaser-content">
-          <span class="mc-teaser-badge">
-            <span class="mc-teaser-dot"></span>
-            <span data-i18n-custom="mc-teaser-live">LIVE · MC 1.21.x</span>
-          </span>
-          <h2 class="mc-teaser-title">
-            <span class="mc-teaser-title-main">ForgeCraft</span>
-            <span class="mc-teaser-title-sub" data-i18n-custom="mc-teaser-tag">A Minecraft community for builders.</span>
-          </h2>
-          <div class="mc-teaser-meta">
-            <span class="mc-teaser-stat"><strong>300+</strong> <em data-i18n-custom="mc-teaser-members">members</em></span>
-            <span class="mc-teaser-stat"><strong>2yr+</strong> <em data-i18n-custom="mc-teaser-active">active</em></span>
-            <span class="mc-teaser-stat"><strong>24/7</strong> <em data-i18n-custom="mc-teaser-online">online</em></span>
-          </div>
-          <span class="mc-teaser-cta" data-i18n-custom="mc-teaser-cta">Enter the server →</span>
-        </div>
-      </a>
-    </div>
-  </section>
-
   <!-- ── Profile strip ── -->
   <section class="profile-strip">
     <div class="container">
@@ -186,6 +190,7 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
       'hero-badge':'Personal Blog','cta-blog':'Read Writing','cta-about':'About Me',
       'featured':'Featured','recent':'Recent','read-more':'Read article →',
       'all-posts':'All posts →','learn-more':'Learn more',
+      'cta-mc':'Minecraft Server',
       'mc-teaser-live':'LIVE · MC 1.21.x',
       'mc-teaser-tag':'A Minecraft community for builders.',
       'mc-teaser-members':'members','mc-teaser-active':'active','mc-teaser-online':'online',
@@ -195,6 +200,7 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
       'hero-badge':'个人博客','cta-blog':'阅读文章','cta-about':'关于我',
       'featured':'精选','recent':'最近','read-more':'阅读全文 →',
       'all-posts':'全部文章 →','learn-more':'了解更多',
+      'cta-mc':'我的世界服',
       'mc-teaser-live':'在线 · MC 1.21.x',
       'mc-teaser-tag':'一个属于建造者的 Minecraft 社群。',
       'mc-teaser-members':'群友','mc-teaser-active':'运营','mc-teaser-online':'在线',
@@ -313,6 +319,35 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
 }
 .btn-outline:hover { background: rgba(255,255,255,.2); transform: translateY(-1px); }
 
+/* MC server pill button — calls attention to the community page */
+.btn-mc {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .9375rem; font-weight: 600; text-decoration: none;
+  color: #fff;
+  background: rgba(48,209,88,.18);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(48,209,88,.55);
+  padding: .75rem 1.4rem;
+  border-radius: var(--radius-md);
+  transition: background .2s, transform .2s, border-color .2s;
+  cursor: pointer;
+}
+.btn-mc:hover {
+  background: rgba(48,209,88,.32);
+  border-color: rgba(48,209,88,.8);
+  transform: translateY(-1px);
+}
+.btn-mc-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #30d158;
+  box-shadow: 0 0 8px #30d158;
+  animation: btnMcPulse 1.6s ease-in-out infinite;
+}
+@keyframes btnMcPulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%     { opacity: .55; transform: scale(.85); }
+}
+
 /* Non-hero btn-outline */
 .profile-actions .btn-outline {
   color: var(--ink-2); background: transparent;
@@ -407,14 +442,14 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
 .more-btn:hover { opacity: .7; }
 
 /* ── Minecraft teaser ── */
-.mc-teaser-section { padding: 4rem 0 1rem; }
+.mc-teaser-section { padding: 3rem 0 1rem; }
 .mc-teaser {
   position: relative;
   display: block;
   overflow: hidden;
   border-radius: var(--radius-xl);
   text-decoration: none;
-  min-height: 280px;
+  min-height: 220px;
   border: 1px solid var(--border);
   box-shadow:
     0 4px 16px rgba(0,0,0,.08),
