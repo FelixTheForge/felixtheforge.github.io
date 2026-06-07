@@ -231,6 +231,8 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
   // ─── Music player (supports <audio> and YouTube) — ONE-TIME setup
   if (!(window as any).__musicInited) {
     (window as any).__musicInited = true;
+    // Wipe any leftover playback-position from earlier versions
+    localStorage.removeItem('music-time');
     const btn       = document.getElementById('music-toggle');
     const playIcon  = document.getElementById('music-play-icon');
     const pauseIcon = document.getElementById('music-pause-icon');
@@ -239,7 +241,9 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     const ytHost    = document.getElementById('yt-player-host');
 
     const MUSIC_KEY = 'music-state';   // 'playing' | 'paused' | null
-    const TIME_KEY  = 'music-time';
+    // NOTE: playback position is intentionally NOT persisted across sessions.
+    // Closing the tab and reopening always starts from 00:00.
+    // Within a session, view-transitions + transition:persist keep audio continuous.
 
     // Unified play / pause / state interface
     const ctrl = {
@@ -266,8 +270,6 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     // ── Mode A: native <audio> ──
     if (audio) {
       audio.volume = 0.3;
-      const lastTime = parseFloat(localStorage.getItem(TIME_KEY) || '0');
-      if (lastTime > 0) audio.currentTime = lastTime;
       audio.addEventListener('play', onPlay);
       audio.addEventListener('pause', onPause);
       ctrl.play    = () => audio.play().catch(()=>{});
@@ -298,8 +300,6 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
           events: {
             onReady: () => {
               yt.setVolume(30);
-              const lastT = parseFloat(localStorage.getItem(TIME_KEY) || '0');
-              if (lastT > 0) try { yt.seekTo(lastT, true); } catch {}
 
               ctrl.play    = () => yt.playVideo();
               ctrl.pause   = () => yt.pauseVideo();
@@ -342,11 +342,6 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
         localStorage.setItem(MUSIC_KEY, 'playing');
       }
     });
-
-    // Save playback position
-    setInterval(() => {
-      if (ctrl.isPlaying) localStorage.setItem(TIME_KEY, String(ctrl.getTime()));
-    }, 2000);
 
     // Auto-resume for native audio
     if (audio) {
