@@ -4,12 +4,10 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
 ---
 <BaseLayout title={`Friends — ${SITE.title}`}>
 
-  <!-- Ambient orbs + mesh — 4 colored blurs, slow drift -->
+  <!-- Ambient: 2 large static orbs + grid backdrop (no JS animation cost) -->
   <div class="friends-ambient" aria-hidden="true">
     <span class="orb orb-1"></span>
     <span class="orb orb-2"></span>
-    <span class="orb orb-3"></span>
-    <span class="orb orb-4"></span>
     <div class="friends-grid-pattern"></div>
   </div>
 
@@ -212,42 +210,20 @@ import { FRIENDS, INSPIRATIONS, SITE } from '../config/site';
   .orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(90px);
+    filter: blur(60px);          /* was 90px — half the GPU cost, same look at this opacity */
     opacity: .35;
-    will-change: transform;
   }
   .orb-1 {
-    width: 32vw; height: 32vw;
-    top: -10vw; right: -10vw;
+    width: 30vw; height: 30vw;
+    top: -8vw; right: -8vw;
     background: radial-gradient(circle, rgba(139,92,246,.55), transparent 70%);
-    animation: orbFloat1 24s ease-in-out infinite alternate;
   }
   .orb-2 {
-    width: 28vw; height: 28vw;
-    bottom: -8vw; left: -6vw;
+    width: 26vw; height: 26vw;
+    bottom: -6vw; left: -4vw;
     background: radial-gradient(circle, rgba(0,113,227,.45), transparent 70%);
-    animation: orbFloat2 30s ease-in-out infinite alternate;
   }
-  .orb-3 {
-    width: 22vw; height: 22vw;
-    top: 38vh; left: 30%;
-    background: radial-gradient(circle, rgba(236,72,153,.32), transparent 70%);
-    animation: orbFloat3 26s ease-in-out infinite alternate;
-    opacity: .25;
-  }
-  .orb-4 {
-    width: 18vw; height: 18vw;
-    top: 70vh; right: 18%;
-    background: radial-gradient(circle, rgba(255,159,10,.3), transparent 70%);
-    animation: orbFloat4 28s ease-in-out infinite alternate;
-    opacity: .22;
-  }
-  @keyframes orbFloat1 { from { transform: translate(0,0) scale(1); } to { transform: translate(-4vw, 5vh) scale(1.1); } }
-  @keyframes orbFloat2 { from { transform: translate(0,0) scale(1); } to { transform: translate(5vw,-4vh) scale(1.08); } }
-  @keyframes orbFloat3 { from { transform: translate(0,0) scale(1); } to { transform: translate(-6vw, 4vh) scale(1.12); } }
-  @keyframes orbFloat4 { from { transform: translate(0,0) scale(1); } to { transform: translate(3vw,-3vh) scale(1.05); } }
-  [data-theme="dark"] .orb { opacity: .55; }
-  [data-theme="dark"] .orb-3, [data-theme="dark"] .orb-4 { opacity: .35; }
+  [data-theme="dark"] .orb { opacity: .5; }
 
   .page-wrap {
     position: relative; z-index: 1;

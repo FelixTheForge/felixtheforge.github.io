@@ -88,38 +88,43 @@
     overflow-x: clip;
   }
 
-  /* Ambient gradient orbs — slow drifting */
+  /* Ambient gradient orbs — STATIC now (was animated; GPU cost wasn't worth it) */
   body::before, body::after {
     content: '';
     position: fixed;
     border-radius: 50%;
-    filter: blur(90px);
+    filter: blur(60px);          /* was 90px */
     pointer-events: none;
     z-index: 0;
-    opacity: .5;
+    opacity: .45;
   }
   body::before {
-    width: 40vw; height: 40vw;
-    top: -10vw; left: -10vw;
+    width: 36vw; height: 36vw;
+    top: -8vw; left: -8vw;
     background: radial-gradient(circle, rgba(0,113,227,.22), transparent 70%);
-    animation: orbDrift1 22s ease-in-out infinite alternate;
   }
   body::after {
-    width: 35vw; height: 35vw;
-    bottom: 10vh; right: -8vw;
+    width: 32vw; height: 32vw;
+    bottom: 10vh; right: -6vw;
     background: radial-gradient(circle, rgba(191,90,242,.18), transparent 70%);
-    animation: orbDrift2 28s ease-in-out infinite alternate;
   }
-  @keyframes orbDrift1 {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(8vw,6vh) scale(1.15); }
+  [data-theme="dark"] body::before { opacity: .55; }
+  [data-theme="dark"] body::after  { opacity: .45; }
+
+  /* Disable expensive effects on small screens / weak GPUs */
+  @media (max-width: 768px) {
+    body::before, body::after { filter: blur(40px); opacity: .3; }
+    .noise-overlay { display: none; }
   }
-  @keyframes orbDrift2 {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(-6vw,-8vh) scale(1.1); }
+
+  /* Respect the user's OS reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
   }
-  [data-theme="dark"] body::before { opacity: .65; }
-  [data-theme="dark"] body::after  { opacity: .55; }
 
   /* SVG noise overlay — adds film-grain texture */
   .noise-overlay {
