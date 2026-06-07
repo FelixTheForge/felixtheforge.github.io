@@ -113,14 +113,46 @@ export const BOOKS = [
   },
 ];
 
-// 🔗 友链 — 在这里添加 / 修改 / 删除你的朋友
+// 🔗 友链 — 我认识、长期保持联系的人
+//   tags:     可选，几个关键词描述他做什么（"writing", "design", "music"...）
+//   note:     可选，长一点的"我为什么关注他"，会显示成卡片底部一段引文
+//   since:    可选，"认识于 2023" 这种
 export const FRIENDS = [
   {
     name:   'Hem',
     url:    'https://hem.asia/',
     avatar: 'https://hem.asia/favicon.ico',
-    bio:    'Hem — a friend on the web.',
+    bio:    'A friend on the web.',
+    tags:   ['writing', 'web'],
+    note:   '一个真诚地把博客当作"家"来经营的人。每次去他的站，都像走进一个安静的房间。',
+    noteEn: 'Someone who genuinely treats their blog as a home. Every visit feels like stepping into a quiet room.',
     color:  '#8b5cf6',
+  },
+];
+
+// ✨ 灵感来源 — 我没有私交、但反复回访 / 经常推荐的人和站
+//   这些是"想认识但没认识"的友链；放下面一节，跟正式 FRIENDS 分开
+export const INSPIRATIONS = [
+  {
+    name:   'Astro',
+    url:    'https://astro.build/',
+    favicon:'https://astro.build/favicon.svg',
+    desc:   'This blog runs on it. Best DX I\'ve had in years.',
+    descZh: '这个博客就跑在它上面。多年来体验最好的开发框架。',
+  },
+  {
+    name:   'Pixabay Music',
+    url:    'https://pixabay.com/music/',
+    favicon:'https://pixabay.com/static/img/icon.png',
+    desc:   'Royalty-free music I use for ambient background.',
+    descZh: '我常用的免版权背景音乐站。',
+  },
+  {
+    name:   'Unsplash',
+    url:    'https://unsplash.com/',
+    favicon:'https://unsplash.com/favicon.ico',
+    desc:   'Where most of the photography here comes from.',
+    descZh: '博客大部分图片的来源。',
   },
 ];
 
