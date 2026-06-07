@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site';
 ---
-<BaseLayout title="404 — FelixTheForge">
+<BaseLayout title={`404 — ${SITE.title}`}>
   <div class="wrap fade-up">
     <p class="num grad-text">404</p>
     <h1 class="title">Page not found</h1>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { SITE } from '../../config/site';
 const posts = await getCollection('blog');
 const tagMap = new Map<string,number>();
 posts.forEach(p => p.data.tags?.forEach(t => tagMap.set(t,(tagMap.get(t)??0)+1)));
@@ -17,7 +18,7 @@ const colors = [
   { bg:'rgba(0,199,190,.1)',   border:'rgba(0,199,190,.25)',   text:'#00a89b' },
 ];
 ---
-<BaseLayout title="Tags — FelixTheForge">
+<BaseLayout title={`Tags — ${SITE.title}`}>
   <div class="page-wrap">
     <header class="page-header fade-up">
       <h1 class="page-title grad-text" data-i18n="nav.tags">Tags</h1>

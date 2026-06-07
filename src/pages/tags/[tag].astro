@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { readingTime } from '../../utils/readingTime';
+import { SITE } from '../../config/site';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -11,7 +12,7 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 const sorted = posts.sort((a,b)=>new Date(b.data.date).valueOf()-new Date(a.data.date).valueOf());
 ---
-<BaseLayout title={`#${tag} — FelixTheForge`}>
+<BaseLayout title={`#${tag} — ${SITE.title}`}>
   <div class="page-wrap">
     <header class="page-header fade-up">
       <a href="/tags" class="back-link">← Tags</a>

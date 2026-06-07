@@ -4,7 +4,7 @@
  * ╚══════════════════════════════════════╝
  */
 export const SITE = {
-  title:      'FelixTheForge',
+  title:      'Felix Forge',
   url:        'https://felixtheforge.github.io',
   avatar:     '/avatar.png',
   role:       'Builder & Writer',          // 职位/标签

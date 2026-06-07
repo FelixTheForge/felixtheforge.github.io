@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { FRIENDS } from '../config/site';
+import { FRIENDS, SITE } from '../config/site';
 ---
-<BaseLayout title="Friends — FelixTheForge">
+<BaseLayout title={`Friends — ${SITE.title}`}>
   <div class="page-wrap">
     <header class="page-header fade-up">
       <h1 class="page-title grad-text" data-i18n="nav.friends">Friends</h1>
