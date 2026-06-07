@@ -67,7 +67,7 @@ const enabled = g?.enabled
       loadGiscus();
       document.addEventListener('astro:after-swap', loadGiscus);
 
-      // Theme sync: when user toggles theme, push the new theme into giscus
+      // Theme + lang sync: when user toggles them, push into giscus iframe
       function syncTheme() {
         var iframe = document.querySelector('iframe.giscus-frame');
         if (!iframe) return;
@@ -78,9 +78,19 @@ const enabled = g?.enabled
           'https://giscus.app'
         );
       }
+      function syncLang() {
+        var iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        var lang = (localStorage.getItem('lang') || 'en') === 'zh' ? 'zh-CN' : 'en';
+        iframe.contentWindow.postMessage(
+          { giscus: { setConfig: { lang: lang } } },
+          'https://giscus.app'
+        );
+      }
       var observer = new MutationObserver(function (m) {
         for (var i = 0; i < m.length; i++) {
-          if (m[i].attributeName === 'data-theme') { syncTheme(); break; }
+          if (m[i].attributeName === 'data-theme') syncTheme();
+          else if (m[i].attributeName === 'data-lang') syncLang();
         }
       });
       observer.observe(document.documentElement, { attributes: true });
