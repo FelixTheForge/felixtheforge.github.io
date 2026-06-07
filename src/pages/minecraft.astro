@@ -2,587 +2,557 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { MINECRAFT } from '../config/site';
 ---
-<BaseLayout title={`${MINECRAFT.name} — Minecraft Utility`}>
+<BaseLayout title={`${MINECRAFT.name} — Minecraft Community`}>
 
-  <!-- 整个 Minecraft 板块包在这个根容器里，所有像素风样式只作用在内部 -->
   <div class="mc-root">
 
-    <!-- ─── Hero ─── -->
+    <!-- ═══════════════ HERO ═══════════════ -->
     <section class="mc-hero">
-      <div class="mc-hero-sky"></div>
-      <div class="mc-hero-clouds"></div>
-      <div class="mc-hero-ground"></div>
+      <div class="mc-hero-bg" style={`background-image:url('${MINECRAFT.bannerImg}')`}></div>
+      <div class="mc-hero-overlay"></div>
 
       <div class="mc-hero-inner">
-        <div class="mc-badge">
-          <span class="mc-pix-heart"></span>
-          <span>BETA · {MINECRAFT.mcVersion}</span>
+        <div class="mc-pix-tag">
+          <span class="mc-block-square"></span>
+          <span>{MINECRAFT.mcVersion}</span>
         </div>
 
-        <h1 class="mc-title">
-          <span class="mc-title-shadow">{MINECRAFT.name}</span>
-          <span class="mc-title-front">{MINECRAFT.name}</span>
-        </h1>
+        <h1 class="mc-title">{MINECRAFT.name}</h1>
+
         <p class="mc-tagline" id="mc-tagline">{MINECRAFT.tagline}</p>
 
-        <div class="mc-cta-row">
-          <a href={MINECRAFT.downloadUrl} class="mc-btn mc-btn-primary">
-            <span class="mc-btn-icon">⬇</span>
-            <span data-i18n-custom="mc-download">Download {MINECRAFT.version}</span>
-          </a>
-          <a href="#features" class="mc-btn mc-btn-secondary">
-            <span class="mc-btn-icon">✦</span>
-            <span data-i18n-custom="mc-features">Features</span>
-          </a>
-        </div>
-
-        <!-- 像素风工具栏 (hotbar) -->
-        <div class="mc-hotbar">
-          <div class="mc-slot active"><span>⚔</span></div>
-          <div class="mc-slot"><span>🧭</span></div>
-          <div class="mc-slot"><span>👁</span></div>
-          <div class="mc-slot"><span>🎯</span></div>
-          <div class="mc-slot"><span>🌍</span></div>
-          <div class="mc-slot"><span>💎</span></div>
-          <div class="mc-slot"><span>🛡</span></div>
-          <div class="mc-slot"><span>✨</span></div>
+        <!-- Join card (QQ group + QR) -->
+        <div class="mc-join">
+          <div class="mc-join-info">
+            <p class="mc-join-label" data-i18n-mc="join-label">JOIN OUR QQ GROUP</p>
+            <p class="mc-group-no">{MINECRAFT.qqGroup}</p>
+            <div class="mc-join-actions">
+              <button id="copy-qq-btn" class="mc-btn mc-btn-green">
+                <span class="mc-btn-icon">⎘</span>
+                <span data-i18n-mc="copy">COPY</span>
+              </button>
+              <a href="#gallery" class="mc-btn mc-btn-dark">
+                <span data-i18n-mc="explore">EXPLORE</span>
+              </a>
+            </div>
+          </div>
+          <div class="mc-qr">
+            <img src={MINECRAFT.qrCode} alt="QQ group QR"
+                 onerror="this.style.display='none';this.parentElement.classList.add('no-qr');"/>
+            <span class="mc-qr-fallback">
+              <span class="mc-pix-grid"></span>
+              <em data-i18n-mc="qr-fallback">put qq-group-qr.png in /public/minecraft/</em>
+            </span>
+            <p class="mc-qr-label" data-i18n-mc="scan">SCAN TO JOIN</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ─── Stats bar ─── -->
-    <section class="mc-stats">
-      {MINECRAFT.stats.map(s => (
-        <div class="mc-stat">
-          <span class="mc-stat-value">{s.value}</span>
-          <span class="mc-stat-label">{s.label}</span>
-        </div>
-      ))}
+    <!-- ═══════════════ GALLERY ═══════════════ -->
+    <section id="gallery" class="mc-section">
+      <header class="mc-section-head">
+        <h2 class="mc-h2" data-i18n-mc="gallery-h">SCREENSHOTS</h2>
+        <p class="mc-section-sub" data-i18n-mc="gallery-sub">Moments from our world.</p>
+      </header>
+
+      <div class="mc-gallery">
+        {MINECRAFT.gallery.map(g => (
+          <a href={g.src} target="_blank" rel="noopener" class="mc-shot">
+            <img src={g.src} alt={g.caption} loading="lazy"/>
+            <div class="mc-shot-overlay">
+              <span class="mc-shot-caption">{g.caption}</span>
+            </div>
+          </a>
+        ))}
+      </div>
     </section>
 
-    <!-- ─── Features ─── -->
-    <section id="features" class="mc-section">
-      <h2 class="mc-section-title">
-        <span class="mc-section-title-shadow">FEATURES</span>
-        <span class="mc-section-title-front" data-i18n-custom="mc-features-title">FEATURES</span>
-      </h2>
-      <p class="mc-section-sub" data-i18n-custom="mc-features-sub">
-        Over 80 modules across 6 categories. Fully configurable.
-      </p>
+    <!-- ═══════════════ FILES ═══════════════ -->
+    <section class="mc-section mc-section-stone">
+      <header class="mc-section-head">
+        <h2 class="mc-h2" data-i18n-mc="files-h">RESOURCES</h2>
+        <p class="mc-section-sub" data-i18n-mc="files-sub">Mod packs, textures, and config files.</p>
+      </header>
 
-      <div class="mc-feature-grid">
-        {MINECRAFT.features.map(f => (
-          <div class="mc-feature-card">
-            <div class="mc-feature-icon">{f.icon}</div>
-            <h3 class="mc-feature-title">{f.title}</h3>
-            <p class="mc-feature-desc">{f.desc}</p>
+      <div class="mc-files">
+        {MINECRAFT.files.map(f => (
+          <div class="mc-file-card">
+            <div class="mc-file-icon">{f.icon}</div>
+            <div class="mc-file-body">
+              <h3 class="mc-file-title" data-zh={f.titleZh}>{f.title}</h3>
+              <p class="mc-file-desc" data-zh={f.descZh}>{f.desc}</p>
+              <div class="mc-file-tags">
+                <span class="mc-tag">{f.provider}</span>
+                <span class="mc-tag mc-tag-size">{f.size}</span>
+                {f.code && <span class="mc-tag mc-tag-code" data-i18n-mc-prefix="code-prefix">code: {f.code}</span>}
+              </div>
+            </div>
+            <a href={f.url} target="_blank" rel="noopener" class="mc-btn mc-btn-green mc-file-btn">
+              <span class="mc-btn-icon">⬇</span>
+              <span data-i18n-mc="download">GET</span>
+            </a>
           </div>
         ))}
       </div>
     </section>
 
-    <!-- ─── Install ─── -->
+    <!-- ═══════════════ DOCS ═══════════════ -->
     <section class="mc-section">
-      <h2 class="mc-section-title">
-        <span class="mc-section-title-shadow">INSTALL</span>
-        <span class="mc-section-title-front" data-i18n-custom="mc-install-title">INSTALL</span>
-      </h2>
-      <div class="mc-install-grid">
-        <div class="mc-step">
-          <div class="mc-step-num">1</div>
-          <p class="mc-step-text" data-i18n-custom="mc-step-1">Download the latest release.</p>
-        </div>
-        <div class="mc-step">
-          <div class="mc-step-num">2</div>
-          <p class="mc-step-text" data-i18n-custom="mc-step-2">Drop the jar into <code>.minecraft/mods</code>.</p>
-        </div>
-        <div class="mc-step">
-          <div class="mc-step-num">3</div>
-          <p class="mc-step-text" data-i18n-custom="mc-step-3">Launch with Fabric loader and press <kbd>RShift</kbd>.</p>
-        </div>
-      </div>
-    </section>
+      <header class="mc-section-head">
+        <h2 class="mc-h2" data-i18n-mc="docs-h">GUIDES</h2>
+        <p class="mc-section-sub" data-i18n-mc="docs-sub">Setup walkthroughs and FAQs.</p>
+      </header>
 
-    <!-- ─── Footer disclaimer ─── -->
-    <section class="mc-disclaimer">
-      <p data-i18n-custom="mc-disclaimer">
-        ⚠ For educational use only. Respect server rules.
-      </p>
+      <div class="mc-docs">
+        {MINECRAFT.docs.map(d => (
+          <a href={d.url} class="mc-doc">
+            <span class="mc-doc-icon">{d.icon}</span>
+            <span class="mc-doc-title" data-zh={d.titleZh}>{d.title}</span>
+            <span class="mc-doc-arrow">→</span>
+          </a>
+        ))}
+      </div>
     </section>
 
   </div>
 </BaseLayout>
 
 <script>
+  // ── i18n ──
   const I18N: Record<string, Record<string,string>> = {
     en: {
-      'mc-download': 'Download v2.7.4',
-      'mc-features': 'Features',
-      'mc-features-title': 'FEATURES',
-      'mc-features-sub': 'Over 80 modules across 6 categories. Fully configurable.',
-      'mc-install-title': 'INSTALL',
-      'mc-step-1': 'Download the latest release.',
-      'mc-step-2': 'Drop the jar into .minecraft/mods.',
-      'mc-step-3': 'Launch with Fabric loader and press RShift to open menu.',
-      'mc-disclaimer': '⚠ For educational use only. Respect server rules.',
+      'join-label': 'JOIN OUR QQ GROUP',
+      'copy': 'COPY',
+      'explore': 'EXPLORE',
+      'qr-fallback': 'put qq-group-qr.png in /public/minecraft/',
+      'scan': 'SCAN TO JOIN',
+      'gallery-h': 'SCREENSHOTS',
+      'gallery-sub': 'Moments from our world.',
+      'files-h': 'RESOURCES',
+      'files-sub': 'Mod packs, textures, and config files.',
+      'docs-h': 'GUIDES',
+      'docs-sub': 'Setup walkthroughs and FAQs.',
+      'download': 'GET',
     },
     zh: {
-      'mc-download': '下载 v2.7.4',
-      'mc-features': '功能',
-      'mc-features-title': '模块功能',
-      'mc-features-sub': '6 大类，80+ 个模块，完全可配置。',
-      'mc-install-title': '安装步骤',
-      'mc-step-1': '下载最新版本。',
-      'mc-step-2': '把 jar 文件丢进 .minecraft/mods 目录。',
-      'mc-step-3': '用 Fabric loader 启动，按 RShift 打开菜单。',
-      'mc-disclaimer': '⚠ 仅供学习交流使用，请尊重服务器规则。',
+      'join-label': '加入 QQ 群',
+      'copy': '复制',
+      'explore': '探索',
+      'qr-fallback': '把 qq-group-qr.png 放到 /public/minecraft/',
+      'scan': '扫码加入',
+      'gallery-h': '群友截图',
+      'gallery-sub': '来自我们世界的瞬间。',
+      'files-h': '资源下载',
+      'files-sub': '整合包、材质、配置文件。',
+      'docs-h': '操作文档',
+      'docs-sub': '部署教程与常见问题。',
+      'download': '下载',
     },
   };
   function syncMc() {
     const lang = localStorage.getItem('lang') || 'en';
     const m = I18N[lang];
-    document.querySelectorAll('[data-i18n-custom]').forEach(el => {
-      const k = el.getAttribute('data-i18n-custom')!;
+    document.querySelectorAll('[data-i18n-mc]').forEach(el => {
+      const k = el.getAttribute('data-i18n-mc')!;
       if (m[k]) el.textContent = m[k];
     });
+    // Tagline
     const tagline = document.getElementById('mc-tagline');
-    if (tagline) {
-      tagline.textContent = lang === 'zh'
-        ? '高端的 Minecraft 辅助客户端'
-        : 'A premium Minecraft utility client';
-    }
+    if (tagline) tagline.textContent = lang === 'zh'
+      ? 'A Minecraft community for builders.'.replace(/.*/,'一个属于建造者的 Minecraft 社群。')
+      : 'A Minecraft community for builders.';
+    // data-zh swap for file titles / docs
+    document.querySelectorAll('[data-zh]').forEach(el => {
+      const en = (el as HTMLElement).dataset.en || el.textContent || '';
+      if (!(el as HTMLElement).dataset.en) (el as HTMLElement).dataset.en = el.textContent || '';
+      el.textContent = lang === 'zh' ? (el as HTMLElement).dataset.zh || en : (el as HTMLElement).dataset.en || '';
+    });
   }
   syncMc();
   document.getElementById('lang-btn')?.addEventListener('click', () => setTimeout(syncMc, 0));
+
+  // ── Copy QQ group number ──
+  const copyBtn = document.getElementById('copy-qq-btn');
+  copyBtn?.addEventListener('click', async () => {
+    const groupNo = document.querySelector('.mc-group-no')?.textContent ?? '';
+    try {
+      await navigator.clipboard.writeText(groupNo.trim());
+      const label = copyBtn.querySelector('span:last-child') as HTMLElement;
+      const original = label.textContent;
+      label.textContent = (localStorage.getItem('lang') || 'en') === 'zh' ? '已复制' : 'COPIED';
+      setTimeout(() => { if (label) label.textContent = original; }, 1400);
+    } catch {}
+  });
 </script>
 
 <style>
-  /* ╔══════════════════════════════════════════════
-     Minecraft section — pixel-perfect, blocky, classic Minecraft UI
-     ──────────────────────────────────────────────
-     All styles scoped under .mc-root so they don't
-     leak into the rest of the Apple-style site.
-     ══════════════════════════════════════════════ */
+  /* ════════════════════════════════════════════════════
+     Minecraft community page — launcher-inspired
+     ════════════════════════════════════════════════════ */
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
   .mc-root {
-    --mc-grass-top:   #5fb04a;
-    --mc-grass-side:  #8b6f47;
-    --mc-dirt:        #6b4423;
-    --mc-stone:       #6e6e6e;
-    --mc-stone-dark:  #4a4a4a;
-    --mc-wood:        #835c33;
-    --mc-sky:         #67bdf6;
-    --mc-cloud:       #ffffff;
-    --mc-gold:        #ffd700;
-    --mc-diamond:     #4cdde0;
-    --mc-redstone:    #ed3030;
-    --mc-emerald:     #1ddc6c;
-    --mc-text:        #ffffff;
-    --mc-text-shadow: #3f3f3f;
-    font-family: 'Press Start 2P', 'Minecraft', monospace;
+    --mc-bg:        #1d1f24;
+    --mc-bg-2:      #252830;
+    --mc-bg-3:      #2c2f38;
+    --mc-stone:     #3a3e48;
+    --mc-stone-lt:  #5a5f6c;
+    --mc-line:      #14161a;
+    --mc-text:      #e6e7ea;
+    --mc-text-dim:  #9aa0ab;
+    --mc-accent:    #4eaf52;          /* Minecraft grass green */
+    --mc-accent-2:  #6cd070;
+    --mc-gold:      #ffaa00;
+    --mc-blue:      #58a6ff;
+    --mc-pix:       'Press Start 2P', 'Minecraft', monospace;
+    --mc-sans:      'Inter', system-ui, sans-serif;
+
+    background: var(--mc-bg);
     color: var(--mc-text);
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-
-    /* Override the Apple page padding from BaseLayout */
+    font-family: var(--mc-sans);
     margin-top: -92px;
-  }
-  /* Sharp pixel-style text — kill anti-alias smoothing */
-  .mc-root * {
-    -webkit-font-smoothing: none;
-    text-rendering: optimizeSpeed;
+    min-height: 100vh;
   }
 
-  /* ╔══════ Hero ══════╗ */
+  /* ── Hero ── */
   .mc-hero {
     position: relative;
-    min-height: 90vh;
+    padding: 8rem 1.5rem 4rem;
     overflow: hidden;
-    padding: 12rem 1.5rem 6rem;
-    background:
-      linear-gradient(180deg, #4ba7e0 0%, #6cc1ec 60%, #87ceeb 100%);
+    border-bottom: 4px solid var(--mc-line);
   }
-
-  /* Pixelated clouds — pure CSS, no image */
-  .mc-hero-clouds {
+  .mc-hero-bg {
     position: absolute; inset: 0;
-    background-image:
-      /* big cloud */
-      linear-gradient(90deg, transparent 5%, #fff 5%, #fff 18%, transparent 18%),
-      linear-gradient(90deg, transparent 8%, #fff 8%, #fff 22%, transparent 22%),
-      /* smaller cloud */
-      linear-gradient(90deg, transparent 65%, #fff 65%, #fff 78%, transparent 78%);
-    background-size: 100% 12px, 100% 12px, 100% 14px;
-    background-position: 0 60px, 0 72px, 0 130px;
-    background-repeat: no-repeat;
-    opacity: .9;
-    animation: mcCloudDrift 60s linear infinite;
+    background-size: cover; background-position: center;
+    filter: brightness(.55) saturate(.85);
   }
-  @keyframes mcCloudDrift {
-    from { background-position: 0 60px, 0 72px, 0 130px; }
-    to   { background-position: 100% 60px, 100% 72px, 100% 130px; }
-  }
-
-  /* Pixelated ground at bottom */
-  .mc-hero-ground {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    height: 120px;
+  .mc-hero-overlay {
+    position: absolute; inset: 0;
     background:
-      /* grass top stripe */
-      linear-gradient(180deg, var(--mc-grass-top) 0 16px, transparent 16px),
-      /* dirt rows with grain */
-      repeating-linear-gradient(90deg,
-        var(--mc-dirt) 0 16px,
-        #5a3a1d 16px 18px,
-        var(--mc-dirt) 18px 32px,
-        #7a4d28 32px 34px),
-      var(--mc-dirt);
-    box-shadow: inset 0 16px 0 rgba(0,0,0,.15);
+      linear-gradient(180deg, rgba(29,31,36,0) 0%, rgba(29,31,36,.85) 90%, var(--mc-bg) 100%),
+      linear-gradient(90deg, rgba(29,31,36,.55) 0%, rgba(29,31,36,.15) 100%);
   }
-
   .mc-hero-inner {
-    position: relative; z-index: 2;
-    max-width: 56rem; margin: 0 auto;
-    text-align: center;
+    position: relative; z-index: 1;
+    max-width: 68rem; margin: 0 auto;
   }
 
-  /* ── Beta badge ── */
-  .mc-badge {
-    display: inline-flex; align-items: center; gap: .5rem;
-    background: var(--mc-stone-dark);
-    color: #fff;
-    padding: .55rem .85rem;
+  /* ── Pixel tag (top badge) ── */
+  .mc-pix-tag {
+    display: inline-flex; align-items: center; gap: .55rem;
+    padding: .45rem .75rem;
+    background: rgba(0,0,0,.4);
+    border: 1px solid var(--mc-stone-lt);
+    color: var(--mc-text-dim);
+    font-family: var(--mc-pix);
     font-size: .55rem;
-    letter-spacing: .1em;
+    letter-spacing: .15em;
     margin-bottom: 1.5rem;
-    border: 2px solid #000;
-    box-shadow:
-      inset 2px 2px 0 #888,
-      inset -2px -2px 0 #2a2a2a,
-      4px 4px 0 rgba(0,0,0,.4);
   }
-  .mc-pix-heart {
-    width: 10px; height: 10px;
-    background: var(--mc-redstone);
-    box-shadow:
-      -3px 0 0 var(--mc-redstone),
-      3px 0 0 var(--mc-redstone),
-      0 3px 0 var(--mc-redstone),
-      -3px 3px 0 var(--mc-redstone),
-      3px 3px 0 var(--mc-redstone),
-      0 -3px 0 var(--mc-redstone),
-      6px -3px 0 var(--mc-redstone),
-      -6px -3px 0 var(--mc-redstone),
-      -3px -3px 0 var(--mc-redstone),
-      3px -3px 0 var(--mc-redstone),
-      0 -6px 0 var(--mc-redstone),
-      0 6px 0 var(--mc-redstone),
-      3px 6px 0 var(--mc-redstone),
-      -3px 6px 0 var(--mc-redstone);
-    display: inline-block;
-    animation: mcHeartBeat 1s ease-in-out infinite;
+  .mc-block-square {
+    width: 8px; height: 8px;
+    background: var(--mc-accent);
+    box-shadow: inset 1px 1px 0 var(--mc-accent-2), inset -1px -1px 0 #2a662a;
   }
-  @keyframes mcHeartBeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
 
-  /* ── Title with classic Minecraft double-layer shadow ── */
+  /* ── Title (no overlap; single text + pixel-style stroke shadow) ── */
   .mc-title {
-    position: relative;
-    font-size: clamp(2rem, 6vw, 4rem);
-    line-height: 1;
-    margin: 0 0 1.5rem;
+    font-family: var(--mc-pix);
+    font-size: clamp(1.75rem, 4.5vw, 3rem);
+    line-height: 1.1;
+    margin: 0 0 .75rem;
     color: var(--mc-text);
-    letter-spacing: .02em;
-    transform: rotate(-2deg);
+    letter-spacing: .04em;
+    /* Pixel-art "8-bit" shadow: 4 solid offsets, no anti-alias */
+    text-shadow:
+      4px 4px 0 #000,
+      0 4px 0 #000,
+      4px 0 0 #000;
+    -webkit-font-smoothing: none;
   }
-  .mc-title-shadow, .mc-title-front {
-    display: inline-block;
-  }
-  .mc-title-shadow {
-    position: absolute; top: 4px; left: 4px;
-    color: #2a2a2a;
-    z-index: 1;
-  }
-  .mc-title-front {
-    position: relative;
-    background: linear-gradient(180deg, #ffe16a 0%, #ffb700 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    z-index: 2;
-    text-shadow: 0 4px 0 #b27d00;
-  }
-
   .mc-tagline {
-    font-size: .65rem;
-    color: #fff;
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
-    letter-spacing: .05em;
+    font-size: 1rem;
+    color: var(--mc-text-dim);
+    line-height: 1.65;
+    max-width: 32rem;
+    margin: 0 0 2.5rem;
   }
 
-  /* ── Minecraft buttons (classic stone-button look) ── */
-  .mc-cta-row {
-    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-    margin-bottom: 3rem;
+  /* ── Join card ── */
+  .mc-join {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+    background: rgba(20,22,26,.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--mc-stone-lt);
+    border-radius: 4px;
+    padding: 1.75rem;
+    max-width: 36rem;
+    box-shadow:
+      inset 2px 2px 0 var(--mc-stone),
+      inset -2px -2px 0 var(--mc-line),
+      0 8px 24px rgba(0,0,0,.4);
   }
+  .mc-join-label {
+    font-family: var(--mc-pix);
+    font-size: .55rem;
+    letter-spacing: .18em;
+    color: var(--mc-accent);
+    margin-bottom: .75rem;
+  }
+  .mc-group-no {
+    font-family: var(--mc-pix);
+    font-size: 1.5rem;
+    color: var(--mc-gold);
+    letter-spacing: .02em;
+    margin-bottom: 1rem;
+    text-shadow: 3px 3px 0 #000;
+    -webkit-font-smoothing: none;
+  }
+  .mc-join-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+  /* QR */
+  .mc-qr {
+    width: 110px; flex-shrink: 0;
+    text-align: center;
+    position: relative;
+  }
+  .mc-qr img {
+    width: 100%; height: 110px; object-fit: cover;
+    border: 2px solid var(--mc-stone-lt);
+    background: #fff;
+    image-rendering: pixelated;
+  }
+  .mc-qr-fallback { display: none; }
+  .mc-qr.no-qr .mc-qr-fallback {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 110px;
+    background: var(--mc-bg-3);
+    border: 2px dashed var(--mc-stone-lt);
+    font-size: .55rem; font-family: var(--mc-pix);
+    color: var(--mc-text-dim);
+    padding: .5rem;
+    text-align: center; line-height: 1.4;
+  }
+  .mc-pix-grid {
+    width: 24px; height: 24px;
+    background-image:
+      linear-gradient(45deg, var(--mc-stone-lt) 25%, transparent 25%, transparent 75%, var(--mc-stone-lt) 75%),
+      linear-gradient(45deg, var(--mc-stone-lt) 25%, transparent 25%, transparent 75%, var(--mc-stone-lt) 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
+    margin-bottom: .35rem;
+    opacity: .5;
+  }
+  .mc-qr-label {
+    font-family: var(--mc-pix);
+    font-size: .5rem;
+    color: var(--mc-text-dim);
+    letter-spacing: .18em;
+    margin-top: .5rem;
+  }
+
+  /* ── Buttons ── */
   .mc-btn {
     display: inline-flex; align-items: center; gap: .5rem;
-    padding: .85rem 1.5rem;
-    font-family: inherit;
-    font-size: .65rem;
-    letter-spacing: .05em;
+    padding: .65rem 1.1rem;
+    font-family: var(--mc-pix);
+    font-size: .55rem;
+    letter-spacing: .12em;
     text-decoration: none;
     color: #fff;
     background: var(--mc-stone);
-    border: 2px solid #000;
+    border: 1px solid var(--mc-line);
     box-shadow:
-      inset 2px 2px 0 #989898,
-      inset -2px -2px 0 #4f4f4f,
-      4px 4px 0 rgba(0,0,0,.5);
-    text-shadow: 2px 2px 0 var(--mc-text-shadow);
-    transition: transform .08s ease, box-shadow .08s ease;
+      inset 1px 1px 0 var(--mc-stone-lt),
+      inset -1px -1px 0 var(--mc-line),
+      0 2px 0 var(--mc-line);
     cursor: pointer;
+    transition: transform .06s, background .15s;
+    -webkit-font-smoothing: none;
   }
-  .mc-btn:hover {
-    background: #7e7e7e;
+  .mc-btn:hover { background: var(--mc-stone-lt); }
+  .mc-btn:active { transform: translateY(2px); box-shadow: inset 1px 1px 0 var(--mc-stone-lt), inset -1px -1px 0 var(--mc-line); }
+  .mc-btn-green {
+    background: var(--mc-accent);
     box-shadow:
-      inset 2px 2px 0 #aaa,
-      inset -2px -2px 0 #5a5a5a,
-      4px 4px 0 rgba(0,0,0,.5);
+      inset 1px 1px 0 var(--mc-accent-2),
+      inset -1px -1px 0 #2a662a,
+      0 2px 0 #1f4a1f;
+    border-color: #1f4a1f;
   }
-  .mc-btn:active {
-    transform: translate(2px,2px);
-    box-shadow:
-      inset 2px 2px 0 #989898,
-      inset -2px -2px 0 #4f4f4f,
-      2px 2px 0 rgba(0,0,0,.5);
+  .mc-btn-green:hover { background: var(--mc-accent-2); }
+  .mc-btn-dark {
+    background: rgba(0,0,0,.4);
+    border-color: var(--mc-stone-lt);
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,.05), inset -1px -1px 0 #000;
+    color: var(--mc-text);
   }
-  .mc-btn-primary {
-    background: #4ea84e;
-    box-shadow:
-      inset 2px 2px 0 #7ed87e,
-      inset -2px -2px 0 #2a662a,
-      4px 4px 0 rgba(0,0,0,.5);
-  }
-  .mc-btn-primary:hover {
-    background: #5fb85f;
-    box-shadow:
-      inset 2px 2px 0 #92ee92,
-      inset -2px -2px 0 #357335,
-      4px 4px 0 rgba(0,0,0,.5);
-  }
-  .mc-btn-icon { font-size: .8rem; }
+  .mc-btn-icon { font-size: .75rem; }
 
-  /* ── Hotbar (像素工具栏) ── */
-  .mc-hotbar {
-    display: inline-flex; gap: 0;
-    padding: 4px;
-    background: rgba(0,0,0,.5);
-    border: 2px solid #000;
-    box-shadow:
-      inset 2px 2px 0 #555,
-      inset -2px -2px 0 #1a1a1a,
-      4px 4px 0 rgba(0,0,0,.4);
-  }
-  .mc-slot {
-    width: 44px; height: 44px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--mc-stone-dark);
-    border: 2px solid #000;
-    box-shadow:
-      inset 2px 2px 0 #383838,
-      inset -2px -2px 0 #1f1f1f;
-    margin: 0 -1px;
-    font-size: 1.5rem;
-    transition: transform .15s ease;
-  }
-  .mc-slot.active {
-    border-color: #fff;
-    transform: translateY(-4px);
-    box-shadow:
-      inset 2px 2px 0 #555,
-      inset -2px -2px 0 #2a2a2a,
-      0 0 0 2px rgba(255,255,255,.6);
-  }
-
-  /* ╔══════ Stats ══════╗ */
-  .mc-stats {
-    background: var(--mc-stone-dark);
-    border-top: 6px solid #000;
-    border-bottom: 6px solid #000;
-    padding: 2rem 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    text-align: center;
-  }
-  .mc-stat { display: flex; flex-direction: column; gap: .35rem; }
-  .mc-stat-value {
-    font-size: 1.5rem;
-    color: var(--mc-gold);
-    text-shadow: 2px 2px 0 #6b4d00, 3px 3px 0 #000;
-  }
-  .mc-stat-label {
-    font-size: .55rem;
-    color: #ccc;
-    letter-spacing: .15em;
-  }
-
-  /* ╔══════ Section ══════╗ */
+  /* ════════════════ Sections ════════════════ */
   .mc-section {
-    background: var(--mc-stone);
-    background-image:
-      repeating-linear-gradient(0deg,
-        rgba(0,0,0,.08) 0 16px,
-        rgba(255,255,255,.04) 16px 32px),
-      repeating-linear-gradient(90deg,
-        rgba(0,0,0,.08) 0 16px,
-        rgba(255,255,255,.04) 16px 32px);
     padding: 4rem 1.5rem;
-    text-align: center;
-    border-bottom: 6px solid #000;
+    border-bottom: 4px solid var(--mc-line);
   }
-
-  .mc-section-title {
-    position: relative;
+  .mc-section-stone {
+    background:
+      repeating-linear-gradient(0deg,
+        rgba(0,0,0,.04) 0 32px,
+        rgba(255,255,255,.015) 32px 64px),
+      var(--mc-bg-2);
+  }
+  .mc-section-head {
+    max-width: 68rem; margin: 0 auto 2.5rem;
+    text-align: left;
+  }
+  .mc-h2 {
+    font-family: var(--mc-pix);
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--mc-text);
+    letter-spacing: .15em;
+    margin: 0 0 .5rem;
+    -webkit-font-smoothing: none;
+    text-shadow: 3px 3px 0 #000;
     display: inline-block;
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    margin-bottom: .75rem;
-    letter-spacing: .08em;
-  }
-  .mc-section-title-shadow {
-    position: absolute; top: 4px; left: 4px;
-    color: #000; z-index: 1;
-  }
-  .mc-section-title-front {
-    position: relative; z-index: 2;
-    background: linear-gradient(180deg, var(--mc-diamond) 0%, #1f9095 100%);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 0 #003536;
+    padding-bottom: .35rem;
+    border-bottom: 3px solid var(--mc-accent);
   }
   .mc-section-sub {
-    font-size: .6rem;
-    color: #ddd;
-    text-shadow: 2px 2px 0 #000;
-    line-height: 1.7;
-    max-width: 32rem;
-    margin: 0 auto 3rem;
+    font-size: .875rem; color: var(--mc-text-dim);
+    margin-top: 1rem;
   }
 
-  /* ╔══════ Feature cards (boîtes en pierre) ══════╗ */
-  .mc-feature-grid {
+  /* ── Gallery ── */
+  .mc-gallery {
+    max-width: 68rem; margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.25rem;
-    max-width: 60rem; margin: 0 auto;
+    gap: 1rem;
   }
-  .mc-feature-card {
-    background: var(--mc-stone-dark);
-    border: 3px solid #000;
-    padding: 1.5rem 1.25rem;
-    text-align: center;
-    box-shadow:
-      inset 3px 3px 0 #5a5a5a,
-      inset -3px -3px 0 #2a2a2a,
-      6px 6px 0 rgba(0,0,0,.5);
-    transition: transform .15s ease;
+  .mc-shot {
     position: relative;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    border: 2px solid var(--mc-line);
+    background: var(--mc-bg-3);
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    transition: transform .2s;
+    text-decoration: none;
   }
-  .mc-feature-card:hover {
-    transform: translate(-2px,-2px);
-    box-shadow:
-      inset 3px 3px 0 #6a6a6a,
-      inset -3px -3px 0 #2a2a2a,
-      8px 8px 0 rgba(0,0,0,.5);
+  .mc-shot:hover { transform: translateY(-3px); border-color: var(--mc-accent); }
+  .mc-shot img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .mc-shot:hover img { transform: scale(1.06); }
+  .mc-shot-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end;
+    padding: .75rem;
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.8) 100%);
+    opacity: 0; transition: opacity .2s;
   }
-  .mc-feature-icon {
-    font-size: 2rem;
-    margin-bottom: .85rem;
-    line-height: 1;
-  }
-  .mc-feature-title {
-    font-size: .85rem;
-    color: var(--mc-gold);
-    text-shadow: 2px 2px 0 #6b4d00, 3px 3px 0 #000;
-    margin-bottom: .5rem;
-    letter-spacing: .08em;
-  }
-  .mc-feature-desc {
+  .mc-shot:hover .mc-shot-overlay { opacity: 1; }
+  .mc-shot-caption {
+    font-family: var(--mc-pix);
     font-size: .55rem;
-    color: #d8d8d8;
-    line-height: 1.7;
-    text-shadow: 1px 1px 0 #000;
+    color: #fff;
+    letter-spacing: .1em;
+    -webkit-font-smoothing: none;
   }
 
-  /* ╔══════ Install steps ══════╗ */
-  .mc-install-grid {
+  /* ── Files ── */
+  .mc-files {
+    max-width: 68rem; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .mc-file-card {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    grid-template-columns: auto 1fr auto;
     gap: 1.25rem;
-    max-width: 60rem; margin: 0 auto;
-  }
-  .mc-step {
-    background: var(--mc-wood);
-    background-image:
-      repeating-linear-gradient(0deg,
-        rgba(0,0,0,.1) 0 6px,
-        transparent 6px 12px);
-    border: 3px solid #000;
-    padding: 1.5rem 1.25rem;
-    text-align: left;
-    display: flex; gap: .75rem; align-items: flex-start;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: var(--mc-bg);
+    border: 1px solid var(--mc-stone-lt);
+    border-radius: 4px;
     box-shadow:
-      inset 3px 3px 0 #a37a4d,
-      inset -3px -3px 0 #5d3e1f,
-      6px 6px 0 rgba(0,0,0,.5);
+      inset 1px 1px 0 var(--mc-stone),
+      inset -1px -1px 0 var(--mc-line);
+    transition: border-color .2s;
   }
-  .mc-step-num {
-    width: 32px; height: 32px;
-    background: var(--mc-gold);
-    color: #000;
+  .mc-file-card:hover { border-color: var(--mc-accent); }
+  .mc-file-icon {
+    width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
-    font-size: .85rem;
-    border: 2px solid #000;
-    box-shadow: inset 2px 2px 0 #fff09a, inset -2px -2px 0 #c2a300;
+    font-size: 1.5rem;
+    background: var(--mc-bg-3);
+    border: 1px solid var(--mc-stone-lt);
     flex-shrink: 0;
   }
-  .mc-step-text {
-    font-size: .6rem;
-    line-height: 1.75;
-    color: #fff;
-    text-shadow: 2px 2px 0 #000;
-  }
-  .mc-step-text code, .mc-step-text kbd {
-    background: #000; color: var(--mc-gold);
-    padding: 1px 6px;
-    border: 1px solid var(--mc-stone);
-    font-family: inherit;
-    font-size: .9em;
-  }
-
-  /* ╔══════ Disclaimer ══════╗ */
-  .mc-disclaimer {
-    background: #3a2222;
-    padding: 1.5rem;
-    text-align: center;
-    border-top: 3px solid #000;
-  }
-  .mc-disclaimer p {
-    font-size: .55rem;
-    color: #ffba6e;
+  .mc-file-title {
+    font-family: var(--mc-pix);
+    font-size: .7rem;
+    color: var(--mc-text);
     letter-spacing: .08em;
-    text-shadow: 1px 1px 0 #000;
+    margin-bottom: .4rem;
+    -webkit-font-smoothing: none;
   }
+  .mc-file-desc {
+    font-size: .825rem;
+    color: var(--mc-text-dim);
+    margin-bottom: .65rem;
+    line-height: 1.5;
+  }
+  .mc-file-tags { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .mc-tag {
+    font-family: var(--mc-pix);
+    font-size: .5rem;
+    padding: .25rem .5rem;
+    background: var(--mc-bg-3);
+    color: var(--mc-text-dim);
+    border: 1px solid var(--mc-stone-lt);
+    letter-spacing: .12em;
+    -webkit-font-smoothing: none;
+  }
+  .mc-tag-size { color: var(--mc-blue); border-color: rgba(88,166,255,.3); }
+  .mc-tag-code { color: var(--mc-gold); border-color: rgba(255,170,0,.3); }
+  .mc-file-btn { flex-shrink: 0; }
+
+  /* ── Docs ── */
+  .mc-docs {
+    max-width: 68rem; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap: .75rem;
+  }
+  .mc-doc {
+    display: flex; align-items: center; gap: .85rem;
+    padding: 1rem 1.25rem;
+    background: var(--mc-bg-2);
+    border: 1px solid var(--mc-stone-lt);
+    color: var(--mc-text);
+    text-decoration: none;
+    transition: background .15s, border-color .15s, transform .15s;
+    box-shadow: inset 1px 1px 0 var(--mc-stone), inset -1px -1px 0 var(--mc-line);
+  }
+  .mc-doc:hover {
+    background: var(--mc-bg-3);
+    border-color: var(--mc-accent);
+    transform: translateX(2px);
+  }
+  .mc-doc-icon { font-size: 1.25rem; }
+  .mc-doc-title { flex: 1; font-size: .9rem; font-weight: 500; }
+  .mc-doc-arrow { color: var(--mc-text-dim); transition: transform .15s, color .15s; }
+  .mc-doc:hover .mc-doc-arrow { color: var(--mc-accent); transform: translateX(3px); }
 
   /* ── Responsive ── */
   @media (max-width: 640px) {
-    .mc-stats { grid-template-columns: repeat(2,1fr); }
-    .mc-slot { width: 36px; height: 36px; font-size: 1.2rem; }
-    .mc-hotbar { transform: scale(.85); }
-    .mc-title { transform: none; }
+    .mc-join { grid-template-columns: 1fr; text-align: center; }
+    .mc-qr { margin: 0 auto; }
+    .mc-join-actions { justify-content: center; }
+    .mc-file-card { grid-template-columns: 1fr; text-align: center; }
+    .mc-file-icon { margin: 0 auto; }
+    .mc-file-tags { justify-content: center; }
   }
 </style>
