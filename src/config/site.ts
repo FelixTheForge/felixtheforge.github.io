@@ -32,7 +32,7 @@ export const SITE = {
   //         'file'    → 用本地 mp3（放 /public/music/xxx.mp3，url 写 '/music/xxx.mp3'）
   music: {
     enabled: true,
-    source:  'bilibili' as 'youtube' | 'bilibili' | 'file',
+    source:  'youtube' as 'youtube' | 'bilibili' | 'file',
     title:   'Echo',
     artist:  'Jason Walker',
     youtubeId:    'ktnJ4zuxXy0',     // YouTube 视频 ID（source = youtube 用）
