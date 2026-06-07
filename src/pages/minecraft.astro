@@ -85,8 +85,8 @@ import { MINECRAFT } from '../config/site';
 
       <div class="mc-gallery">
         {MINECRAFT.gallery.map(g => (
-          <a href={g.src} target="_blank" rel="noopener" class="mc-shot">
-            <img src={g.src} alt={g.caption} loading="lazy"/>
+          <a href={g.full} target="_blank" rel="noopener" class="mc-shot">
+            <img src={g.thumb} alt={g.caption} loading="lazy" decoding="async" width="640" height="400"/>
             <div class="mc-shot-overlay">
               <span class="mc-shot-caption">{g.caption}</span>
             </div>
@@ -117,10 +117,10 @@ import { MINECRAFT } from '../config/site';
       <div class="mc-wall-grid">
         {MINECRAFT.wallpapers.map(w => (
           <div class="mc-wall">
-            <img src={w.src} alt={w.title} loading="lazy"/>
+            <img src={w.thumb} alt={w.title} loading="lazy" decoding="async" width="640" height="360"/>
             <div class="mc-wall-info">
               <span class="mc-wall-title" data-zh={w.titleZh}>{w.title}</span>
-              <a href={w.src} download class="mc-wall-dl">
+              <a href={w.full} download class="mc-wall-dl">
                 <span>{w.res}</span>
                 <span>⬇</span>
               </a>

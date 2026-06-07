@@ -66,10 +66,11 @@ export const MINECRAFT = {
   taglineZh:   '一个属于建造者的 Minecraft 社群。',
   mcVersion:   'MC 1.21.x',
   qqGroup:     '123456789',                          // 你的 QQ 群号
-  qrCode:      '/minecraft/qq-group-qr.png',         // QQ 群二维码，放 public/minecraft/ 下
-  bannerImg:   '/minecraft/banner.jpg',              // Hero 大图（日落岛屿）
-  sceneCherry: '/minecraft/scene-cherry.jpg',        // 樱花树场景
-  sceneRain:   '/minecraft/scene-rain.jpg',          // 雨水草地场景
+  qrCode:      '/minecraft/qq-group-qr.png',
+  // -md (1280w ~100KB) for hero / section backgrounds — full quality kept as fallback download
+  bannerImg:   '/minecraft/banner-md.jpg',
+  sceneCherry: '/minecraft/scene-cherry-md.jpg',
+  sceneRain:   '/minecraft/scene-rain-md.jpg',
 
   // ⚡ 服务器特性标签（在 hero 显示，让用户一眼看懂玩什么）
   tags:   ['Survival', 'Building', 'Redstone', 'Shaders', 'Multiplayer', 'Long-term'],
@@ -141,19 +142,19 @@ export const MINECRAFT = {
     { title: 'Server rules',            titleZh: '服务器规则',   icon: '📜', url: '#' },
   ],
 
-  // 🖼️ 群友截图墙 — 把图放 public/minecraft/gallery/ 下
+  // 🖼️ 群友截图墙 — thumb 显示用，full 点开查看用
   gallery: [
-    { src: '/minecraft/banner.jpg',        caption: 'Sunset isles' },
-    { src: '/minecraft/scene-cherry.jpg',  caption: 'Cherry grove' },
-    { src: '/minecraft/scene-rain.jpg',    caption: 'Rainy meadow' },
-    { src: '/minecraft/scene-flowers.jpg', caption: 'Field of bloom' },
+    { thumb: '/minecraft/banner-sm.jpg',        full: '/minecraft/banner.jpg',        caption: 'Sunset isles' },
+    { thumb: '/minecraft/scene-cherry-sm.jpg',  full: '/minecraft/scene-cherry.jpg',  caption: 'Cherry grove' },
+    { thumb: '/minecraft/scene-rain-sm.jpg',    full: '/minecraft/scene-rain.jpg',    caption: 'Rainy meadow' },
+    { thumb: '/minecraft/scene-flowers-sm.jpg', full: '/minecraft/scene-flowers.jpg', caption: 'Field of bloom' },
   ],
 
-  // 🌅 壁纸墙 — 可下载的桌面壁纸
+  // 🌅 壁纸墙 — preview 小图省流量，download 指向高清原图
   wallpapers: [
-    { src: '/minecraft/banner.jpg',        title: 'Sunset Isles',  titleZh: '日落群岛',  res: '4K' },
-    { src: '/minecraft/scene-cherry.jpg',  title: 'Cherry Grove',  titleZh: '樱花林',    res: '4K' },
-    { src: '/minecraft/scene-rain.jpg',    title: 'Rainy Meadow',  titleZh: '雨中草地',  res: '4K' },
-    { src: '/minecraft/scene-flowers.jpg', title: 'Field of Bloom',titleZh: '繁花原野',  res: '4K' },
+    { thumb: '/minecraft/banner-sm.jpg',        full: '/minecraft/banner.jpg',        title: 'Sunset Isles',   titleZh: '日落群岛', res: '4K' },
+    { thumb: '/minecraft/scene-cherry-sm.jpg',  full: '/minecraft/scene-cherry.jpg',  title: 'Cherry Grove',   titleZh: '樱花林',   res: '4K' },
+    { thumb: '/minecraft/scene-rain-sm.jpg',    full: '/minecraft/scene-rain.jpg',    title: 'Rainy Meadow',   titleZh: '雨中草地', res: '4K' },
+    { thumb: '/minecraft/scene-flowers-sm.jpg', full: '/minecraft/scene-flowers.jpg', title: 'Field of Bloom', titleZh: '繁花原野', res: '4K' },
   ],
 };

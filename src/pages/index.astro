@@ -125,6 +125,37 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
     </section>
   )}
 
+  <!-- ── Minecraft community teaser ── -->
+  <section class="mc-teaser-section">
+    <div class="container">
+      <a href="/minecraft" class="mc-teaser">
+        <div class="mc-teaser-bg" style="background-image:url('/minecraft/banner-md.jpg')"></div>
+        <div class="mc-teaser-overlay"></div>
+        <div class="mc-teaser-deco" aria-hidden="true">
+          <span class="mc-deco mc-deco-1">⛏</span>
+          <span class="mc-deco mc-deco-2">💎</span>
+          <span class="mc-deco mc-deco-3">🟩</span>
+        </div>
+        <div class="mc-teaser-content">
+          <span class="mc-teaser-badge">
+            <span class="mc-teaser-dot"></span>
+            <span data-i18n-custom="mc-teaser-live">LIVE · MC 1.21.x</span>
+          </span>
+          <h2 class="mc-teaser-title">
+            <span class="mc-teaser-title-main">ForgeCraft</span>
+            <span class="mc-teaser-title-sub" data-i18n-custom="mc-teaser-tag">A Minecraft community for builders.</span>
+          </h2>
+          <div class="mc-teaser-meta">
+            <span class="mc-teaser-stat"><strong>300+</strong> <em data-i18n-custom="mc-teaser-members">members</em></span>
+            <span class="mc-teaser-stat"><strong>2yr+</strong> <em data-i18n-custom="mc-teaser-active">active</em></span>
+            <span class="mc-teaser-stat"><strong>24/7</strong> <em data-i18n-custom="mc-teaser-online">online</em></span>
+          </div>
+          <span class="mc-teaser-cta" data-i18n-custom="mc-teaser-cta">Enter the server →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
   <!-- ── Profile strip ── -->
   <section class="profile-strip">
     <div class="container">
@@ -155,11 +186,19 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
       'hero-badge':'Personal Blog','cta-blog':'Read Writing','cta-about':'About Me',
       'featured':'Featured','recent':'Recent','read-more':'Read article →',
       'all-posts':'All posts →','learn-more':'Learn more',
+      'mc-teaser-live':'LIVE · MC 1.21.x',
+      'mc-teaser-tag':'A Minecraft community for builders.',
+      'mc-teaser-members':'members','mc-teaser-active':'active','mc-teaser-online':'online',
+      'mc-teaser-cta':'Enter the server →',
     },
     zh: {
       'hero-badge':'个人博客','cta-blog':'阅读文章','cta-about':'关于我',
       'featured':'精选','recent':'最近','read-more':'阅读全文 →',
       'all-posts':'全部文章 →','learn-more':'了解更多',
+      'mc-teaser-live':'在线 · MC 1.21.x',
+      'mc-teaser-tag':'一个属于建造者的 Minecraft 社群。',
+      'mc-teaser-members':'群友','mc-teaser-active':'运营','mc-teaser-online':'在线',
+      'mc-teaser-cta':'进入服务器 →',
     },
   };
 
@@ -366,6 +405,150 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
   transition: opacity .2s;
 }
 .more-btn:hover { opacity: .7; }
+
+/* ── Minecraft teaser ── */
+.mc-teaser-section { padding: 4rem 0 1rem; }
+.mc-teaser {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  text-decoration: none;
+  min-height: 280px;
+  border: 1px solid var(--border);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.08),
+    0 16px 40px rgba(78,175,82,.08);
+  transition: transform .3s cubic-bezier(.25,.46,.45,.94),
+              box-shadow .3s;
+}
+.mc-teaser:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.12),
+    0 24px 56px rgba(78,175,82,.18);
+}
+.mc-teaser-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  filter: brightness(.5) saturate(1.15);
+  transition: transform .6s;
+}
+.mc-teaser:hover .mc-teaser-bg { transform: scale(1.04); }
+.mc-teaser-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,.4) 60%, rgba(78,175,82,.25) 100%);
+}
+
+.mc-teaser-deco { position: absolute; inset: 0; pointer-events: none; }
+.mc-deco {
+  position: absolute;
+  font-size: 2.5rem;
+  opacity: .35;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.5));
+  animation: mcDecoFloat 6s ease-in-out infinite;
+}
+.mc-deco-1 { top: 20%; right: 12%; animation-delay: 0s; }
+.mc-deco-2 { top: 55%; right: 6%; animation-delay: 1s; font-size: 2rem; }
+.mc-deco-3 { top: 70%; right: 22%; animation-delay: 2s; font-size: 2.25rem; }
+@keyframes mcDecoFloat {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%     { transform: translateY(-12px) rotate(3deg); }
+}
+
+.mc-teaser-content {
+  position: relative; z-index: 2;
+  padding: 2.5rem 2rem;
+  color: #fff;
+  max-width: 38rem;
+}
+.mc-teaser-badge {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .68rem; font-weight: 600;
+  letter-spacing: .14em;
+  padding: .3rem .7rem;
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 4px;
+  color: #d4ffd6;
+  margin-bottom: 1rem;
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}
+.mc-teaser-dot {
+  width: 6px; height: 6px;
+  background: #30d158;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #30d158;
+  animation: mcDotPulse 1.6s ease-in-out infinite;
+}
+@keyframes mcDotPulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%     { opacity: .5; transform: scale(.8); }
+}
+
+.mc-teaser-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -.025em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.mc-teaser-title-main {
+  background: linear-gradient(135deg, #fff 0%, #d4ffd6 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.mc-teaser-title-sub {
+  font-size: clamp(.875rem, 1.5vw, 1rem);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255,255,255,.85);
+}
+
+.mc-teaser-meta {
+  display: flex; gap: 1.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.mc-teaser-stat {
+  display: inline-flex; align-items: baseline; gap: .35rem;
+  font-size: .8125rem;
+  color: rgba(255,255,255,.7);
+}
+.mc-teaser-stat strong {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}
+.mc-teaser-stat em {
+  font-style: normal;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.mc-teaser-cta {
+  display: inline-flex; align-items: center;
+  font-size: .9375rem; font-weight: 600;
+  background: #30d158;
+  color: #052b09;
+  padding: .65rem 1.4rem;
+  border-radius: 999px;
+  transition: transform .2s, background .2s;
+  box-shadow: 0 4px 16px rgba(48,209,88,.4);
+}
+.mc-teaser:hover .mc-teaser-cta {
+  background: #4ce06c;
+  transform: translateX(3px);
+}
+
+@media (max-width: 640px) {
+  .mc-teaser-content { padding: 1.75rem 1.25rem; }
+  .mc-teaser-meta { gap: 1rem; }
+  .mc-deco { font-size: 1.75rem !important; opacity: .25; }
+}
 
 /* ── Profile strip ── */
 .profile-strip { padding: 5rem 0 6rem; }

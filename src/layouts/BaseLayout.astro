@@ -62,11 +62,6 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
         <li><a href="/about"     class="nav-item" data-i18n="nav.about">About</a></li>
       </ul>
 
-      <!-- Hamburger for mobile -->
-      <button id="nav-burger" class="nav-burger" aria-label="Menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-
       <div class="nav-actions">
         <button id="lang-btn" class="nav-act" title="Switch language">
           <span id="lang-label">EN</span>
@@ -81,13 +76,18 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
           </svg>
         </button>
         {SITE.social.github && (
-          <a href={SITE.social.github} target="_blank" rel="noopener" class="nav-act" title="GitHub">
+          <a href={SITE.social.github} target="_blank" rel="noopener" class="nav-act nav-act-github" title="GitHub">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
             </svg>
           </a>
         )}
       </div>
+
+      <!-- Mobile-only hamburger (far right) -->
+      <button id="nav-burger" class="nav-burger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 
@@ -598,23 +598,34 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
 
   /* ────────────────  Mobile (< 768px) ──────────────── */
   @media (max-width: 768px) {
-    .nav-inner { gap: .5rem; padding: 0 .75rem 0 1rem; }
-    .nav-burger { display: flex; }
+    .nav-inner {
+      gap: 0;
+      padding: 0 .5rem 0 1rem;
+      justify-content: space-between;
+    }
+    .nav-logo { flex: 1; min-width: 0; }
+    .nav-burger { display: flex; flex-shrink: 0; margin-left: 4px; }
+
+    /* Mobile: hide GitHub icon, keep lang & theme essential */
+    .nav-act-github { display: none; }
+    .nav-actions { gap: 0; }
 
     /* Collapsed mobile menu — slides down below navbar */
     .nav-links {
       position: absolute;
-      top: 100%; left: 0; right: 0;
+      top: 100%; right: 0; left: auto;
+      width: 200px; max-width: calc(100vw - 16px);
       flex-direction: column;
       gap: 0;
       padding: .5rem;
-      margin-top: 8px;
+      margin-top: 10px;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      box-shadow: 0 12px 32px rgba(0,0,0,.15);
+      box-shadow: 0 12px 32px rgba(0,0,0,.18);
       opacity: 0;
       transform: translateY(-8px) scale(.98);
+      transform-origin: top right;
       pointer-events: none;
       transition: opacity .2s, transform .2s;
     }
@@ -627,14 +638,14 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     .nav-item {
       display: block;
       width: 100%;
-      padding: .65rem 1rem;
+      padding: .6rem .9rem;
       border-radius: var(--radius-sm);
-      font-size: 1rem;
+      font-size: .9375rem;
       text-align: left;
     }
-    /* In transparent-nav (over hero) mode, the dropdown still needs solid bg */
+    /* Dropdown stays solid even over hero */
     .navbar[data-transparent="true"]:not(.scrolled) .nav-links {
-      background: rgba(28,28,42,.92);
+      background: rgba(28,28,42,.95);
       border-color: rgba(255,255,255,.1);
     }
     .navbar[data-transparent="true"]:not(.scrolled) .nav-item {
@@ -649,12 +660,11 @@ const { title, description = `${SITE.title} — personal writings`, transparentN
     .footer-links { justify-content: center; flex-wrap: wrap; }
   }
 
-  /* Very small phones */
+  /* Very small phones — hide logo text, keep mark only */
   @media (max-width: 380px) {
-    .nav-inner { gap: .25rem; }
     .nav-act { width: 30px; height: 30px; }
     .nav-act svg { width: 13px; height: 13px; }
-    .logo-mark { display: none; }
+    .logo-text { font-size: .8125rem; }
   }
 
 
