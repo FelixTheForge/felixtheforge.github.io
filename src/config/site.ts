@@ -36,9 +36,9 @@ export const SITE = {
   giscus: {
     enabled:    true,
     repo:       'FelixTheForge/felixtheforge.github.io',
-    repoId:     'REPLACE_ME_REPO_ID',           // 形如 R_kgDOxxxxxxxxx
-    category:   'Announcements',                 // GitHub Discussions 里的类别名
-    categoryId: 'REPLACE_ME_CATEGORY_ID',         // 形如 DIC_kwDOxxxxxx
+    repoId:     'R_kgDOSy5HWQ',
+    category:   'Announcements',
+    categoryId: 'DIC_kwDOSy5HWc4C-rpx',
     mapping:    'pathname' as const,              // 用 URL 路径关联 Discussion
     reactions:  true,                              // 允许 emoji 反应
     inputPosition: 'top' as 'top' | 'bottom',     // 输入框在顶 / 底
