@@ -68,16 +68,20 @@ export const SITE = {
   },
 };
 
-// 📚 阅读列表 — 在这里添加你在看 / 看过的书
-// status: 'reading'（在读）| 'finished'（读完）| 'wishlist'（想读）
-// rating: 1~5（仅 finished 显示）
-// cover: 在 https://search.douban.com 找书 → 复制封面图 URL
+// 📚 阅读列表
+//   status:    'reading'（在读）| 'finished'（读完）| 'wishlist'（想读）
+//   rating:    1~5（仅 finished 用）
+//   cover:     用 Open Library API 最稳：
+//              https://covers.openlibrary.org/b/isbn/<ISBN>-L.jpg
+//              ISBN 在书背 / 豆瓣页 / Goodreads 都能查到
+//              如果 Open Library 没收录就放公开图床 URL（imgur / cloudflare 等）
+//   notesUrl:  指向你写的读书笔记博客文章；填了就显示「Read notes →」按钮
 export const BOOKS = [
   {
     title:    'Designing Data-Intensive Applications',
     titleZh:  '数据密集型应用系统设计',
     author:   'Martin Kleppmann',
-    cover:    'https://img1.doubanio.com/view/subject/l/public/s29675812.jpg',
+    cover:    'https://covers.openlibrary.org/b/isbn/9781449373320-L.jpg',
     status:   'reading' as 'reading' | 'finished' | 'wishlist',
     note:     '工程师必读，分布式系统的圣经。',
     noteEn:   'A must-read for engineers — the distributed systems bible.',
@@ -86,18 +90,19 @@ export const BOOKS = [
     title:    'The Pragmatic Programmer',
     titleZh:  '程序员修炼之道',
     author:   'David Thomas, Andrew Hunt',
-    cover:    'https://img2.doubanio.com/view/subject/l/public/s33665583.jpg',
+    cover:    'https://covers.openlibrary.org/b/isbn/9780135957059-L.jpg',
     status:   'finished' as 'reading' | 'finished' | 'wishlist',
     rating:   5,
     note:     '不变的真理。每年重读一遍都有新感悟。',
     noteEn:   'Timeless truths. New insights every re-read.',
     finishedDate: '2025-03',
+    notesUrl: '/blog/notes-pragmatic-programmer',
   },
   {
     title:    'Project Hail Mary',
     titleZh:  '挽救计划',
     author:   'Andy Weir',
-    cover:    'https://img1.doubanio.com/view/subject/l/public/s34002005.jpg',
+    cover:    'https://covers.openlibrary.org/b/isbn/9780593135204-L.jpg',
     status:   'wishlist' as 'reading' | 'finished' | 'wishlist',
     note:     '看完《火星救援》之后必读。',
     noteEn:   'A must-read after finishing The Martian.',

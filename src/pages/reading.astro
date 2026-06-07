@@ -39,6 +39,12 @@ const wishlist = BOOKS.filter(b => b.status === 'wishlist');
                 <h3 class="book-title" data-zh={b.titleZh}>{b.title}</h3>
                 <p class="book-author">{b.author}</p>
                 {b.note && <p class="book-note" data-zh={b.note} data-en={b.noteEn || ''}>{b.noteEn || b.note}</p>}
+                {(b as any).notesUrl && (
+                  <a href={(b as any).notesUrl} class="book-notes-link">
+                    <span data-zh="读书笔记">Read notes</span>
+                    <span class="arr">→</span>
+                  </a>
+                )}
               </div>
             </article>
           ))}
@@ -70,6 +76,12 @@ const wishlist = BOOKS.filter(b => b.status === 'wishlist');
                   </p>
                 )}
                 {b.note && <p class="book-note" data-zh={b.note} data-en={b.noteEn || ''}>{b.noteEn || b.note}</p>}
+                {(b as any).notesUrl && (
+                  <a href={(b as any).notesUrl} class="book-notes-link">
+                    <span data-zh="读书笔记">Read notes</span>
+                    <span class="arr">→</span>
+                  </a>
+                )}
                 {b.finishedDate && <p class="book-date">{b.finishedDate}</p>}
               </div>
             </article>
@@ -95,6 +107,12 @@ const wishlist = BOOKS.filter(b => b.status === 'wishlist');
                 <h3 class="book-title" data-zh={b.titleZh}>{b.title}</h3>
                 <p class="book-author">{b.author}</p>
                 {b.note && <p class="book-note" data-zh={b.note} data-en={b.noteEn || ''}>{b.noteEn || b.note}</p>}
+                {(b as any).notesUrl && (
+                  <a href={(b as any).notesUrl} class="book-notes-link">
+                    <span data-zh="读书笔记">Read notes</span>
+                    <span class="arr">→</span>
+                  </a>
+                )}
               </div>
             </article>
           ))}
@@ -271,4 +289,22 @@ const wishlist = BOOKS.filter(b => b.status === 'wishlist');
     text-transform: uppercase;
     font-weight: 600;
   }
+  .book-notes-link {
+    display: inline-flex; align-items: center; gap: .25rem;
+    font-size: .72rem; font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: .5rem;
+    padding: .25rem .55rem;
+    border-radius: 999px;
+    background: rgba(0,113,227,.08);
+    border: 1px solid rgba(0,113,227,.18);
+    transition: background .15s, transform .15s, gap .15s;
+  }
+  .book-notes-link:hover {
+    background: rgba(0,113,227,.16);
+    gap: .4rem;
+  }
+  .book-notes-link .arr { transition: transform .15s; }
+  .book-notes-link:hover .arr { transform: translateX(2px); }
 </style>
