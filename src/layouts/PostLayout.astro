@@ -130,7 +130,7 @@ const showToc = tocItems.length >= 3;
             <ul class="toc-list">
               {tocItems.map(h => (
                 <li class={`toc-item toc-d${h.depth}`}>
-                  <a href={`#${h.slug}`} class="toc-link sb-toc-link" data-toc-slug={h.slug}>
+                  <a href={`#${h.slug}`} class="toc-link" data-toc-slug={h.slug}>
                     {h.text}
                   </a>
                 </li>
@@ -163,7 +163,7 @@ const showToc = tocItems.length >= 3;
   });
 
   // ─── TOC: active-section highlight + smooth scroll ───
-  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.sb-toc-link');
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
   if (tocLinks.length) {
     const tocBySlug = new Map<string, HTMLAnchorElement>();
     tocLinks.forEach(a => tocBySlug.set(a.dataset.tocSlug!, a));
@@ -384,67 +384,6 @@ const showToc = tocItems.length >= 3;
   .sb-meta { display: flex; flex-direction: column; gap: .15rem; }
   .sb-date { font-size: .7rem; color: var(--ink-2); font-weight: 500; }
   .sb-rt   { font-size: .65rem; color: var(--ink-4); }
-
-  /* ── TOC ── */
-  .sb-toc {
-    width: 100%;
-    text-align: left;
-    max-height: 50vh;
-    overflow-y: auto;
-    /* hide scrollbar but keep scrollable */
-    scrollbar-width: thin;
-  }
-  .sb-toc::-webkit-scrollbar { width: 3px; }
-  .sb-toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-  .sb-toc-label {
-    font-size: .65rem; font-weight: 600;
-    letter-spacing: .12em; text-transform: uppercase;
-    color: var(--ink-4);
-    margin-bottom: .65rem;
-  }
-  .sb-toc-list {
-    list-style: none; margin: 0; padding: 0;
-    display: flex; flex-direction: column; gap: .15rem;
-    position: relative;
-  }
-  .sb-toc-list::before {
-    content: '';
-    position: absolute;
-    left: 6px; top: 0; bottom: 0;
-    width: 1px;
-    background: var(--border);
-  }
-  .sb-toc-item { position: relative; }
-  .sb-toc-d3 { padding-left: 1rem; }
-  .sb-toc-link {
-    display: block;
-    position: relative;
-    font-size: .75rem;
-    line-height: 1.5;
-    color: var(--ink-3);
-    text-decoration: none;
-    padding: .25rem 0 .25rem .85rem;
-    border-radius: 4px;
-    transition: color .15s;
-  }
-  .sb-toc-link::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 50%; transform: translateY(-50%);
-    width: 1px; height: 0;
-    background: var(--accent);
-    border-radius: 2px;
-    transition: height .2s;
-  }
-  .sb-toc-link:hover { color: var(--ink); }
-  .sb-toc-link.active {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .sb-toc-link.active::before {
-    height: 16px;
-    width: 2px;
-  }
 
   .sb-actions {
     display: flex; gap: .375rem; align-items: center;
