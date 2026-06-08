@@ -119,6 +119,16 @@ export const BOOKS = [
 //   since:    可选，"认识于 2023" 这种
 export const FRIENDS = [
   {
+    name:   'Charlie Fei',
+    url:    'https://charliefei.github.io/en/',
+    avatar: 'https://github.com/charliefei.png',
+    bio:    "Writings on tech, life, and craft.",
+    tags:   ['writing', 'tech'],
+    note:   '认真在写自己东西的人。文风干净，更新慢但每篇都值得读。',
+    noteEn: 'Someone who writes seriously. Clean voice, slow cadence, every post worth reading.',
+    color:  '#10b981',
+  },
+  {
     name:   'Hem',
     url:    'https://hem.asia/',
     avatar: 'https://hem.asia/favicon.ico',
@@ -133,13 +143,6 @@ export const FRIENDS = [
 // ✨ 灵感来源 — 我没有私交、但反复回访 / 经常推荐的人和站
 //   这些是"想认识但没认识"的友链；放下面一节，跟正式 FRIENDS 分开
 export const INSPIRATIONS = [
-  {
-    name:   'Astro',
-    url:    'https://astro.build/',
-    favicon:'https://astro.build/favicon.svg',
-    desc:   'This blog runs on it. Best DX I\'ve had in years.',
-    descZh: '这个博客就跑在它上面。多年来体验最好的开发框架。',
-  },
   {
     name:   'Pixabay Music',
     url:    'https://pixabay.com/music/',

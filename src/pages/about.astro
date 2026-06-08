@@ -217,28 +217,35 @@ import { SITE } from '../config/site';
   .role { font-size: .9375rem; font-weight: 500; color: var(--accent); margin-bottom: .375rem; }
   .location { display: flex; align-items: center; gap: .375rem; font-size: .8125rem; color: var(--ink-3); }
   .bio { font-size: 1rem; color: var(--ink-2); line-height: 1.7; margin-bottom: 1.5rem; }
-  .social-section { display: flex; flex-direction: column; gap: .65rem; }
+  .social-section { display: flex; flex-direction: column; gap: .85rem; }
   .social-label {
-    font-size: .65rem; font-weight: 700;
-    letter-spacing: .14em; text-transform: uppercase;
-    color: var(--ink-4);
+    font-size: .7rem; font-weight: 700;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--ink-3);
   }
-  .social-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .social-row {
+    display: flex;
+    gap: .55rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
   .about-social-btn {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 38px; height: 38px;
+    width: 44px; height: 44px;
     color: var(--ink-2);
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 999px;
     text-decoration: none;
-    transition: background .15s, border-color .15s, color .15s, transform .15s;
+    transition: background .15s, border-color .15s, color .15s, transform .15s, box-shadow .15s;
   }
+  .about-social-btn svg { width: 18px; height: 18px; }
   .about-social-btn:hover {
     background: var(--bg-elevated);
     border-color: var(--accent);
     color: var(--accent);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,113,227,.15);
   }
 
   .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
