@@ -150,15 +150,42 @@ import { MINECRAFT } from '../config/site';
               <h3 class="mc-file-title" data-zh={f.titleZh}>{f.title}</h3>
               <p class="mc-file-desc" data-zh={f.descZh}>{f.desc}</p>
               <div class="mc-file-tags">
-                <span class="mc-tag">{f.provider}</span>
                 <span class="mc-tag mc-tag-size">{f.size}</span>
-                {f.code && <span class="mc-tag mc-tag-code" data-i18n-mc-prefix="code-prefix">code: {f.code}</span>}
+                {f.links.length > 1 && (
+                  <span class="mc-tag">{f.links.length} sources</span>
+                )}
               </div>
             </div>
-            <a href={f.url} target="_blank" rel="noopener" class="mc-btn mc-btn-green mc-file-btn">
-              <span class="mc-btn-icon">⬇</span>
-              <span data-i18n-mc="download">GET</span>
-            </a>
+
+            {/* Single link → plain link button. Multi link → dropdown menu. */}
+            {f.links.length === 1 ? (
+              <a href={f.links[0].url} target="_blank" rel="noopener" class="mc-btn mc-btn-green mc-file-btn">
+                <span class="mc-btn-icon">⬇</span>
+                <span data-i18n-mc="download">GET</span>
+              </a>
+            ) : (
+              <div class="mc-dl-wrap">
+                <button type="button" class="mc-btn mc-btn-green mc-file-btn mc-dl-toggle" aria-haspopup="true" aria-expanded="false">
+                  <span class="mc-btn-icon">⬇</span>
+                  <span data-i18n-mc="download">GET</span>
+                  <span class="mc-dl-caret">▾</span>
+                </button>
+                <div class="mc-dl-menu" role="menu" aria-hidden="true">
+                  {f.links.map(link => (
+                    <a href={link.url} target="_blank" rel="noopener" class="mc-dl-item" role="menuitem">
+                      <span class="mc-dl-provider">{link.provider}</span>
+                      {link.code && (
+                        <span class="mc-dl-code">
+                          <span data-i18n-mc="code-label">提取码</span>
+                          <strong>{link.code}</strong>
+                          <button type="button" class="mc-dl-copy" data-copy={link.code} title="Copy code" aria-label="Copy code">⎘</button>
+                        </span>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -203,6 +230,7 @@ import { MINECRAFT } from '../config/site';
       'docs-h': 'GUIDES',
       'docs-sub': 'Setup walkthroughs and FAQs.',
       'download': 'GET',
+      'code-label': 'code',
     },
     zh: {
       'join-label': '加入 QQ 群',
@@ -219,6 +247,7 @@ import { MINECRAFT } from '../config/site';
       'docs-h': '操作文档',
       'docs-sub': '部署教程与常见问题。',
       'download': '下载',
+      'code-label': '提取码',
     },
   };
   function syncMc() {
@@ -254,6 +283,50 @@ import { MINECRAFT } from '../config/site';
       label.textContent = (localStorage.getItem('lang') || 'en') === 'zh' ? '已复制' : 'COPIED';
       setTimeout(() => { if (label) label.textContent = original; }, 1400);
     } catch {}
+  });
+
+  // ── Download dropdown — open/close + click-outside + ESC ──
+  function closeAllDl() {
+    document.querySelectorAll('.mc-dl-wrap.open').forEach(w => {
+      w.classList.remove('open');
+      w.querySelector('.mc-dl-toggle')?.setAttribute('aria-expanded', 'false');
+      w.querySelector('.mc-dl-menu')?.setAttribute('aria-hidden', 'true');
+    });
+  }
+  document.querySelectorAll<HTMLElement>('.mc-dl-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wrap = btn.closest('.mc-dl-wrap');
+      if (!wrap) return;
+      const isOpen = wrap.classList.contains('open');
+      closeAllDl();
+      if (!isOpen) {
+        wrap.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        wrap.querySelector('.mc-dl-menu')?.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('.mc-dl-wrap')) closeAllDl();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAllDl();
+  });
+
+  // ── Copy extract-code button inside dropdown ──
+  document.querySelectorAll<HTMLButtonElement>('.mc-dl-copy').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const code = btn.dataset.copy || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        const original = btn.textContent;
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1200);
+      } catch {}
+    });
   });
 </script>
 
@@ -810,6 +883,114 @@ import { MINECRAFT } from '../config/site';
   .mc-tag-size { color: var(--mc-blue); border-color: rgba(88,166,255,.3); }
   .mc-tag-code { color: var(--mc-gold); border-color: rgba(255,170,0,.3); }
   .mc-file-btn { flex-shrink: 0; }
+
+  /* ── Download dropdown (multi-source) ── */
+  .mc-dl-wrap { position: relative; flex-shrink: 0; }
+  .mc-dl-toggle { cursor: pointer; }
+  .mc-dl-caret {
+    margin-left: .15rem;
+    transition: transform .2s;
+    display: inline-block;
+    font-size: .55rem;
+  }
+  .mc-dl-wrap.open .mc-dl-caret { transform: rotate(180deg); }
+
+  .mc-dl-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 240px;
+    background: var(--mc-bg-2);
+    border: 1px solid #000;
+    box-shadow:
+      inset 1px 1px 0 var(--mc-stone),
+      inset -1px -1px 0 var(--mc-line),
+      8px 8px 0 rgba(0,0,0,.5);
+    padding: 6px;
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(-4px) scale(.96);
+    pointer-events: none;
+    transition: opacity .15s, transform .15s;
+  }
+  .mc-dl-wrap.open .mc-dl-menu {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .mc-dl-item {
+    display: flex; flex-direction: column;
+    gap: .35rem;
+    padding: .7rem .85rem;
+    text-decoration: none;
+    color: var(--mc-text);
+    border: 1px solid transparent;
+    transition: background .12s, border-color .12s;
+  }
+  .mc-dl-item:hover {
+    background: var(--mc-bg-3);
+    border-color: var(--mc-accent);
+  }
+  .mc-dl-item:not(:last-child) {
+    margin-bottom: 4px;
+  }
+
+  .mc-dl-provider {
+    font-family: var(--mc-pix);
+    font-size: .65rem;
+    color: var(--mc-gold);
+    letter-spacing: .12em;
+    text-shadow: 2px 2px 0 #000;
+    -webkit-font-smoothing: none;
+  }
+  .mc-dl-code {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .65rem;
+    color: var(--mc-text-dim);
+    font-family: var(--mc-sans);
+  }
+  .mc-dl-code strong {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    color: var(--mc-accent-2);
+    font-weight: 600;
+    background: rgba(78,175,82,.12);
+    padding: .1rem .35rem;
+    border-radius: 3px;
+    letter-spacing: .05em;
+  }
+  .mc-dl-copy {
+    margin-left: auto;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: 1px solid var(--mc-stone-lt);
+    color: var(--mc-text-dim);
+    cursor: pointer;
+    font-size: .75rem;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .mc-dl-copy:hover {
+    background: var(--mc-accent);
+    border-color: var(--mc-accent);
+    color: #fff;
+  }
+  .mc-dl-copy.copied {
+    background: var(--mc-accent);
+    border-color: var(--mc-accent);
+    color: #fff;
+  }
+
+  /* Mobile: dropdown opens centered, not right-aligned */
+  @media (max-width: 640px) {
+    .mc-dl-menu {
+      right: 50%; transform: translateX(50%) translateY(-4px) scale(.96);
+      min-width: 220px;
+    }
+    .mc-dl-wrap.open .mc-dl-menu {
+      transform: translateX(50%) translateY(0) scale(1);
+    }
+  }
 
   /* ── Docs ── */
   .mc-docs {

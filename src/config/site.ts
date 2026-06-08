@@ -202,6 +202,8 @@ export const MINECRAFT = {
   ],
 
   // 📂 资源 / 网盘文件
+  // 文件资源 — 每个文件可以有多个下载源（百度 / 夸克 / GitHub 等）
+  // links 数组里多放几个，点 GET 时会弹出菜单让用户选
   files: [
     {
       title:    'Modpack v3.2',
@@ -209,10 +211,11 @@ export const MINECRAFT = {
       desc:     'Latest server modpack — Fabric 1.21.1',
       descZh:   '最新服务器整合包 — Fabric 1.21.1',
       size:     '420 MB',
-      provider: '百度云',
-      url:      'https://pan.baidu.com/s/xxxxxxx',
-      code:     'mc01',                              // 提取码
       icon:     '📦',
+      links: [
+        { provider: '百度云', url: 'https://pan.baidu.com/s/xxxxxxx', code: 'mc01' },
+        { provider: '夸克网盘', url: 'https://pan.quark.cn/s/xxxxxxx', code: 'mc02' },
+      ],
     },
     {
       title:    'Resource Pack',
@@ -220,10 +223,11 @@ export const MINECRAFT = {
       desc:     'Faithful 32× with custom tweaks',
       descZh:   'Faithful 32× 定制版',
       size:     '85 MB',
-      provider: '百度云',
-      url:      'https://pan.baidu.com/s/yyyyyyy',
-      code:     'tx02',
       icon:     '🎨',
+      links: [
+        { provider: '百度云', url: 'https://pan.baidu.com/s/yyyyyyy', code: 'tx02' },
+        { provider: '夸克网盘', url: 'https://pan.quark.cn/s/yyyyyyy', code: 'tx03' },
+      ],
     },
     {
       title:    'Shader Profile',
@@ -231,10 +235,10 @@ export const MINECRAFT = {
       desc:     'BSL recommended settings',
       descZh:   'BSL 光影推荐配置',
       size:     '4 MB',
-      provider: 'GitHub',
-      url:      'https://github.com/',
-      code:     '',
       icon:     '💡',
+      links: [
+        { provider: 'GitHub', url: 'https://github.com/', code: '' },
+      ],
     },
   ],
 
