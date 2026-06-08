@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Socials from '../components/Socials.astro';
 import { SITE } from '../config/site';
 ---
 <BaseLayout title={`About — ${SITE.title}`}>
@@ -34,17 +35,14 @@ import { SITE } from '../config/site';
         </div>
       </div>
       <p class="bio" id="about-bio">{SITE.bioEn}</p>
-      <div class="social-row">
-        {SITE.social.github && (
-          <a href={SITE.social.github} target="_blank" rel="noopener" class="social-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
+      <div class="social-section">
+        <p class="social-label" data-zh="在以下平台找到我">Find me on</p>
+        <div class="social-row">
+          <Socials className="about-social-btn" />
+          <a href="/rss.xml" class="about-social-btn" title="RSS feed" aria-label="RSS">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1" fill="currentColor"/></svg>
           </a>
-        )}
-        <a href="/rss.xml" class="social-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1" fill="currentColor"/></svg>
-          RSS
-        </a>
+        </div>
       </div>
     </div>
 
@@ -94,9 +92,16 @@ import { SITE } from '../config/site';
     if (motto) motto.textContent = lang === 'zh' ? SITE.mottoZh : SITE.mottoEn;
     const src = document.getElementById('motto-source');
     if (src) src.textContent = lang === 'zh' ? SITE.mottoSourceZh : SITE.mottoSourceEn;
+    // Generic data-zh swap for any other static element
+    document.querySelectorAll('[data-zh]').forEach(el => {
+      const h = el as HTMLElement;
+      if (!h.dataset.en) h.dataset.en = h.textContent || '';
+      h.textContent = lang === 'zh' ? (h.dataset.zh || '') : (h.dataset.en || '');
+    });
   }
   syncBio();
   document.getElementById('lang-btn')?.addEventListener('click', () => setTimeout(syncBio, 0));
+  document.addEventListener('astro:after-swap', syncBio);
 </script>
 
 <style>
@@ -212,14 +217,29 @@ import { SITE } from '../config/site';
   .role { font-size: .9375rem; font-weight: 500; color: var(--accent); margin-bottom: .375rem; }
   .location { display: flex; align-items: center; gap: .375rem; font-size: .8125rem; color: var(--ink-3); }
   .bio { font-size: 1rem; color: var(--ink-2); line-height: 1.7; margin-bottom: 1.5rem; }
-  .social-row { display: flex; gap: .75rem; }
-  .social-btn {
-    display: inline-flex; align-items: center; gap: .5rem;
-    font-size: .875rem; font-weight: 500; color: var(--ink-2); text-decoration: none;
-    background: var(--bg); border: 1px solid var(--border); padding: .5rem 1rem;
-    border-radius: var(--radius-md); transition: background .15s, border-color .15s;
+  .social-section { display: flex; flex-direction: column; gap: .65rem; }
+  .social-label {
+    font-size: .65rem; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-4);
   }
-  .social-btn:hover { background: var(--bg-elevated); border-color: var(--accent); color: var(--accent); }
+  .social-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .about-social-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px;
+    color: var(--ink-2);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background .15s, border-color .15s, color .15s, transform .15s;
+  }
+  .about-social-btn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
 
   .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   .text-section, .interests-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-sm); }
