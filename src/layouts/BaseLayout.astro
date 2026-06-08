@@ -96,6 +96,16 @@ const socialImage = ogImage
       var l=localStorage.getItem('lang')||'en';
       document.documentElement.setAttribute('data-theme',t);
       document.documentElement.setAttribute('data-lang',l);
+
+      // View Transitions swap rewrites <html data-theme="light"> from the
+      // new page's template. Reapply our preference BEFORE the swap so the
+      // dark theme survives every navigation.
+      document.addEventListener('astro:before-swap', function(e){
+        var theme = localStorage.getItem('theme')||'light';
+        var lang  = localStorage.getItem('lang')||'en';
+        e.newDocument.documentElement.setAttribute('data-theme', theme);
+        e.newDocument.documentElement.setAttribute('data-lang',  lang);
+      });
     })();
   </script>
 </head>
