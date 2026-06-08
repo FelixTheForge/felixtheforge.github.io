@@ -120,6 +120,8 @@ const showToc = tocItems.length >= 3;
           </div>
           <a href="/blog" class="back-btn">← All posts</a>
         </footer>
+
+        <Comments />
       </div>
 
       {showToc && (
@@ -141,8 +143,6 @@ const showToc = tocItems.length >= 3;
       )}
     </div>
   </article>
-
-  <Comments />
 </BaseLayout>
 
 <script>
