@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { readingTime } from '../utils/readingTime';
 import { SITE } from '../config/site';
+import PostCover from '../components/PostCover.astro';
 
 const posts = (await getCollection('blog'))
   .sort((a,b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
@@ -94,10 +95,7 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
 
         <a href={`/blog/${featured.id}`} class="featured-card card">
           <div class="feat-img-wrap">
-            {featured.data.cover
-              ? <img src={featured.data.cover} alt={featured.data.title} class="feat-img" loading="lazy"/>
-              : <div class="feat-img-fallback"></div>
-            }
+            <PostCover title={featured.data.title} cover={featured.data.cover} variant="card" className="feat-img"/>
             <div class="feat-img-shine"></div>
           </div>
           <div class="feat-body">
@@ -131,11 +129,9 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagColorMap[t]) tagColorMap[t
         <div class="post-grid">
           {recent.map((post,i) => (
             <a href={`/blog/${post.id}`} class="post-card card fade-up" style={`animation-delay:${i*.08}s`}>
-              {post.data.cover && (
-                <div class="card-img-wrap">
-                  <img src={post.data.cover} alt="" class="card-img" loading="lazy"/>
-                </div>
-              )}
+              <div class="card-img-wrap">
+                <PostCover title={post.data.title} cover={post.data.cover} variant="card" className="card-img"/>
+              </div>
               <div class="card-body">
                 <div class="card-tags">
                   {post.data.tags?.slice(0,2).map(t => (

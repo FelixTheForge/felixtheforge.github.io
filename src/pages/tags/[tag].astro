@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { readingTime } from '../../utils/readingTime';
 import { SITE } from '../../config/site';
+import PostCover from '../../components/PostCover.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -24,7 +25,7 @@ const sorted = posts.sort((a,b)=>new Date(b.data.date).valueOf()-new Date(a.data
     <div class="post-list fade-up">
       {sorted.map(post => (
         <a href={`/blog/${post.id}`} class="post-row card">
-          {post.data.cover && <img src={post.data.cover} alt="" class="thumb" loading="lazy"/>}
+          <div class="thumb"><PostCover title={post.data.title} cover={post.data.cover} variant="thumb"/></div>
           <div class="row-body">
             <h2 class="row-title">{post.data.title}</h2>
             {post.data.description && <p class="row-desc">{post.data.description}</p>}

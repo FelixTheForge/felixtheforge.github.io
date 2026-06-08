@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { readingTime } from '../../utils/readingTime';
 import { SITE } from '../../config/site';
+import PostCover from '../../components/PostCover.astro';
 
 const posts = (await getCollection('blog'))
   .sort((a,b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
@@ -69,12 +70,10 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
     <!-- ── Featured (most recent) — larger card ── -->
     {featured && (
       <a href={`/blog/${featured.id}`} class="blog-featured fade-up" style="animation-delay:.1s">
-        {featured.data.cover && (
-          <div class="bf-img-wrap">
-            <img src={featured.data.cover} alt="" class="bf-img" loading="lazy"/>
-            <div class="bf-img-fade"></div>
-          </div>
-        )}
+        <div class="bf-img-wrap">
+          <PostCover title={featured.data.title} cover={featured.data.cover} variant="card" className="bf-img"/>
+          <div class="bf-img-fade"></div>
+        </div>
         <div class="bf-body">
           <div class="bf-meta-top">
             <span class="bf-newest" data-i18n-custom="blog-newest">★ Latest</span>
@@ -104,11 +103,9 @@ posts.forEach(p => p.data.tags?.forEach(t => { if(!tagMap[t]) tagMap[t]=tagColor
         <div class="post-list">
           {rest.filter(p => new Date(p.data.date).getFullYear() === year).map((post,pi) => (
             <a href={`/blog/${post.id}`} class="post-row" style={`animation-delay:${(yi*4+pi)*0.05}s`}>
-              {post.data.cover && (
-                <div class="row-thumb-wrap">
-                  <img src={post.data.cover} alt="" class="row-thumb" loading="lazy"/>
-                </div>
-              )}
+              <div class="row-thumb-wrap">
+                <PostCover title={post.data.title} cover={post.data.cover} variant="thumb" className="row-thumb"/>
+              </div>
               <div class="row-body">
                 <div class="row-tags">
                   {post.data.tags?.slice(0,2).map(t => (

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Comments from '../components/Comments.astro';
+import PostCover from '../components/PostCover.astro';
 import { readingTime } from '../utils/readingTime';
 import { SITE } from '../config/site';
 
@@ -56,12 +57,10 @@ const showToc = tocItems.length >= 3;
   })}/>
 
   <article class="post-article">
-    {cover && (
-      <div class="post-hero">
-        <img src={cover} alt={title} class="post-hero-img"/>
-        <div class="post-hero-fade"></div>
-      </div>
-    )}
+    <div class="post-hero">
+      <PostCover title={title} cover={cover} variant="hero" className="post-hero-img" loading="eager"/>
+      <div class="post-hero-fade"></div>
+    </div>
 
     <div class={`post-layout ${showToc ? 'has-toc' : ''}`}>
 
