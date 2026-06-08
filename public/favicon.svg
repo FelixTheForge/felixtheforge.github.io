@@ -5,27 +5,40 @@
       <stop offset="50%"  stop-color="#f5ebff"/>
       <stop offset="100%" stop-color="#ffe9f3"/>
     </linearGradient>
-    <linearGradient id="flame" x1="0.5" y1="1" x2="0.5" y2="0">
-      <stop offset="0%"   stop-color="#0071e3"/>
-      <stop offset="100%" stop-color="#bf5af2"/>
+    <linearGradient id="anvil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4b5364"/>
+      <stop offset="100%" stop-color="#262c37"/>
     </linearGradient>
   </defs>
 
-  <!-- Soft pastel rounded square -->
+  <!-- Soft pastel rounded square (keep the light vibe from before) -->
   <rect width="32" height="32" rx="8" ry="8" fill="url(#bg)"/>
 
-  <!-- Hairline flame outline in the brand gradient -->
+  <!-- Anvil silhouette
+       horn (left) → flat working surface → tapered neck → wide stepped base -->
   <path d="
-    M16 6
-    C 18.5 9.5, 22.5 11, 22 16.5
-    C 22 21.5, 19 24.5, 16 24.5
-    C 13 24.5, 10 21.5, 10 16.5
-    C 9.5 11, 13.5 9.5, 16 6 Z"
-    fill="none"
-    stroke="url(#flame)"
-    stroke-width="1.6"
+    M2.5 12.8
+    L5 11
+    L27 11
+    L27 13.6
+    L21 13.6
+    L21 18.4
+    L25.5 18.4
+    L25.5 22
+    L6.5 22
+    L6.5 18.4
+    L11 18.4
+    L11 13.6
+    L5 13.6 Z"
+    fill="url(#anvil)"
+    stroke="#1c2129"
+    stroke-width="0.5"
     stroke-linejoin="round"/>
 
-  <!-- Tiny inner dot — single warm accent for personality -->
-  <circle cx="16" cy="17.5" r="2.2" fill="#ff9f0a" opacity="0.85"/>
+  <!-- Subtle highlight on the top working surface (metal sheen) -->
+  <rect x="6.5" y="11.4" width="19" height="0.6" fill="rgba(255,255,255,0.35)" rx="0.3"/>
+
+  <!-- Tiny orange spark above — hints at forging without being loud -->
+  <circle cx="22.5" cy="8.5" r="1" fill="#ff9f0a"/>
+  <circle cx="22.5" cy="8.5" r="1.6" fill="#ff9f0a" opacity="0.25"/>
 </svg>
